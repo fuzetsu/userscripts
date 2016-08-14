@@ -11,8 +11,8 @@ It provides 2 useful functions:
 
 ```js
 /**
- * @param sel         - css selector you are waiting for
- * @param action      - the callback that will be executed when element(s) 
+ * @param         sel - css selector you are waiting for
+ * @param      action - the callback that will be executed when element(s) 
  *                      matching the given selector are found, it is called
  *                      once for every element matching the selector
  * @param stopLooking - if true the function will stop looking for 
