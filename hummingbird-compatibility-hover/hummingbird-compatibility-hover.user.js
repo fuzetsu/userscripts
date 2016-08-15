@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Compatibility Hover
 // @namespace    http://fuzetsu.com/hch
-// @version      1.0.3
+// @version      1.0.4
 // @description  Shows hummingbird user compatibility rating at the bottom right of the screen when a user link is hovered over
 // @author       fuzetsu
 // @match        *://hummingbird.me/*
