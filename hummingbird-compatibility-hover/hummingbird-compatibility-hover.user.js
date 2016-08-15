@@ -17,7 +17,7 @@ var DELAY_SEC = 0.75;
 var CACHED = {};
 
 var Util = {
-  log: function () {
+  log: function() {
     var args = [].slice.call(arguments);
     args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
     console.log.apply(console, args);
@@ -42,10 +42,10 @@ var Util = {
   addStyle: function(styles) {
     var sel, css, obj;
     var out = '';
-    for(sel in styles) {
+    for (sel in styles) {
       obj = styles[sel];
       out += sel + '{';
-      for(css in obj) {
+      for (css in obj) {
         out += css + ':' + obj[css] + ';';
       }
       out += '}';
@@ -108,7 +108,7 @@ var App = {
   getCompatArea: function() {
     var compatArea = Util.q('#' + COMPAT_ID);
 
-    if(!compatArea) {
+    if (!compatArea) {
       compatArea = document.createElement('div');
       compatArea.id = COMPAT_ID;
       compatArea.style.display = 'none';
@@ -123,14 +123,14 @@ var App = {
   },
 
   showCompat: function(me, them) {
-    if(me === them) return;
-    if(Util.q('.signup-cta')) return; // not signed in
+    if (me === them) return;
+    if (Util.q('.signup-cta')) return; // not signed in
 
     var self = this;
     var area = this.getCompatArea();
 
     var cache = CACHED[me + '+' + them];
-    if(cache) {
+    if (cache) {
       area.innerHTML = self.getCompatHTML(cache);
     } else {
       area.innerHTML = '<img src="' + LOAD_GIF + '" />';
@@ -170,7 +170,7 @@ var App = {
     Util.log('starting...');
     self.styleUI();
     waitForElems('a', function(link) {
-      if(self.userLinkRegex.test(link.href)) {
+      if (self.userLinkRegex.test(link.href)) {
         link.addEventListener('mouseenter', self.startHover);
         link.addEventListener('mouseleave', self.stopHover);
         link.addEventListener('click', self.stopHover);
