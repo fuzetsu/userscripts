@@ -61,7 +61,7 @@ var hb = {
 };
 
 var App = {
-  userLinkRegex: /hummingbird\.me\/users\/.+/,
+  userLinkRegex: /^https?:\/\/(forums\.)?hummingbird\.me\/users\/[^\/]+\/?(\?.*)?$/,
 
   styleUI: function() {
     var style = {
@@ -132,8 +132,7 @@ var App = {
     var cache = CACHED[me + '+' + them];
     if (cache) {
       area.innerHTML = self.getCompatHTML(cache);
-    }
-    else {
+    } else {
       area.innerHTML = '<img src="' + LOAD_GIF + '" />';
       Util.getJSON('https://hbird-cmp-node.herokuapp.com/compatibility/anime?user1=' + me + '&user2=' + them, function(compat) {
         CACHED[me + '+' + them] = compat;
@@ -158,7 +157,7 @@ var App = {
   startHover: function(e) {
     App._timeout = setTimeout(function() {
       App._timeout = null;
-      App.showCompat(hb.getUserName(Util.q('.dropdown-menu > li > a').href), hb.getUserName(e.target.href));
+      App.showCompat(hb.getUserName(Util.q('.dropdown-menu > li > a, #current-user > a').href), hb.getUserName(e.target.href));
     }, DELAY_SEC * 1000);
   },
   stopHover: function(e) {
@@ -174,6 +173,7 @@ var App = {
       if (self.userLinkRegex.test(link.href)) {
         link.addEventListener('mouseenter', self.startHover);
         link.addEventListener('mouseleave', self.stopHover);
+        link.addEventListener('click', self.stopHover);
       }
     });
   }
