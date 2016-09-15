@@ -1,14 +1,23 @@
 /**
- * @param sel - the selector you want to wait for
- * @param action - the callback that will be executed when element/s matching the given selector are found, it is passed the array of found elements
- * @param stopLooking - if true the function will stop looking for more elements after the first match
+ * @param obj - {
+ *  sel: 'a',                    // the selector you want to wait for (optional)
+ *  context: document.body,      // scope of search for selector or mutations (optional, default document.body)
+ *  stop: true,                  // stop waiting after first result (optional, default false)
+ *  mode: 'M',                   // M to use mutation observer, S to use setInterval (optional, default M)
+ *  onchange: func,              // if using mode 'M' this function will be called whenever mutation handler triggers
+ *  onmatch: func,               // if selector is specified function will be called for each match with element as parameter
+ *  config: { attributes: true } // if using mode 'M' this object will override settings passed to mutation observer
+ * }
  */
-function waitForElems(sel, action, stopLooking) {
+function waitForElems(obj) {
   var tick;
   var id = 'fke' + Math.floor(Math.random() * 12345);
-  var type = window.MutationObserver ? 'M' : 'S';
+  var type = window.MutationObserver ? (obj.mode || 'M') : 'S';
   var lastMutation = Date.now();
   var lastCall = Date.now();
+  var context = obj.context || document.body;
+  var sel = obj.sel;
+  var onChange = obj.onchange;
   var queuedCall;
 
   function throttle(func) {
@@ -19,12 +28,10 @@ function waitForElems(sel, action, stopLooking) {
       // 500ms or more since last query
       if (now - lastCall >= 500) {
         func();
-      }
-      else {
+      } else {
         queuedCall = setTimeout(func, 100);
       }
-    }
-    else {
+    } else {
       func();
     }
     lastMutation = now;
@@ -32,37 +39,38 @@ function waitForElems(sel, action, stopLooking) {
 
   function findElem(sel) {
     lastCall = Date.now();
-    var found = [].filter.call(document.querySelectorAll(sel), function(elem) {
+    var found = [].filter.call(context.querySelectorAll(sel), function(elem) {
       return elem.dataset[id] !== 'y';
     });
     if (found.length > 0) {
-      if (stopLooking) {
+      if (obj.stop) {
         type === 'M' ? tick.disconnect() : clearInterval(tick);
       }
       found.forEach(function(elem) {
         elem.dataset[id] = 'y';
-        action(elem);
+        obj.onmatch(elem);
       });
     }
   }
   if (type === 'M') {
-    tick = new MutationObserver(throttle.bind(null, findElem.bind(null, sel)));
-    tick.observe(document.body, {
+    tick = new MutationObserver(function() {
+      if (sel) throttle.call(null, findElem.bind(null, sel));
+      if (onChange) onChange.apply(this, arguments);
+    })
+    tick.observe(context, obj.config || {
       subtree: true,
       childList: true
     });
-  }
-  else {
+  } else {
     tick = setInterval(findElem.bind(null, sel), 300);
   }
-  findElem(sel);
+  if (sel) findElem(sel);
   return {
     type: type,
     stop: function() {
       if (type === 'M') {
         tick.disconnect();
-      }
-      else {
+      } else {
         clearInterval(tick);
       }
     }
