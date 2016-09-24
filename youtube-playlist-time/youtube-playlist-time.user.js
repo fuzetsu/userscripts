@@ -1,21 +1,21 @@
 // ==UserScript==
 // @name         YouTube Playlist Time
 // @namespace    http://www.fuzetsu.com/WLFT
-// @version      1.2.9
+// @version      1.2.10
 // @description  Shows the total time it would take to watch all the videos in a YouTube playlist
 // @match        https://www.youtube.com/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?4
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @copyright    2014+, fuzetsu
 // @grant        none
 // ==/UserScript==
 
 var SCRIPT_NAME = 'YouTube Playlist Time';
-var HOLDER_SELECTOR = '.pl-header-content > ul';
+var HOLDER_SELECTOR = '.pl-header-details';
 var TIMESTAMP_SELECTOR = '.timestamp';
 var TIME_CLASS = 'us-total-time';
 
 var util = {
-  log: function() {
+  log: function () {
     var args = [].slice.call(arguments);
     args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
     console.log.apply(console, args);
@@ -54,7 +54,7 @@ var util = {
 var calcTimeString = function(str) {
   return str.split(':').reverse().reduce(function(last, cur, idx) {
     cur = parseInt(cur, 10);
-    switch (idx) {
+    switch(idx) {
       case 0: // seconds
         return last + cur;
       case 1: // minutes
@@ -84,7 +84,7 @@ var setTime = function(seconds) {
 
 var getTimeLoc = function() {
   var loc = util.q('.' + TIME_CLASS);
-  if (!loc) {
+  if(!loc) {
     loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement('li'));
     loc.className = TIME_CLASS;
   }
@@ -98,7 +98,7 @@ var timeLocExists = function() {
 var lastLength = 0;
 var calcTotalTime = function(force) {
   var timestamps = util.qq(TIMESTAMP_SELECTOR);
-  if (!force && timestamps.length === lastLength && timeLocExists()) return;
+  if(!force && timestamps.length === lastLength && timeLocExists()) return;
   lastLength = timestamps.length;
   var totalSeconds = timestamps.reduce(function(total, ts) {
     return total + calcTimeString(ts.textContent.trim());
@@ -117,15 +117,19 @@ waitForUrl(/^https:\/\/www\.youtube\.com\/playlist\?list=.+/, function() {
   var urlWaitId;
   var seconds = 0;
   util.log('Reached playlist, waiting for display area to load');
-  waitForElems(HOLDER_SELECTOR, function(holder) {
-    util.log('display area loaded, calculating time.');
-    util.bindEvt(window, events);
-    calcTotalTime(true);
-    urlWaitId = waitForUrl(function(url) {
-      return url !== playlistUrl;
-    }, function() {
-      util.log('Leaving playlist, removing listeners');
-      util.unbindEvt(window, events);
-    }, true);
-  }, true);
+  waitForElems({
+    sel: HOLDER_SELECTOR,
+    stop: true,
+    onmatch: function(holder) {
+      util.log('display area loaded, calculating time.');
+      util.bindEvt(window, events);
+      calcTotalTime(true);
+      urlWaitId = waitForUrl(function(url) {
+        return url !== playlistUrl;
+      }, function() {
+        util.log('Leaving playlist, removing listeners');
+        util.unbindEvt(window, events);
+      }, true);
+    }
+  });
 });
