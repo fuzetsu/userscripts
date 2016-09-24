@@ -7,7 +7,7 @@
 // @match        *://hummingbird.me/*
 // @match        http://myanimelist.net/404.php?*
 // @grant        none
-// @require https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=141779
 // ==/UserScript==
 
 var url = window.location.href;
