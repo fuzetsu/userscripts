@@ -6,7 +6,7 @@
 // @author       fuzetsu
 // @match        *://www.youtube.com/*
 // @grant        none
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=28657
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=141779
 // @noframes
 // ==/UserScript==
 
