@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kijiji Middle Click
 // @namespace    kijiji-middle-click
-// @version      1.0
+// @version      1.1
 // @description  make link middle clicking work on kijiji
 // @author       fuzetsu
 // @match        *://www.kijiji.ca/*
