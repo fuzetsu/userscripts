@@ -94,7 +94,7 @@ function waitForAds() {
   if(MUTE_AD) {
     ticks.push(waitForElems('.videoAdUi', function(ad) {
       var muteButton = Util.q(MUTE_BUTTON_SELECTOR);
-	  var muteIndicator = Util.q(MUTE_INDICATOR_SELECTOR);
+      var muteIndicator = Util.q(MUTE_INDICATOR_SELECTOR);
       if(muteIndicator.style.opacity === '1') {
         Util.log('Video ad detected, audio already muted so respecting user setting');
         return;
