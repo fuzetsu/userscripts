@@ -62,13 +62,14 @@ var Util = {
   },
   qq: function(query, context) {
     return [].slice.call((context || document).querySelectorAll(query));
-  }
+  },
 };
 
 var SCRIPT_NAME = 'Auto Close YouTube Ads';
 var SEC_WAIT = parseInt(Util.storeGet('SEC_WAIT'));
 var MUTE_AD = Util.storeGet('MUTE_AD');
 var MUTE_BUTTON_SELECTOR = '.ytp-mute-button';
+var MUTE_INDICATOR_SELECTOR = '.ytp-svg-sound-mute-group';
 var ticks = [];
 var videoUrl;
 
@@ -93,7 +94,8 @@ function waitForAds() {
   if(MUTE_AD) {
     ticks.push(waitForElems('.videoAdUi', function(ad) {
       var muteButton = Util.q(MUTE_BUTTON_SELECTOR);
-      if(muteButton.title === 'Unmute') {
+	  var muteIndicator = Util.q(MUTE_INDICATOR_SELECTOR);
+      if(muteIndicator.style.opacity === '1') {
         Util.log('Video ad detected, audio already muted so respecting user setting');
         return;
       }
@@ -103,7 +105,7 @@ function waitForAds() {
       // wait for the ad to dissapear before unmuting
       Util.keepTrying(500, function() {
         if(!Util.q('.videoAdUi')) {
-          if(muteButton.title === 'Unmute') {
+          if(muteIndicator.style.opacity === '1') {
             muteButton.click();
             Util.log('Video ad ended, unmuting audio');
           } else {
