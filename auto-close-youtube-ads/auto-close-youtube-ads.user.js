@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.1.15
+// @version      1.1.16
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        https://*.youtube.com/*
@@ -69,12 +69,11 @@ var SCRIPT_NAME = 'Auto Close YouTube Ads';
 var SEC_WAIT = parseInt(Util.storeGet('SEC_WAIT'));
 var MUTE_AD = Util.storeGet('MUTE_AD');
 var MUTE_BUTTON_SELECTOR = '.ytp-mute-button';
-var MUTE_INDICATOR_SELECTOR = '.ytp-svg-sound-mute-group';
+var MUTE_INDICATOR_SELECTOR = '.ytp-volume-slider-handle';
 var ticks = [];
 var videoUrl;
 
 if(!MUTE_AD && MUTE_AD !== false) MUTE_AD = true;
-
 if(!SEC_WAIT && SEC_WAIT !== 0) SEC_WAIT = 3;
 
 function waitForAds() {
@@ -95,7 +94,8 @@ function waitForAds() {
     ticks.push(waitForElems('.videoAdUi', function(ad) {
       var muteButton = Util.q(MUTE_BUTTON_SELECTOR);
       var muteIndicator = Util.q(MUTE_INDICATOR_SELECTOR);
-      if(muteIndicator.style.opacity === '1') {
+      if(!muteIndicator) return Util.log('unable to determine mute state, skipping mute');
+      if( muteIndicator.style.left === '0px') {
         Util.log('Video ad detected, audio already muted so respecting user setting');
         return;
       }
@@ -105,7 +105,7 @@ function waitForAds() {
       // wait for the ad to dissapear before unmuting
       Util.keepTrying(500, function() {
         if(!Util.q('.videoAdUi')) {
-          if(muteIndicator.style.opacity === '1') {
+          if(muteIndicator.style.left === '0px') {
             muteButton.click();
             Util.log('Video ad ended, unmuting audio');
           } else {
