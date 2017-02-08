@@ -59,6 +59,28 @@
           Util.log('Failed to get Kitsu mappings');
         }
       });
+    },
+    getMalPage: function(url, cb) {
+      Util.log('Loading MAL page:', url);
+      GM_xmlhttpRequest({
+        method: 'GET',
+        url: url,
+        onload: function(response) {
+          Util.log('Loaded MAL page');
+          var tempDiv = document.createElement('div');
+          tempDiv.innerHTML = response.responseText;
+
+          var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
+          var rating = Util.q('span[itemprop="ratingValue"]', sidebar).innerText;
+          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar).innerText;
+          var usersFaved = Util.q('div:nth-of-type(19)', sidebar).innerText.replace('Favorites: ', '');
+          
+          cb(rating, usersRated, usersFaved);
+        },
+        onerror: function() {
+          Util.log('Error loading MAL page');
+        }
+      });
     }
   };
 
@@ -73,6 +95,12 @@
         Util.log('MAL ID not found');
       } else {
         Util.log('Received MAL ID:', malId);
+        var malLink = 'https://myanimelist.net/' + type + '/' + malId;
+        App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
+          Util.log('MAL rating:', rating);
+          Util.log('MAL users rated:', usersRated);
+          Util.log('MAL users faved:', usersFaved);
+        });
       }
     });
   });
