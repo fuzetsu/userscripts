@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         Hummingbird MAL Rating
-// @namespace    http://fuzetsu.com/hummingbird-mal-rating
-// @version      1.3.3
-// @description  Shows MyAnimeList.net rating in hummingbird.me
+// @name         Kitsu MAL Rating
+// @namespace    http://fuzetsu.com/kitsu-mal-rating
+// @version      2.0
+// @description  Shows MyAnimeList.net rating in kitsu.io
 // @author       fuzetsu
-// @match        *://hummingbird.me/*
+// @match        *://kitsu.io/*
 // @match        http://myanimelist.net/404.php?*
 // @grant        none
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=141779
