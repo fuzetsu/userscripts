@@ -50,7 +50,7 @@
           onload: function(response) {
             try {
               var json = JSON.parse(response.responseText);
-              Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
+              //Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
               var malId;
               for (var i = 0; i < json.included.length; i++) {
                 if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
@@ -75,7 +75,7 @@
         method: 'GET',
         url: url,
         onload: function(response) {
-          Util.log('Loaded MAL page');
+          //Util.log('Loaded MAL page');
           var tempDiv = document.createElement('div');
           tempDiv.innerHTML = response.responseText;
 
@@ -103,14 +103,14 @@
   waitForUrl(REGEX, function() {
     var type = location.href.match(REGEX)[1];
     var slug = location.href.match(REGEX)[2];
-    Util.log('Parsed URL type:', type);
-    Util.log('Parsed URL slug:', slug);
+    //Util.log('Parsed URL type:', type);
+    //Util.log('Parsed URL slug:', slug);
 
     App.getMalLink(type, slug, function(malId) {
       if (!malId) {
         Util.log('MAL ID not found');
       } else {
-        Util.log('Received MAL ID:', malId);
+        //Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
 
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
@@ -119,9 +119,9 @@
           usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
           usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
 
-          Util.log('MAL rating:', rating);
-          Util.log('MAL users rated:', usersRated);
-          Util.log('MAL users faved:', usersFaved);
+          //Util.log('MAL rating:', rating);
+          //Util.log('MAL users rated:', usersRated);
+          //Util.log('MAL users faved:', usersFaved);
 
           var malRatingBar = document.createElement('div');
           malRatingBar.classList.add('rating-bar');
