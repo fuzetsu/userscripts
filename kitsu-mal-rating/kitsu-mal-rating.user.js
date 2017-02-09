@@ -105,6 +105,14 @@
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
+          rating = parseFloat(rating / 2).toFixed(2);
+          usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
+          usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
+
+          Util.log('MAL rating:', rating);
+          Util.log('MAL users rated:', usersRated);
+          Util.log('MAL users faved:', usersFaved);
+
           var malRatingBar = document.createElement('div');
           malRatingBar.classList.add('rating-bar');
           malRatingBar.classList.add('clearfix');
@@ -112,7 +120,7 @@
           var ratingElem = document.createElement('span');
           ratingElem.classList.add('community-percentage');
           //ratingElem.classList.add('percent-quarter-3');
-          ratingElem.textContent = parseFloat(rating / 2).toFixed(2);
+          ratingElem.textContent = rating;
           malRatingBar.appendChild(ratingElem);
 
           var labelElem = document.createElement('span');
@@ -125,12 +133,8 @@
 
           var usersElem = document.createElement('span');
           usersElem.classList.add('ratings-count');
-          usersElem.textContent = parseInt(usersRated).toLocaleString('en-US') + ' ratings - ' + usersFaved + ' favorites';
+          usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
           malRatingBar.appendChild(usersElem);
-
-          Util.log('MAL rating:', rating);
-          Util.log('MAL users rated:', usersRated);
-          Util.log('MAL users faved:', usersFaved);
 
           waitForElems({
             sel: '.rating-bar',
