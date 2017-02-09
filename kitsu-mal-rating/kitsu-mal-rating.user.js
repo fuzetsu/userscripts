@@ -73,8 +73,8 @@
           var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
           var rating = Util.q('span[itemprop="ratingValue"]', sidebar).innerText;
           var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar).innerText;
-          var usersFaved = Util.q('div:nth-of-type(19)', sidebar).innerText.replace('Favorites: ', '');
-          
+          var usersFaved = Util.q('h2:not(.mt8):nth-of-type(4) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+
           cb(rating, usersRated, usersFaved);
         },
         onerror: function() {
@@ -97,9 +97,42 @@
         Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
+
+          var malRatingBar = document.createElement('div');
+          malRatingBar.classList.add('rating-bar');
+          malRatingBar.classList.add('clearfix');
+
+          var ratingElem = document.createElement('span');
+          ratingElem.classList.add('community-percentage');
+          //ratingElem.classList.add('percent-quarter-3');
+          ratingElem.textContent = parseFloat(rating / 2).toFixed(2);
+          malRatingBar.appendChild(ratingElem);
+
+          var labelElem = document.createElement('span');
+          labelElem.classList.add('average-rating-stars');
+          malRatingBar.appendChild(labelElem);
+          var labelText = document.createElement('h5');
+          labelText.textContent = 'MAL';
+          labelText.setAttribute('style', 'top: 5px;');
+          labelElem.appendChild(labelText);
+
+          var usersElem = document.createElement('span');
+          usersElem.classList.add('ratings-count');
+          usersElem.textContent = parseInt(usersRated).toLocaleString('en-US') + ' ratings - ' + usersFaved + ' favorites';
+          malRatingBar.appendChild(usersElem);
+
           Util.log('MAL rating:', rating);
           Util.log('MAL users rated:', usersRated);
           Util.log('MAL users faved:', usersFaved);
+
+          waitForElems({
+            sel: '.rating-bar',
+            stop: true,
+            onmatch: function(ratingBar) {
+              ratingBar.setAttribute('style', 'margin-bottom: 5px;');
+              ratingBar.parentElement.appendChild(malRatingBar);
+            }
+          });
         });
       }
     });
