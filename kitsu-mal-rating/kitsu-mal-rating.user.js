@@ -73,7 +73,13 @@
           var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
           var rating = Util.q('span[itemprop="ratingValue"]', sidebar).innerText;
           var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar).innerText;
-          var usersFaved = Util.q('h2:not(.mt8):nth-of-type(4) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+          var usersFaved;
+          var isOnList = Util.q('h2.mt8', sidebar);
+          if (isOnList) {
+            usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+          } else {
+            usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+          }
 
           cb(rating, usersRated, usersFaved);
         },
