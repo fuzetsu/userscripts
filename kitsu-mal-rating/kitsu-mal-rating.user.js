@@ -127,9 +127,13 @@
           labelElem.classList.add('average-rating-stars');
           labelElem.setAttribute('style', 'top: 5px;');
           malRatingBar.appendChild(labelElem);
+          var labelLink = document.createElement('a');
+          labelLink.href = malLink;
+          labelLink.setAttribute('target', '_blank');
+          labelElem.appendChild(labelLink);
           var labelText = document.createElement('h5');
           labelText.textContent = 'MAL';
-          labelElem.appendChild(labelText);
+          labelLink.appendChild(labelText);
 
           var usersElem = document.createElement('span');
           usersElem.classList.add('ratings-count');
