@@ -76,10 +76,11 @@
           var usersFaved;
           var isOnList = Util.q('h2.mt8', sidebar);
           if (isOnList) {
-            usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+            usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar);
           } else {
-            usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+            usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar);
           }
+          usersFaved = usersFaved.innerText.replace('Favorites:', '').trim();
 
           cb(rating, usersRated, usersFaved);
         },
@@ -116,10 +117,10 @@
 
           var labelElem = document.createElement('span');
           labelElem.classList.add('average-rating-stars');
+          labelElem.setAttribute('style', 'top: 5px;');
           malRatingBar.appendChild(labelElem);
           var labelText = document.createElement('h5');
           labelText.textContent = 'MAL';
-          labelText.setAttribute('style', 'top: 5px;');
           labelElem.appendChild(labelText);
 
           var usersElem = document.createElement('span');
