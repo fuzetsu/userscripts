@@ -32,33 +32,42 @@
   };
 
   var App = {
+    cache: {},
     getMalLink: function(type, slug, cb) {
-      Util.log('Fetching mappings for Kitsu slug:', type + '/' + slug);
-      GM_xmlhttpRequest({
-        method: 'GET',
-        url: API + '/' + type + '?filter[slug]=' + slug + '&fields[' + type + ']=id&include=mappings',
-        headers: {
-          'Accept': 'application/vnd.api+json'
-        },
-        onload: function(response) {
-          try {
-            var json = JSON.parse(response.responseText);
-            Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
-            var malId;
-            for (var i = 0; i < json.included.length; i++) {
-              if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
-                malId = json.included[i].attributes.externalId;
+      var id = type + '/' + slug;
+      var self = this;
+      if (self.cache.hasOwnProperty(id)) {
+        Util.log('Loading cached MAL ID:', self.cache[id]);
+        cb(self.cache[id]);
+      } else {
+        Util.log('Fetching mappings for Kitsu slug:', id);
+        GM_xmlhttpRequest({
+          method: 'GET',
+          url: API + '/' + type + '?filter[slug]=' + slug + '&fields[' + type + ']=id&include=mappings',
+          headers: {
+            'Accept': 'application/vnd.api+json'
+          },
+          onload: function(response) {
+            try {
+              var json = JSON.parse(response.responseText);
+              Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
+              var malId;
+              for (var i = 0; i < json.included.length; i++) {
+                if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
+                  malId = json.included[i].attributes.externalId;
+                }
               }
+              self.cache[id] = malId;
+              cb(malId);
+            } catch (err) {
+              Util.log('Failed to parse API results');
             }
-            cb(malId);
-          } catch (err) {
-            Util.log('Failed to parse API results');
+          },
+          onerror: function() {
+            Util.log('Failed to get Kitsu mappings');
           }
-        },
-        onerror: function() {
-          Util.log('Failed to get Kitsu mappings');
-        }
-      });
+        });
+      }
     },
     getMalPage: function(url, cb) {
       Util.log('Loading MAL page:', url);
@@ -103,6 +112,7 @@
       } else {
         Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
+
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
           rating = parseFloat(rating / 2).toFixed(2);
