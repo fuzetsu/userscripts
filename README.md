@@ -16,7 +16,7 @@ or from the list below.
 * [Gfycat Redirect to Webm](https://greasyfork.org/en/scripts/7027-gfycat-redirect-to-webm)
 * [Hangouts Notifier](https://greasyfork.org/en/scripts/14193-hangouts-notifier) **_not currently working_**
 * [Hummingbird Compatibility Hover](https://greasyfork.org/en/scripts/9570-hummingbird-compatibility-hover)
-* [Hummingbird MAL Rating](https://greasyfork.org/en/scripts/5890-hummingbird-mal-rating)
+* [Kitsu MAL Rating](https://greasyfork.org/en/scripts/5890-kitsu-mal-rating)
 * [Kijiji Middle Click](https://greasyfork.org/en/scripts/23555-kijiji-middle-click)
 * [Youtube History Management](https://greasyfork.org/en/scripts/7044-youtube-history-management)
 * [Youtube Playlist Search](https://greasyfork.org/en/scripts/14370-youtube-playlist-search)
