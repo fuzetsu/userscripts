@@ -3,9 +3,8 @@
 // @namespace    http://fuzetsu.com/kitsu-mal-rating
 // @version      2.0
 // @description  Shows MyAnimeList.net rating on Kitsu.io
-// @author       fuzetsu
+// @author       synthtech / fuzetsu
 // @match        *://kitsu.io/*
-// @match        *://myanimelist.net/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
