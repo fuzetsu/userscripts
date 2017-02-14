@@ -124,10 +124,12 @@
     var slug = location.href.match(REGEX)[2];
     //Util.log('Parsed URL type:', type);
     //Util.log('Parsed URL slug:', slug);
+    var barCheck = Util.q('#mal-rating-bar');
 
     App.getMalLink(type, slug, function(malId) {
       if (!malId) {
         Util.log('MAL ID not found');
+        if (barCheck) barCheck.remove();
       } else {
         //Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
@@ -142,41 +144,53 @@
           //Util.log('MAL users rated:', usersRated);
           //Util.log('MAL users faved:', usersFaved);
 
-          var malRatingBar = document.createElement('div');
-          malRatingBar.classList.add('rating-bar');
-          malRatingBar.classList.add('clearfix');
+          if (barCheck) {
+            var updateRating = Util.q('.community-percentage', barCheck);
+            updateRating.textContent = rating;
 
-          var ratingElem = document.createElement('span');
-          ratingElem.classList.add('community-percentage');
-          //ratingElem.classList.add('percent-quarter-3');
-          ratingElem.textContent = rating;
-          malRatingBar.appendChild(ratingElem);
+            var updateLink = Util.q('a', barCheck);
+            updateLink.href = malLink;
 
-          var labelElem = document.createElement('span');
-          labelElem.classList.add('average-rating-stars');
-          labelElem.setAttribute('style', 'top: 5px;');
-          malRatingBar.appendChild(labelElem);
-          var labelLink = document.createElement('a');
-          labelLink.href = malLink;
-          labelLink.setAttribute('target', '_blank');
-          labelElem.appendChild(labelLink);
-          var labelText = document.createElement('h5');
-          labelText.textContent = 'MAL';
-          labelLink.appendChild(labelText);
+            var updateUsers = Util.q('.ratings-count', barCheck);
+            updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
+          } else {
+            var newRatingBar = document.createElement('div');
+            newRatingBar.id = 'mal-rating-bar';
+            newRatingBar.classList.add('rating-bar');
+            newRatingBar.classList.add('clearfix');
 
-          var usersElem = document.createElement('span');
-          usersElem.classList.add('ratings-count');
-          usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
-          malRatingBar.appendChild(usersElem);
+            var ratingElem = document.createElement('span');
+            ratingElem.classList.add('community-percentage');
+            //ratingElem.classList.add('percent-quarter-3');
+            ratingElem.textContent = rating;
+            newRatingBar.appendChild(ratingElem);
 
-          waitForElems({
-            sel: '.rating-bar',
-            stop: true,
-            onmatch: function(ratingBar) {
-              ratingBar.setAttribute('style', 'margin-bottom: 5px;');
-              ratingBar.parentElement.appendChild(malRatingBar);
-            }
-          });
+            var labelElem = document.createElement('span');
+            labelElem.classList.add('average-rating-stars');
+            labelElem.setAttribute('style', 'top: 5px;');
+            newRatingBar.appendChild(labelElem);
+            var labelLink = document.createElement('a');
+            labelLink.href = malLink;
+            labelLink.setAttribute('target', '_blank');
+            labelElem.appendChild(labelLink);
+            var labelText = document.createElement('h5');
+            labelText.textContent = 'MAL';
+            labelLink.appendChild(labelText);
+
+            var usersElem = document.createElement('span');
+            usersElem.classList.add('ratings-count');
+            usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
+            newRatingBar.appendChild(usersElem);
+
+            waitForElems({
+              sel: 'div > .rating-bar:first-child',
+              stop: true,
+              onmatch: function(ratingBar) {
+                ratingBar.setAttribute('style', 'margin-bottom: 5px;');
+                ratingBar.parentElement.appendChild(newRatingBar);
+              }
+            });
+          }
         });
       }
     });
