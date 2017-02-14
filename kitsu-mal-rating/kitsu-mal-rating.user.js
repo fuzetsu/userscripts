@@ -144,6 +144,8 @@
           //Util.log('MAL users rated:', usersRated);
           //Util.log('MAL users faved:', usersFaved);
 
+          var ratingBar = Util.q('.col-sm-8 > section:first-child > div > .rating-bar:first-child:not(#mal-rating-bar)');
+
           if (barCheck) {
             var updateRating = Util.q('.community-percentage', barCheck);
             updateRating.textContent = rating;
@@ -153,6 +155,10 @@
 
             var updateUsers = Util.q('.ratings-count', barCheck);
             updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
+
+            if (!ratingBar.hasAttribute('style')) {
+              ratingBar.setAttribute('style', 'margin-bottom: 5px;');
+            }
           } else {
             var newRatingBar = document.createElement('div');
             newRatingBar.id = 'mal-rating-bar';
@@ -182,7 +188,6 @@
             usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
             newRatingBar.appendChild(usersElem);
 
-            var ratingBar = Util.q('.col-sm-8 > section:first-child > div > .rating-bar:first-child:not(#mal-rating-bar)');
             if (ratingBar) {
               waitForElems({
                 sel: '.col-sm-8 > section:first-child > div > .rating-bar:first-child',
