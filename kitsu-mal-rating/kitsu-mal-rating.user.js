@@ -182,14 +182,25 @@
             usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
             newRatingBar.appendChild(usersElem);
 
-            waitForElems({
-              sel: 'div > .rating-bar:first-child',
-              stop: true,
-              onmatch: function(ratingBar) {
-                ratingBar.setAttribute('style', 'margin-bottom: 5px;');
-                ratingBar.parentElement.appendChild(newRatingBar);
-              }
-            });
+            var ratingBar = Util.q('.col-sm-8 > section:first-child > div > .rating-bar:first-child:not(#mal-rating-bar)');
+            if (ratingBar) {
+              waitForElems({
+                sel: '.col-sm-8 > section:first-child > div > .rating-bar:first-child',
+                stop: true,
+                onmatch: function(node) {
+                  node.setAttribute('style', 'margin-bottom: 5px;');
+                  node.parentElement.appendChild(newRatingBar);
+                }
+              });
+            } else {
+              waitForElems({
+                sel: '.col-sm-8 > section:first-child > div',
+                stop: true,
+                onmatch: function(node) {
+                  node.appendChild(newRatingBar);
+                }
+              });
+            }
           }
         });
       }
