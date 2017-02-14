@@ -79,15 +79,35 @@
           tempDiv.innerHTML = response.responseText;
 
           var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
-          var rating = Util.q('span[itemprop="ratingValue"]', sidebar).innerText;
-          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar).innerText;
+          var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
+          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
           var usersFaved;
+
           var isOnList = Util.q('h2.mt8', sidebar);
           if (isOnList) {
             usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar);
+
+            if (rating && usersRated) {
+              rating = rating.innerText;
+              usersRated = usersRated.innerText;
+            } else {
+              var score = Util.q('h2:nth-of-type(4) + div', sidebar).innerText;
+              rating = score.replace(/[0-9]{1,2}\.[0-9]{2}/, '$&');
+              usersRated = score.replace(/\(scored by ([0-9]+) users\)/, '$1');
+            }
           } else {
             usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar);
+
+            if (rating && usersRated) {
+              rating = rating.innerText;
+              usersRated = usersRated.innerText;
+            } else {
+              var score2 = Util.q('h2:nth-of-type(3) + div', sidebar).innerText;
+              rating = score2.replace(/[0-9]{1,2}\.[0-9]{2}/, '$&');
+              usersRated = score2.replace(/\(scored by ([0-9]+) users\)/, '$1');
+            }
           }
+
           usersFaved = usersFaved.innerText.replace('Favorites:', '').trim();
 
           cb(rating, usersRated, usersFaved);
