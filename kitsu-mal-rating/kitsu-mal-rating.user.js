@@ -92,8 +92,8 @@
               usersRated = usersRated.innerText;
             } else {
               var score = Util.q('h2:nth-of-type(4) + div', sidebar).innerText;
-              rating = score.replace(/[0-9]{1,2}\.[0-9]{2}/, '$&');
-              usersRated = score.replace(/\(scored by ([0-9]+) users\)/, '$1');
+              rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+              usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
             }
           } else {
             usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar);
@@ -103,8 +103,8 @@
               usersRated = usersRated.innerText;
             } else {
               var score2 = Util.q('h2:nth-of-type(3) + div', sidebar).innerText;
-              rating = score2.replace(/[0-9]{1,2}\.[0-9]{2}/, '$&');
-              usersRated = score2.replace(/\(scored by ([0-9]+) users\)/, '$1');
+              rating = score2.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+              usersRated = score2.match(/\(scored by ([0-9]+) users\)/)[1];
             }
           }
 
