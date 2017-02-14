@@ -81,34 +81,20 @@
           var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
           var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
           var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
-          var usersFaved;
+          var headerNum;
 
-          var isOnList = Util.q('h2.mt8', sidebar);
-          if (isOnList) {
-            usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar);
+          if (Util.q('h2.mt8', sidebar)) headerNum = 4;
+          else headerNum = 3;
 
-            if (rating && usersRated) {
-              rating = rating.innerText;
-              usersRated = usersRated.innerText;
-            } else {
-              var score = Util.q('h2:nth-of-type(4) + div', sidebar).innerText;
-              rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
-              usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
-            }
+          if (rating && usersRated) {
+            rating = rating.innerText;
+            usersRated = usersRated.innerText;
           } else {
-            usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar);
-
-            if (rating && usersRated) {
-              rating = rating.innerText;
-              usersRated = usersRated.innerText;
-            } else {
-              var score2 = Util.q('h2:nth-of-type(3) + div', sidebar).innerText;
-              rating = score2.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
-              usersRated = score2.match(/\(scored by ([0-9]+) users\)/)[1];
-            }
+            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText;
+            rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
           }
-
-          usersFaved = usersFaved.innerText.replace('Favorites:', '').trim();
+          var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
 
           cb(rating, usersRated, usersFaved);
         },
