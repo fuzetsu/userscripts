@@ -110,12 +110,12 @@
     var slug = location.href.match(REGEX)[2];
     //Util.log('Parsed URL type:', type);
     //Util.log('Parsed URL slug:', slug);
-    var barCheck = Util.q('#mal-rating-bar');
+    var preMalBarCheck = Util.q('#mal-rating-bar');
 
     App.getMalLink(type, slug, function(malId) {
       if (!malId) {
         Util.log('MAL ID not found');
-        if (barCheck) barCheck.remove();
+        if (preMalBarCheck) preMalBarCheck.remove();
       } else {
         //Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
@@ -130,21 +130,26 @@
           //Util.log('MAL users rated:', usersRated);
           //Util.log('MAL users faved:', usersFaved);
 
-          var ratingBar = Util.q('.col-sm-8 > section:first-child > div > .rating-bar:first-child:not(#mal-rating-bar)');
+          var malBarCheck = Util.q('#mal-rating-bar');
 
-          if (barCheck) {
-            var updateRating = Util.q('.community-percentage', barCheck);
+          if (malBarCheck) {
+            var updateRating = Util.q('.community-percentage', malBarCheck);
             updateRating.textContent = rating;
 
-            var updateLink = Util.q('a', barCheck);
+            var updateLink = Util.q('a', malBarCheck);
             updateLink.href = malLink;
 
-            var updateUsers = Util.q('.ratings-count', barCheck);
+            var updateUsers = Util.q('.ratings-count', malBarCheck);
             updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
 
-            if (!ratingBar.hasAttribute('style')) {
-              ratingBar.setAttribute('style', 'margin-bottom: 5px;');
-            }
+            waitForElems({
+              sel: '.col-sm-8 > section:first-child > div',
+              stop: true,
+              onmatch: function(node) {
+                var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
+                if (check) check.setAttribute('style', 'margin-bottom: 5px;');
+              }
+            });
           } else {
             var newRatingBar = document.createElement('div');
             newRatingBar.id = 'mal-rating-bar';
@@ -174,24 +179,15 @@
             usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
             newRatingBar.appendChild(usersElem);
 
-            if (ratingBar) {
-              waitForElems({
-                sel: '.col-sm-8 > section:first-child > div > .rating-bar:first-child',
-                stop: true,
-                onmatch: function(node) {
-                  node.setAttribute('style', 'margin-bottom: 5px;');
-                  node.parentElement.appendChild(newRatingBar);
-                }
-              });
-            } else {
-              waitForElems({
-                sel: '.col-sm-8 > section:first-child > div',
-                stop: true,
-                onmatch: function(node) {
-                  node.appendChild(newRatingBar);
-                }
-              });
-            }
+            waitForElems({
+              sel: '.col-sm-8 > section:first-child > div',
+              stop: true,
+              onmatch: function(node) {
+                var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
+                if (check) check.setAttribute('style', 'margin-bottom: 5px;');
+                node.appendChild(newRatingBar);
+              }
+            });
           }
         });
       }
