@@ -79,16 +79,22 @@
           tempDiv.innerHTML = response.responseText;
 
           var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
-          var rating = Util.q('span[itemprop="ratingValue"]', sidebar).innerText;
-          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar).innerText;
-          var usersFaved;
-          var isOnList = Util.q('h2.mt8', sidebar);
-          if (isOnList) {
-            usersFaved = Util.q('h2:nth-of-type(4) + div + div + div + div + div', sidebar);
+          var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
+          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
+          var headerNum;
+
+          if (Util.q('h2.mt8', sidebar)) headerNum = 4;
+          else headerNum = 3;
+
+          if (rating && usersRated) {
+            rating = rating.innerText;
+            usersRated = usersRated.innerText;
           } else {
-            usersFaved = Util.q('h2:nth-of-type(3) + div + div + div + div + div', sidebar);
+            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText;
+            rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
           }
-          usersFaved = usersFaved.innerText.replace('Favorites:', '').trim();
+          var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
 
           cb(rating, usersRated, usersFaved);
         },
@@ -104,10 +110,12 @@
     var slug = location.href.match(REGEX)[2];
     //Util.log('Parsed URL type:', type);
     //Util.log('Parsed URL slug:', slug);
+    var barCheck = Util.q('#mal-rating-bar');
 
     App.getMalLink(type, slug, function(malId) {
       if (!malId) {
         Util.log('MAL ID not found');
+        if (barCheck) barCheck.remove();
       } else {
         //Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
@@ -122,41 +130,69 @@
           //Util.log('MAL users rated:', usersRated);
           //Util.log('MAL users faved:', usersFaved);
 
-          var malRatingBar = document.createElement('div');
-          malRatingBar.classList.add('rating-bar');
-          malRatingBar.classList.add('clearfix');
+          var ratingBar = Util.q('.col-sm-8 > section:first-child > div > .rating-bar:first-child:not(#mal-rating-bar)');
 
-          var ratingElem = document.createElement('span');
-          ratingElem.classList.add('community-percentage');
-          //ratingElem.classList.add('percent-quarter-3');
-          ratingElem.textContent = rating;
-          malRatingBar.appendChild(ratingElem);
+          if (barCheck) {
+            var updateRating = Util.q('.community-percentage', barCheck);
+            updateRating.textContent = rating;
 
-          var labelElem = document.createElement('span');
-          labelElem.classList.add('average-rating-stars');
-          labelElem.setAttribute('style', 'top: 5px;');
-          malRatingBar.appendChild(labelElem);
-          var labelLink = document.createElement('a');
-          labelLink.href = malLink;
-          labelLink.setAttribute('target', '_blank');
-          labelElem.appendChild(labelLink);
-          var labelText = document.createElement('h5');
-          labelText.textContent = 'MAL';
-          labelLink.appendChild(labelText);
+            var updateLink = Util.q('a', barCheck);
+            updateLink.href = malLink;
 
-          var usersElem = document.createElement('span');
-          usersElem.classList.add('ratings-count');
-          usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
-          malRatingBar.appendChild(usersElem);
+            var updateUsers = Util.q('.ratings-count', barCheck);
+            updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
 
-          waitForElems({
-            sel: '.rating-bar',
-            stop: true,
-            onmatch: function(ratingBar) {
+            if (!ratingBar.hasAttribute('style')) {
               ratingBar.setAttribute('style', 'margin-bottom: 5px;');
-              ratingBar.parentElement.appendChild(malRatingBar);
             }
-          });
+          } else {
+            var newRatingBar = document.createElement('div');
+            newRatingBar.id = 'mal-rating-bar';
+            newRatingBar.classList.add('rating-bar');
+            newRatingBar.classList.add('clearfix');
+
+            var ratingElem = document.createElement('span');
+            ratingElem.classList.add('community-percentage');
+            //ratingElem.classList.add('percent-quarter-3');
+            ratingElem.textContent = rating;
+            newRatingBar.appendChild(ratingElem);
+
+            var labelElem = document.createElement('span');
+            labelElem.classList.add('average-rating-stars');
+            labelElem.setAttribute('style', 'top: 5px;');
+            newRatingBar.appendChild(labelElem);
+            var labelLink = document.createElement('a');
+            labelLink.href = malLink;
+            labelLink.setAttribute('target', '_blank');
+            labelElem.appendChild(labelLink);
+            var labelText = document.createElement('h5');
+            labelText.textContent = 'MAL';
+            labelLink.appendChild(labelText);
+
+            var usersElem = document.createElement('span');
+            usersElem.classList.add('ratings-count');
+            usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
+            newRatingBar.appendChild(usersElem);
+
+            if (ratingBar) {
+              waitForElems({
+                sel: '.col-sm-8 > section:first-child > div > .rating-bar:first-child',
+                stop: true,
+                onmatch: function(node) {
+                  node.setAttribute('style', 'margin-bottom: 5px;');
+                  node.parentElement.appendChild(newRatingBar);
+                }
+              });
+            } else {
+              waitForElems({
+                sel: '.col-sm-8 > section:first-child > div',
+                stop: true,
+                onmatch: function(node) {
+                  node.appendChild(newRatingBar);
+                }
+              });
+            }
+          }
         });
       }
     });
