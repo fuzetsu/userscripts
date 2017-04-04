@@ -122,7 +122,8 @@
 
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
-          rating = parseFloat(rating / 2).toFixed(2);
+          if (rating == 'N/A') { rating = null; }
+          else { rating = parseFloat(rating * 10).toFixed(2) + '%'; }
           usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
           usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
 
@@ -134,7 +135,8 @@
 
           if (malBarCheck) {
             var updateRating = Util.q('.community-percentage', malBarCheck);
-            updateRating.textContent = rating;
+            if (!rating) { updateRating.textContent = 'N/A'; }
+            else { updateRating.textContent = rating; }
 
             var updateLink = Util.q('a', malBarCheck);
             updateLink.href = malLink;
@@ -159,7 +161,8 @@
             var ratingElem = document.createElement('span');
             ratingElem.classList.add('community-percentage');
             //ratingElem.classList.add('percent-quarter-3');
-            ratingElem.textContent = rating;
+            if (!rating) { ratingElem.textContent = 'N/A'; }
+            else { ratingElem.textContent = rating; }
             newRatingBar.appendChild(ratingElem);
 
             var labelElem = document.createElement('span');
