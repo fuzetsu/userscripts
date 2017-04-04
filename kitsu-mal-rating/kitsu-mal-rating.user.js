@@ -143,7 +143,7 @@
             updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
 
             waitForElems({
-              sel: '.col-sm-8 > section:first-child > div',
+              sel: '.col-sm-8 > section:first-child',
               stop: true,
               onmatch: function(node) {
                 var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
@@ -180,7 +180,7 @@
             newRatingBar.appendChild(usersElem);
 
             waitForElems({
-              sel: '.col-sm-8 > section:first-child > div',
+              sel: '.col-sm-8 > section:first-child',
               stop: true,
               onmatch: function(node) {
                 var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
