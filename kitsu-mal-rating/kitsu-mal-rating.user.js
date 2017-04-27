@@ -91,7 +91,11 @@
             usersRated = usersRated.innerText;
           } else {
             var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText;
-            rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            if (score.match(/Score: N\/A/)[0]) {
+              rating = null;
+            } else {
+              rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            }
             usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
           }
           var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
@@ -123,7 +127,7 @@
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
           if (rating == 'N/A') { rating = null; }
-          else { rating = parseFloat(rating * 10).toFixed(2) + '%'; }
+          else { rating = parseFloat(rating * 10).toFixed(2); }
           usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
           usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
 
@@ -136,7 +140,15 @@
           if (malBarCheck) {
             var updateRating = Util.q('.community-percentage', malBarCheck);
             if (!rating) { updateRating.textContent = 'N/A'; }
-            else { updateRating.textContent = rating; }
+            else {
+              var percentColor = 'percent-quarter-';
+              if (rating <= 25) { percentColor += 1; }
+              else if (rating <= 50) { percentColor += 2; }
+              else if (rating <= 75) { percentColor += 3; }
+              else if (rating <= 100) { percentColor += 4; }
+              updateRating.classList.add(percentColor);
+              updateRating.textContent = rating + '%';
+            }
 
             var updateLink = Util.q('a', malBarCheck);
             updateLink.href = malLink;
@@ -160,9 +172,16 @@
 
             var ratingElem = document.createElement('span');
             ratingElem.classList.add('community-percentage');
-            //ratingElem.classList.add('percent-quarter-3');
             if (!rating) { ratingElem.textContent = 'N/A'; }
-            else { ratingElem.textContent = rating; }
+            else {
+              var percentColor = 'percent-quarter-';
+              if (rating <= 25) { percentColor += 1; }
+              else if (rating <= 50) { percentColor += 2; }
+              else if (rating <= 75) { percentColor += 3; }
+              else if (rating <= 100) { percentColor += 4; }
+              ratingElem.classList.add(percentColor);
+              ratingElem.textContent = rating + '%';
+            }
             newRatingBar.appendChild(ratingElem);
 
             var labelElem = document.createElement('span');
