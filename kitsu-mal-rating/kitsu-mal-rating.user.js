@@ -90,8 +90,8 @@
             rating = rating.innerText;
             usersRated = usersRated.innerText;
           } else {
-            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText;
-            if (score.match(/Score: N\/A/)[0]) {
+            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\n\r]/g, '');
+            if (score.match(/Score:  N\/A/)[0]) {
               rating = null;
             } else {
               rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
