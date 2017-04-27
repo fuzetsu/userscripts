@@ -126,7 +126,7 @@
 
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
-          if (rating == 'N/A') { rating = null; }
+          if (!rating || rating == 'N/A') { rating = null; }
           else { rating = parseFloat(rating * 10).toFixed(2); }
           usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
           usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
