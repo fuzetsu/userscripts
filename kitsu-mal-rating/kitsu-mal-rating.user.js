@@ -51,9 +51,11 @@
               var json = JSON.parse(response.responseText);
               //Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
               var malId;
-              for (var i = 0; i < json.included.length; i++) {
-                if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
-                  malId = json.included[i].attributes.externalId;
+              if (json.included) {
+                for (var i = 0; i < json.included.length; i++) {
+                  if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
+                    malId = json.included[i].attributes.externalId;
+                  }
                 }
               }
               self.cache[id] = malId;
