@@ -51,9 +51,11 @@
               var json = JSON.parse(response.responseText);
               //Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
               var malId;
-              for (var i = 0; i < json.included.length; i++) {
-                if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
-                  malId = json.included[i].attributes.externalId;
+              if (json.included) {
+                for (var i = 0; i < json.included.length; i++) {
+                  if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {
+                    malId = json.included[i].attributes.externalId;
+                  }
                 }
               }
               self.cache[id] = malId;
@@ -90,8 +92,12 @@
             rating = rating.innerText;
             usersRated = usersRated.innerText;
           } else {
-            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText;
-            rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\n\r]/g, '');
+            if (score.match(/Score:\s+N\/A/)) {
+              rating = null;
+            } else {
+              rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+            }
             usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
           }
           var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
@@ -122,7 +128,8 @@
 
         App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
 
-          rating = parseFloat(rating / 2).toFixed(2);
+          if (!rating || rating == 'N/A') { rating = null; }
+          else { rating = parseFloat(rating * 10).toFixed(2); }
           usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
           usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
 
@@ -134,7 +141,16 @@
 
           if (malBarCheck) {
             var updateRating = Util.q('.community-percentage', malBarCheck);
-            updateRating.textContent = rating;
+            if (!rating) { updateRating.textContent = 'N/A'; }
+            else {
+              var percentColor = 'percent-quarter-';
+              if (rating <= 25) { percentColor += 1; }
+              else if (rating <= 50) { percentColor += 2; }
+              else if (rating <= 75) { percentColor += 3; }
+              else if (rating <= 100) { percentColor += 4; }
+              updateRating.classList.add(percentColor);
+              updateRating.textContent = rating + '%';
+            }
 
             var updateLink = Util.q('a', malBarCheck);
             updateLink.href = malLink;
@@ -143,7 +159,7 @@
             updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
 
             waitForElems({
-              sel: '.col-sm-8 > section:first-child > div',
+              sel: '.col-sm-8 > section:first-child',
               stop: true,
               onmatch: function(node) {
                 var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
@@ -158,8 +174,16 @@
 
             var ratingElem = document.createElement('span');
             ratingElem.classList.add('community-percentage');
-            //ratingElem.classList.add('percent-quarter-3');
-            ratingElem.textContent = rating;
+            if (!rating) { ratingElem.textContent = 'N/A'; }
+            else {
+              var percentColor = 'percent-quarter-';
+              if (rating <= 25) { percentColor += 1; }
+              else if (rating <= 50) { percentColor += 2; }
+              else if (rating <= 75) { percentColor += 3; }
+              else if (rating <= 100) { percentColor += 4; }
+              ratingElem.classList.add(percentColor);
+              ratingElem.textContent = rating + '%';
+            }
             newRatingBar.appendChild(ratingElem);
 
             var labelElem = document.createElement('span');
@@ -180,7 +204,7 @@
             newRatingBar.appendChild(usersElem);
 
             waitForElems({
-              sel: '.col-sm-8 > section:first-child > div',
+              sel: '.col-sm-8 > section:first-child',
               stop: true,
               onmatch: function(node) {
                 var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
