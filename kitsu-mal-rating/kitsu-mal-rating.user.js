@@ -76,33 +76,36 @@
         method: 'GET',
         url: url,
         onload: function(response) {
-          //Util.log('Loaded MAL page');
-          var tempDiv = document.createElement('div');
-          tempDiv.innerHTML = response.responseText;
+          try {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = response.responseText;
 
-          var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
-          var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
-          var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
-          var headerNum;
+            var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
+            var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
+            var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
+            var headerNum;
 
-          if (Util.q('h2.mt8', sidebar)) headerNum = 4;
-          else headerNum = 3;
+            if (Util.q('h2.mt8', sidebar)) headerNum = 4;
+            else headerNum = 3;
 
-          if (rating && usersRated) {
-            rating = rating.innerText;
-            usersRated = usersRated.innerText;
-          } else {
-            var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\n\r]/g, '');
-            if (score.match(/Score:\s+N\/A/)) {
-              rating = null;
+            if (rating && usersRated) {
+              rating = rating.innerText;
+              usersRated = usersRated.innerText;
             } else {
-              rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+              var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\n\r]/g, '');
+              if (score.match(/Score:\s+N\/A/)) {
+                rating = null;
+              } else {
+                rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
+              }
+              usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
             }
-            usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
-          }
-          var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
+            var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
 
-          cb(rating, usersRated, usersFaved);
+            cb(rating, usersRated, usersFaved);
+          } catch (err) {
+            Util.log('Failed to parse MAL page');
+          }
         },
         onerror: function() {
           Util.log('Error loading MAL page');
