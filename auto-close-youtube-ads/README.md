@@ -10,6 +10,8 @@ The script has 2 menu options you can find in the tamper/grease monkey menus whe
 
 **The second menu option** lets you enable/disable whether you want video ads to be muted while they play. _This option is enabled by default._
 
+**The third menu option** lets you enable/disable whether you want video ads to be hidden while they play. _This option is disabled by default._
+
 I like to support the people who make videos I like on YouTube so I white-list them on my ad-blocker, unfortunately ads are kind of annoying so I made this script to make them a bit more bearable.
 
 # Notes on YouTube Monetization
