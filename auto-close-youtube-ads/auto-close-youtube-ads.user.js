@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.1.16
+// @version      1.1.17
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        https://*.youtube.com/*
@@ -68,6 +68,7 @@ var Util = {
 var SCRIPT_NAME = 'Auto Close YouTube Ads';
 var SEC_WAIT = parseInt(Util.storeGet('SEC_WAIT'));
 var MUTE_AD = Util.storeGet('MUTE_AD');
+var HIDE_AD = Util.storeGet('HIDE_AD');
 var MUTE_BUTTON_SELECTOR = '.ytp-mute-button';
 var MUTE_INDICATOR_SELECTOR = '.ytp-volume-slider-handle';
 var ticks = [];
@@ -92,6 +93,10 @@ function waitForAds() {
   );
   if(MUTE_AD) {
     ticks.push(waitForElems('.videoAdUi', function(ad) {
+      if(HIDE_AD) {
+        ad.style.zIndex = 10;
+        ad.style.background = 'black';
+      }
       var muteButton = Util.q(MUTE_BUTTON_SELECTOR);
       var muteIndicator = Util.q(MUTE_INDICATOR_SELECTOR);
       if(!muteIndicator) return Util.log('unable to determine mute state, skipping mute');
@@ -168,5 +173,9 @@ GM_registerMenuCommand(SCRIPT_NAME + ': set ad close delay', function() {
 });
 GM_registerMenuCommand(SCRIPT_NAME + ': ' + (MUTE_AD ? 'disable' : 'enable') + ' video ad muting (warning clicking this will refresh the page)', function() {
   Util.storeSet('MUTE_AD', !MUTE_AD);
+  location.reload();
+});
+GM_registerMenuCommand(SCRIPT_NAME + ': ' + (HIDE_AD ? 'disable' : 'enable') + ' video ad hiding (warning clicking this will refresh the page)', function() {
+  Util.storeSet('HIDE_AD', !HIDE_AD);
   location.reload();
 });
