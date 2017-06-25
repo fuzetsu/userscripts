@@ -4,7 +4,7 @@
 
 This script will automatically press the skip button on YouTube videos ads and click the close button on popup ads.
 
-The script has 2 menu options you can find in the tamper/grease monkey menus when you're on a youtube page.
+The script has 3 menu options you can find in the tamper/grease monkey menus when you're on a youtube page.
 
 **The first menu option** lets you choose how many seconds of delay you would like before the script closes the ad. _The default for this option is 3 seconds._
 
