@@ -143,76 +143,54 @@
           var malBarCheck = Util.q('#mal-rating-bar');
 
           if (malBarCheck) {
-            var updateRating = Util.q('.community-percentage', malBarCheck);
-            if (!rating) { updateRating.textContent = 'N/A'; }
-            else {
+            var updateRating = malBarCheck.firstChild;
+
+            updateRating.className = 'media-community-rating';
+            if (rating) {
               var percentColor = 'percent-quarter-';
               if (rating <= 25) { percentColor += 1; }
               else if (rating <= 50) { percentColor += 2; }
               else if (rating <= 75) { percentColor += 3; }
               else if (rating <= 100) { percentColor += 4; }
               updateRating.classList.add(percentColor);
-              updateRating.textContent = rating + '%';
             }
 
-            var updateLink = Util.q('a', malBarCheck);
-            updateLink.href = malLink;
-
-            var updateUsers = Util.q('.ratings-count', malBarCheck);
-            updateUsers.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
-
-            waitForElems({
-              sel: '.col-sm-8 > section:first-child',
-              stop: true,
-              onmatch: function(node) {
-                var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
-                if (check) check.setAttribute('style', 'margin-bottom: 5px;');
-              }
-            });
+            updateRating.firstChild.href = malLink;
+            rating ? updateRating.firstChild.textContent = rating + '% MAL Approval' : updateRating.firstChild.textContent = 'Unknown MAL Approval';
           } else {
-            var newRatingBar = document.createElement('div');
+            var newRatingBar = document.createElement('section');
             newRatingBar.id = 'mal-rating-bar';
-            newRatingBar.classList.add('rating-bar');
-            newRatingBar.classList.add('clearfix');
+            newRatingBar.className = 'media-rating';
 
             var ratingElem = document.createElement('span');
-            ratingElem.classList.add('community-percentage');
-            if (!rating) { ratingElem.textContent = 'N/A'; }
-            else {
+            ratingElem.className = 'media-community-rating';
+
+            if (rating) {
               var percentColor = 'percent-quarter-';
               if (rating <= 25) { percentColor += 1; }
               else if (rating <= 50) { percentColor += 2; }
               else if (rating <= 75) { percentColor += 3; }
               else if (rating <= 100) { percentColor += 4; }
               ratingElem.classList.add(percentColor);
-              ratingElem.textContent = rating + '%';
             }
+
+            var ratingLink = document.createElement('a');
+            ratingLink.id = 'mal-rating-link';
+            ratingLink.href = malLink;
+            ratingLink.target = '_blank';
+            ratingLink.rel = 'noopener noreferrer';
+            ratingLink.style.color = 'inherit';
+            ratingLink.style.fontFamily = 'inherit';
+            rating ? ratingLink.textContent = rating + '% MAL Approval' : ratingLink.textContent = 'Unknown MAL Approval';
+
+            ratingElem.appendChild(ratingLink);
             newRatingBar.appendChild(ratingElem);
 
-            var labelElem = document.createElement('span');
-            labelElem.classList.add('average-rating-stars');
-            labelElem.setAttribute('style', 'top: 5px;');
-            newRatingBar.appendChild(labelElem);
-            var labelLink = document.createElement('a');
-            labelLink.href = malLink;
-            labelLink.setAttribute('target', '_blank');
-            labelElem.appendChild(labelLink);
-            var labelText = document.createElement('h5');
-            labelText.textContent = 'MAL';
-            labelLink.appendChild(labelText);
-
-            var usersElem = document.createElement('span');
-            usersElem.classList.add('ratings-count');
-            usersElem.textContent = usersRated + ' ratings - ' + usersFaved + ' favorites';
-            newRatingBar.appendChild(usersElem);
-
             waitForElems({
-              sel: '.col-sm-8 > section:first-child',
+              sel: '.media-rating:not(#mal-rating-bar)',
               stop: true,
               onmatch: function(node) {
-                var check = Util.q('.rating-bar:not(#mal-rating-bar)', node);
-                if (check) check.setAttribute('style', 'margin-bottom: 5px;');
-                node.appendChild(newRatingBar);
+                node.parentElement.insertBefore(newRatingBar, node.nextSibling);
               }
             });
           }
