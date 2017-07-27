@@ -49,7 +49,6 @@
           onload: function(response) {
             try {
               var json = JSON.parse(response.responseText);
-              //Util.log('Kitsu ' + type + ' ID:', json.data[0].id);
               var malId;
               if (json.included) {
                 for (var i = 0; i < json.included.length; i++) {
@@ -82,15 +81,13 @@
 
             var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);
             var rating = Util.q('span[itemprop="ratingValue"]', sidebar);
-            var usersRated = Util.q('span[itemprop="ratingCount"]', sidebar);
             var headerNum;
 
             if (Util.q('h2.mt8', sidebar)) headerNum = 4;
             else headerNum = 3;
 
-            if (rating && usersRated) {
+            if (rating) {
               rating = rating.innerText;
-              usersRated = usersRated.innerText;
             } else {
               var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\n\r]/g, '');
               if (score.match(/Score:\s+N\/A/)) {
@@ -98,11 +95,9 @@
               } else {
                 rating = score.match(/[0-9]{1,2}\.[0-9]{2}/)[0];
               }
-              usersRated = score.match(/\(scored by ([0-9]+) users\)/)[1];
             }
-            var usersFaved = Util.q('h2:nth-of-type(' + headerNum + ') + div + div + div + div + div', sidebar).innerText.replace('Favorites:', '').trim();
 
-            cb(rating, usersRated, usersFaved);
+            cb(rating);
           } catch (err) {
             Util.log('Failed to parse MAL page');
           }
@@ -117,8 +112,6 @@
   waitForUrl(REGEX, function() {
     var type = location.href.match(REGEX)[1];
     var slug = location.href.match(REGEX)[2];
-    //Util.log('Parsed URL type:', type);
-    //Util.log('Parsed URL slug:', slug);
     var preMalBarCheck = Util.q('#mal-rating-bar');
 
     App.getMalLink(type, slug, function(malId) {
@@ -126,26 +119,17 @@
         Util.log('MAL ID not found');
         if (preMalBarCheck) preMalBarCheck.remove();
       } else {
-        //Util.log('Received MAL ID:', malId);
         var malLink = 'https://myanimelist.net/' + type + '/' + malId;
 
-        App.getMalPage(malLink, function(rating, usersRated, usersFaved) {
-
+        App.getMalPage(malLink, function(rating) {
           if (!rating || rating == 'N/A') { rating = null; }
           else { rating = parseFloat(rating * 10).toFixed(2); }
-          usersRated = parseInt(usersRated.replace(',', '')).toLocaleString('en-US');
-          usersFaved = parseInt(usersFaved.replace(',', '')).toLocaleString('en-US');
-
-          //Util.log('MAL rating:', rating);
-          //Util.log('MAL users rated:', usersRated);
-          //Util.log('MAL users faved:', usersFaved);
 
           var malBarCheck = Util.q('#mal-rating-bar');
-
           if (malBarCheck) {
             var updateRating = malBarCheck.firstChild;
-
             updateRating.className = 'media-community-rating';
+
             if (rating) {
               var percentColor = 'percent-quarter-';
               if (rating <= 25) { percentColor += 1; }
