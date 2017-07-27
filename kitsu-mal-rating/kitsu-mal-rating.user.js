@@ -174,7 +174,7 @@
               sel: '.media-rating:not(#mal-rating-bar)',
               stop: true,
               onmatch: function(node) {
-                node.parentElement.insertBefore(newRatingBar, node.nextSibling);
+                node.parentNode.insertBefore(newRatingBar, node.nextSibling);
               }
             });
           }
