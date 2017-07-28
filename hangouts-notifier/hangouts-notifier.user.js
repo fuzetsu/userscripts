@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hangouts Notifier
 // @namespace    fuzetsu.com/HangoutsNotifier
-// @version      0.0.8
+// @version      0.0.9
 // @description  Show desktop notifications for the Hangouts web app
 // @author       fuzetsu
 // @match        https://hangouts.google.com/webchat/*
@@ -96,7 +96,12 @@ var hn = {
     var res = hn.getLastMessage();
     if (!res) {
       util.log('failed to get last message, this probably  isn\'t a hangouts chat window...');
-      return false;
+      if (document.URL.indexOf('prop=gmail#epreld') >= 0) {
+        util.log('So it may be a hangouts chat window, after all...');
+        res = {id: -1};
+      } else {
+        return false;
+      }
     }
     // if window is focused set last message as read
     if (document.hasFocus() || !util.q(NEW_MSG)) {
