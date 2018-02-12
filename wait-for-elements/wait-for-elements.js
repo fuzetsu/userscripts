@@ -56,7 +56,7 @@ function waitForElems(obj) {
     tick = new MutationObserver(function() {
       if (sel) throttle.call(null, findElem.bind(null, sel));
       if (onChange) onChange.apply(this, arguments);
-    })
+    });
     tick.observe(context, obj.config || {
       subtree: true,
       childList: true
@@ -72,6 +72,16 @@ function waitForElems(obj) {
         tick.disconnect();
       } else {
         clearInterval(tick);
+      }
+    },
+    resume: function() {
+      if (type === 'M') {
+        tick.observe(context, obj.config || {
+          subtree: true,
+          childList: true
+        });
+      } else {
+        tick = setInterval(findElem.bind(null, sel), 300);
       }
     }
   };
