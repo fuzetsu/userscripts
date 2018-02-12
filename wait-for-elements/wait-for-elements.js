@@ -17,6 +17,10 @@ function waitForElems(obj) {
   var lastCall = Date.now();
   var context = obj.context || document.body;
   var sel = obj.sel;
+  var config = obj.config || {
+    subtree: true,
+    childList: true
+  };
   var onChange = obj.onchange;
   var queuedCall;
 
@@ -56,11 +60,8 @@ function waitForElems(obj) {
     tick = new MutationObserver(function() {
       if (sel) throttle.call(null, findElem.bind(null, sel));
       if (onChange) onChange.apply(this, arguments);
-    })
-    tick.observe(context, obj.config || {
-      subtree: true,
-      childList: true
     });
+    tick.observe(context, config);
   } else {
     tick = setInterval(findElem.bind(null, sel), 300);
   }
@@ -72,6 +73,13 @@ function waitForElems(obj) {
         tick.disconnect();
       } else {
         clearInterval(tick);
+      }
+    },
+    resume: function() {
+      if (type === 'M') {
+        tick.observe(context, config);
+      } else {
+        tick = setInterval(findElem.bind(null, sel), 300);
       }
     }
   };
