@@ -10,7 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
-// @require      https://raw.githubusercontent.com/fuzetsu/userscripts/7e2dbd8d041afa4bda5914b4c8086b2519c51b41/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/7e2dbd8d041afa4bda5914b4c8086b2519c51b41/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 var Util = {
