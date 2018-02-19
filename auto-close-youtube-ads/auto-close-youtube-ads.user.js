@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.1.18
+// @version      1.1.19
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -10,7 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=141779
+// @require      https://raw.githubusercontent.com/fuzetsu/userscripts/7e2dbd8d041afa4bda5914b4c8086b2519c51b41/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 var Util = {
