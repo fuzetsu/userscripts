@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Time
 // @namespace    http://www.fuzetsu.com/WLFT
-// @version      1.2.10
+// @version      1.2.11
 // @description  Shows the total time it would take to watch all the videos in a YouTube playlist
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
@@ -10,9 +10,11 @@
 // ==/UserScript==
 
 var SCRIPT_NAME = 'YouTube Playlist Time';
-var HOLDER_SELECTOR = '.pl-header-details';
-var TIMESTAMP_SELECTOR = '.timestamp';
-var TIME_CLASS = 'us-total-time';
+var HOLDER_SELECTOR = '#stats';
+var TIMESTAMP_SELECTOR = '.ytd-thumbnail-overlay-time-status-renderer';
+var EL_ID = 'us-total-time';
+var EL_TYPE = 'yt-formatted-string';
+var EL_CLASS = 'style-scope ytd-playlist-sidebar-primary-info-renderer';
 
 var util = {
   log: function () {
@@ -83,16 +85,17 @@ var setTime = function(seconds) {
 };
 
 var getTimeLoc = function() {
-  var loc = util.q('.' + TIME_CLASS);
+  var loc = util.q('#' + EL_ID);
   if(!loc) {
-    loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement('li'));
-    loc.className = TIME_CLASS;
+    loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement(EL_TYPE));
+    loc.id = EL_ID;
+    loc.className = EL_CLASS;
   }
   return loc;
 };
 
 var timeLocExists = function() {
-  return !!util.q('.' + TIME_CLASS);
+  return !!util.q('#' + EL_ID);
 };
 
 var lastLength = 0;
