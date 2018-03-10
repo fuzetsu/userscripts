@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Time
 // @namespace    http://www.fuzetsu.com/WLFT
-// @version      1.2.11
+// @version      1.2.10
 // @description  Shows the total time it would take to watch all the videos in a YouTube playlist
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
@@ -11,7 +11,7 @@
 
 var SCRIPT_NAME = 'YouTube Playlist Time';
 var HOLDER_SELECTOR = '#stats';
-var TIMESTAMP_SELECTOR = '.ytd-thumbnail-overlay-time-status-renderer';
+var TIMESTAMP_SELECTOR = 'ytd-browse:not([hidden]) .ytd-thumbnail-overlay-time-status-renderer';
 var EL_ID = 'us-total-time';
 var EL_TYPE = 'yt-formatted-string';
 var EL_CLASS = 'style-scope ytd-playlist-sidebar-primary-info-renderer';
@@ -117,22 +117,27 @@ util.log('Started, waiting for playlist');
 
 waitForUrl(/^https:\/\/www\.youtube\.com\/playlist\?list=.+/, function() {
   var playlistUrl = location.href;
-  var urlWaitId;
+  var urlWaitId, oid;
   var seconds = 0;
   util.log('Reached playlist, waiting for display area to load');
   waitForElems({
     sel: HOLDER_SELECTOR,
     stop: true,
     onmatch: function(holder) {
+      clearTimeout(oid);
       util.log('display area loaded, calculating time.');
-      util.bindEvt(window, events);
-      calcTotalTime(true);
-      urlWaitId = waitForUrl(function(url) {
-        return url !== playlistUrl;
-      }, function() {
-        util.log('Leaving playlist, removing listeners');
-        util.unbindEvt(window, events);
-      }, true);
+      oid = setTimeout(function() {
+        util.bindEvt(window, events);
+        calcTotalTime(true);
+         urlWaitId = waitForUrl(function(url) {
+           return url !== playlistUrl;
+         }, function() {
+           util.log('Leaving playlist, removing listeners');
+           util.unbindEvt(window, events);
+           var loc = getTimeLoc();
+           if(loc) loc.remove();
+         }, true);
+      }, 500);
     }
   });
 });
