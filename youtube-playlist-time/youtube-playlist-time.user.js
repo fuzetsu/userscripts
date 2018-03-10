@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Time
 // @namespace    http://www.fuzetsu.com/WLFT
-// @version      1.2.10
+// @version      1.2.11
 // @description  Shows the total time it would take to watch all the videos in a YouTube playlist
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
