@@ -10,15 +10,19 @@ Include it in your userscript using the `@require` directive:
 It provides 2 useful functions:
 
 ```js
+
 /**
- * @param         sel - css selector you are waiting for
- * @param      action - the callback that will be executed when element(s) 
- *                      matching the given selector are found, it is called
- *                      once for every element matching the selector
- * @param stopLooking - if true the function will stop looking for 
- *                      more elements after the first match
+ * @param obj - {
+ *  sel: 'a',                    // the selector you want to wait for (optional)
+ *  context: document.body,      // scope of search for selector or mutations (optional, default document.body)
+ *  stop: true,                  // stop waiting after first result (optional, default false)
+ *  mode: 'M',                   // M to use mutation observer, S to use setInterval (optional, default M)
+ *  onchange: func,              // if using mode 'M' this function will be called whenever mutation handler triggers
+ *  onmatch: func,               // if selector is specified function will be called for each match with element as parameter
+ *  config: { attributes: true } // if using mode 'M' this object will override settings passed to mutation observer
+ * }
  */
-function waitForElems(sel, action, stopLooking)
+function waitForElems(obj) {}
 
 /**
  * @param       regex - should match the site you're waiting for
@@ -27,7 +31,7 @@ function waitForElems(sel, action, stopLooking)
  * @param stopLooking - if true the function will stop waiting
  *                      for another url match after the first match
  */
-function waitForUrl(regex, action, stopLooking)
+function waitForUrl(regex, action, stopLooking) {}
 ```
 
 The `regex` parameter of `waitForUrl` can be a function that
