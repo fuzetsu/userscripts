@@ -88,9 +88,7 @@ function waitForAds() {
         }
       });
     }),
-    waitAndClick('a.close-button', function(btn) {
-      Util.q('div.recall-button').remove();
-    })
+    waitAndClick('.close-padding.contains-svg,a.close-button')
   );
   if(MUTE_AD) {
     ticks.push(waitForElems('.videoAdUi', function(ad) {
