@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Search
 // @namespace    http://www.fuzetsu.com/YPS
-// @version      0.0.7
+// @version      0.0.8
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
@@ -10,8 +10,9 @@
 // ==/UserScript==
 
 var SCRIPT_NAME = 'YouTube Playlist Search';
-var ITEM_SELECTOR = '.pl-video';
-var TEXT_SELECTOR = '.pl-video-title';
+var ITEM_SELECTOR = '#contents > ytd-playlist-video-renderer';
+var TEXT_SELECTOR = '#meta';
+var OFFSET_AREA_SELECTOR = '#masthead-container';
 
 var util = {
   log: function() {
@@ -47,7 +48,7 @@ var yps = {
     txtSearch.setAttribute('style', [
       'position: fixed',
       'right: 0',
-      'top:' + (util.q('#yt-masthead-container').clientHeight + 40) + 'px',
+      'top:' + (util.q(OFFSET_AREA_SELECTOR).clientHeight) + 'px',
       'width: 250px',
       'z-index: 1000'
     ].join(';'));
