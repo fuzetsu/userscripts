@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Search
 // @namespace    http://www.fuzetsu.com/YPS
-// @version      0.0.8
+// @version      1.0.0
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
@@ -9,90 +9,85 @@
 // @grant        none
 // ==/UserScript==
 
-var SCRIPT_NAME = 'YouTube Playlist Search';
-var ITEM_SELECTOR = '#contents > ytd-playlist-video-renderer';
-var TEXT_SELECTOR = '#meta';
-var OFFSET_AREA_SELECTOR = '#masthead-container';
+const SCRIPT_NAME = 'YouTube Playlist Search';
+const ITEM_SELECTOR = '#contents > ytd-playlist-video-renderer,ytd-grid-video-renderer';
+const TEXT_SELECTOR = '#meta';
+const OFFSET_AREA_SELECTOR = '#masthead-container';
 
-var util = {
-  log: function() {
-    var args = [].slice.call(arguments);
-    args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: hotpink;');
-    console.log.apply(console, args);
-  },
-  q: function(query, context) {
-    return (context || document).querySelector(query);
-  },
-  qq: function(query, context) {
-    return [].slice.call((context || document).querySelectorAll(query));
-  },
-  throttle: function(callback, limit) {
-    var wait = false;
-    return function() {
-      if (!wait) {
-        callback.apply(this, arguments);
-        wait = true;
-        setTimeout(function() {
-          wait = false;
-        }, limit);
-      }
+const util = {
+  log: (...args) => console.log(...[`%c${SCRIPT_NAME}`, 'font-weight: bold;color: hotpink;', ...args]),
+  q: (query, context) => (context || document).querySelector(query),
+  qq: (query, context) => Array.from((context || document).querySelectorAll(query)),
+  debounce: (cb, ms) => {
+    let id;
+    return (...args) => {
+      clearTimeout(id);
+      id = setTimeout(() => cb(...args), ms);
     };
   }
 };
 
-var yps = {
+const yps = {
   _items: [],
-  makeSearchBox: function() {
-    var txtSearch = document.createElement('input');
-    txtSearch.type = 'text';
-    txtSearch.setAttribute('style', [
+  render: () => {
+    const commonStyles = [
       'position: fixed',
+      `top: ${util.q(OFFSET_AREA_SELECTOR).clientHeight}px`,
+      'z-index: 9000',
+      'padding: 5px 8px',
+      'border: 1px solid #999',
+      'font-size: medium',
+      'color: var(--yt-primary-text-color)',
+      'margin: 0',
+      'box-sizing: border-box',
+      'background: var(--yt-main-app-background-tmp)'
+    ];
+    const txtSearch = document.createElement('input');
+    txtSearch.type = 'text';
+    txtSearch.placeholder = 'filter - start with ^ for inverse search';
+    txtSearch.setAttribute('style', [
+      ...commonStyles,
       'right: 0',
-      'top:' + (util.q(OFFSET_AREA_SELECTOR).clientHeight) + 'px',
-      'width: 250px',
-      'z-index: 1000'
+      'width: 300px'
     ].join(';'));
-    txtSearch.onkeyup = yps.search;
-    document.body.appendChild(txtSearch);
-    return txtSearch;
+    txtSearch.onkeyup = util.debounce(e => resultCount.render(...yps.search(e.target.value)), 200);
+    const resultCount = document.createElement('span');
+    resultCount.render = (x, y, invert) => resultCount.textContent = `Showing ${x} of ${y} ${invert ? '(NOT)' : ''}`;
+    resultCount.setAttribute('style', [
+      ...commonStyles,
+      'right: 300px'
+    ].join(';'));
+    [txtSearch, resultCount].forEach(elem => document.body.appendChild(elem));
+    return { txtSearch, resultCount };
   },
-  search: function(e) {
-    yps.filterVideos(e.target.value);
+  search: (query = '') => {
+    const invert = query.startsWith('^');
+    if(invert) query = query.slice(1);
+    query = query.toLowerCase().trim().split(' ').map(q => q.trim()).filter(q => !!q);
+    const count = yps._items
+      .map(item => item.elem.style.display = query[invert ? 'some' : 'every'](q => item.name.includes(q)) ? (invert ? 'none' : '') : (invert ? '' : 'none'))
+      .filter(x => x === '').length;
+    return [count, yps._items.length, invert];
   },
-  filterVideos: function(query) {
-    query = query.toLowerCase().split(' ').map(function(q) {
-      return q.trim();
-    });
-    yps._items.forEach(function(item) {
-      if (query.every(function(q) {
-          return item.name.indexOf(q) > -1;
-        })) {
-        item.elem.style.display = '';
-      }
-      else {
-        item.elem.style.display = 'none';
-      }
-    });
-  },
-  start: function() {
+  start: () => {
     util.log('Starting... waiting for playlist');
-    waitForUrl(/^https:\/\/www\.youtube\.com\/playlist\?list=.+/, function() {
-      var playlistUrl = location.href;
-      var urlWaitId, itemWait;
-      var txtSearch = yps.makeSearchBox();
+    waitForUrl(/^https:\/\/www\.youtube\.com\/(playlist\?list=|user\/[^\/]+\/videos|feed\/subscriptions).*/, () => {
+      let urlWaitId, itemWait;
+      const playlistUrl = location.href;
+      const { txtSearch, resultCount } = yps.render();
+      const refresh = util.debounce(() => resultCount.render(...yps.search(txtSearch.value)), 50);
       util.log('Reached playlist, adding search box');
-      itemWait = waitForElems(ITEM_SELECTOR, function(item) {
+      itemWait = waitForElems(ITEM_SELECTOR, item => {
         yps._items.push({
           elem: item,
           name: util.q(TEXT_SELECTOR, item).textContent.toLowerCase()
         });
+        refresh();
       });
-      urlWaitId = waitForUrl(function(url) {
-        return url !== playlistUrl;
-      }, function() {
+      urlWaitId = waitForUrl(url => url !== playlistUrl, () => {
         util.log('leaving playlist, cleaning up');
         itemWait.stop();
-        txtSearch.remove();
+        [txtSearch, resultCount].forEach(elem => elem.remove());
         yps._items = [];
       }, true);
     });
