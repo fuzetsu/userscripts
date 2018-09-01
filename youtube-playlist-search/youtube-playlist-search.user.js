@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Search
 // @namespace    http://www.fuzetsu.com/YPS
-// @version      1.0.0
+// @version      1.1.0
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
@@ -15,7 +15,7 @@ const TEXT_SELECTOR = '#meta';
 const OFFSET_AREA_SELECTOR = '#masthead-container';
 
 const util = {
-  log: (...args) => console.log(...[`%c${SCRIPT_NAME}`, 'font-weight: bold;color: hotpink;', ...args]),
+  log: (...args) => console.log(`%c${SCRIPT_NAME}`, 'font-weight: bold;color: hotpink;', ...args),
   q: (query, context) => (context || document).querySelector(query),
   qq: (query, context) => Array.from((context || document).querySelectorAll(query)),
   debounce: (cb, ms) => {
@@ -24,11 +24,17 @@ const util = {
       clearTimeout(id);
       id = setTimeout(() => cb(...args), ms);
     };
+  },
+  makeElem: (tag, attrs) => {
+    const elem = document.createElement(tag);
+    Object.entries(attrs).forEach(([attr, val]) => !['style'].includes(attr) && attr in elem ? elem[attr] = val : elem.setAttribute(attr, val));
+    return elem;
   }
 };
 
 const yps = {
   _items: [],
+  hideWatched: false,
   render: () => {
     const commonStyles = [
       'position: fixed',
@@ -42,21 +48,30 @@ const yps = {
       'box-sizing: border-box',
       'background: var(--yt-main-app-background-tmp)'
     ];
-    const txtSearch = document.createElement('input');
-    txtSearch.type = 'text';
-    txtSearch.placeholder = 'filter - start with ^ for inverse search';
-    txtSearch.setAttribute('style', [
-      ...commonStyles,
-      'right: 0',
-      'width: 300px'
-    ].join(';'));
-    txtSearch.onkeyup = util.debounce(e => resultCount.render(...yps.search(e.target.value)), 200);
-    const resultCount = document.createElement('span');
-    resultCount.render = (x, y, invert) => resultCount.textContent = `Showing ${x} of ${y} ${invert ? '(NOT)' : ''}`;
-    resultCount.setAttribute('style', [
-      ...commonStyles,
-      'right: 300px'
-    ].join(';'));
+    const txtSearch = util.makeElem('input', {
+      type: 'text',
+      placeholder: 'filter - start with ^ for inverse search',
+      style: [
+        ...commonStyles,
+        'right: 0',
+        'width: 300px'
+      ].join(';'),
+      onkeyup: util.debounce(e => resultCount.render(...yps.search(e.target.value)), 200)
+    });
+    const resultCount = util.makeElem('span', {
+      style: [
+        ...commonStyles,
+        'right: 300px'
+      ].join(';'),
+      textContent: '-'
+    });
+    resultCount.render = (x, y, invert) => resultCount.childNodes[0].textContent = `Showing ${x} of ${y} ${invert ? '(NOT)' : ''} | Hide Watched `;
+    const toggleWatched = util.makeElem('input', {
+      type: 'checkbox',
+      value: yps.hideWatched,
+      onchange: () => (yps.hideWatched = toggleWatched.checked, resultCount.render(...yps.search(txtSearch.value)))
+    });
+    resultCount.appendChild(toggleWatched);
     [txtSearch, resultCount].forEach(elem => document.body.appendChild(elem));
     return { txtSearch, resultCount };
   },
@@ -65,8 +80,14 @@ const yps = {
     if(invert) query = query.slice(1);
     query = query.toLowerCase().trim().split(' ').map(q => q.trim()).filter(q => !!q);
     const count = yps._items
-      .map(item => item.elem.style.display = query[invert ? 'some' : 'every'](q => item.name.includes(q)) ? (invert ? 'none' : '') : (invert ? '' : 'none'))
-      .filter(x => x === '').length;
+      .map(item => {
+        const hideBecauseWatched = yps.hideWatched && item.watched;
+        let hide = hideBecauseWatched || !query[invert ? 'some' : 'every'](q => item.name.includes(q));
+        if(invert && !hideBecauseWatched) hide = !hide;
+        item.elem.style.display = hide ? 'none' : '';
+        return hide;
+      })
+      .filter(hide => !hide).length;
     return [count, yps._items.length, invert];
   },
   start: () => {
@@ -77,11 +98,18 @@ const yps = {
       const { txtSearch, resultCount } = yps.render();
       const refresh = util.debounce(() => resultCount.render(...yps.search(txtSearch.value)), 50);
       util.log('Reached playlist, adding search box');
-      itemWait = waitForElems(ITEM_SELECTOR, item => {
-        yps._items.push({
-          elem: item,
-          name: util.q(TEXT_SELECTOR, item).textContent.toLowerCase()
+      itemWait = waitForElems(ITEM_SELECTOR, elem => {
+        let item;
+        yps._items.push(item = {
+          elem,
+          name: util.q(TEXT_SELECTOR, item).textContent.toLowerCase(),
+          watched: false
         });
+        setTimeout(() => {
+          const prog = util.q('#progress', elem);
+          if(prog) item.watched = parseInt(prog.style.width) > 50;
+          if(ytp.hideWatched && item.watched) refresh();
+        }, 2000);
         refresh();
       });
       urlWaitId = waitForUrl(url => url !== playlistUrl, () => {
