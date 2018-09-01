@@ -12,13 +12,13 @@ or from the list below.
 ### Regular Scripts
 
 * [Auto Close Youtube Ads](https://greasyfork.org/en/scripts/9165-auto-close-youtube-ads)
-* [Crunchyroll Queue Times](https://greasyfork.org/en/scripts/693-crunchyroll-queue-real-times)
-* [Gfycat Redirect to Webm](https://greasyfork.org/en/scripts/7027-gfycat-redirect-to-webm)
-* [Hangouts Notifier](https://greasyfork.org/en/scripts/14193-hangouts-notifier) **_not currently working_**
-* [Hummingbird Compatibility Hover](https://greasyfork.org/en/scripts/9570-hummingbird-compatibility-hover)
-* [Kitsu MAL Rating](https://greasyfork.org/en/scripts/5890-kitsu-mal-rating)
+* [Crunchyroll Queue Times](https://greasyfork.org/en/scripts/693-crunchyroll-queue-real-times)  **_untested_**
+* [Gfycat Redirect to Webm](https://greasyfork.org/en/scripts/7027-gfycat-redirect-to-webm) **_untested_**
+* [Hangouts Notifier](https://greasyfork.org/en/scripts/14193-hangouts-notifier) **_not working_**
+* [Hummingbird Compatibility Hover](https://greasyfork.org/en/scripts/9570-hummingbird-compatibility-hover) **_untested_**
+* [Kitsu MAL Rating](https://greasyfork.org/en/scripts/5890-kitsu-mal-rating) **_untested_**
 * [Kijiji Middle Click](https://greasyfork.org/en/scripts/23555-kijiji-middle-click)
-* [Youtube History Management](https://greasyfork.org/en/scripts/7044-youtube-history-management)
+* [Youtube History Management](https://greasyfork.org/en/scripts/7044-youtube-history-management) **_untested_**
 * [Youtube Playlist Search](https://greasyfork.org/en/scripts/14370-youtube-playlist-search)
 * [Youtube Playlist Time](https://greasyfork.org/en/scripts/694-youtube-playlist-time)
 
