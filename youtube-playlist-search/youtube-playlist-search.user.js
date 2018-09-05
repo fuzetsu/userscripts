@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Playlist Search
 // @namespace    http://www.fuzetsu.com/YPS
-// @version      1.1.2
+// @version      1.1.3
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
@@ -117,8 +117,8 @@ const yps = {
       });
       const urlWaitId = waitForUrl(url => url !== playlistUrl, () => {
         util.log('leaving playlist, cleaning up');
-        [progressWait, itemWait].forEach(wait => wait.stop());
-        [txtSearch, resultCount, urlWaitId].forEach(elem => elem.remove());
+        [progressWait, itemWait, urlWaitId].forEach(wait => wait.stop());
+        [txtSearch, resultCount].forEach(elem => elem.remove());
         yps._items = [];
       }, true);
     });
