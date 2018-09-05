@@ -4,7 +4,7 @@
 // @version      1.1.3
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @copyright    2014+, fuzetsu
 // @grant        none
 // ==/UserScript==
@@ -93,31 +93,37 @@ const yps = {
   },
   start: () => {
     util.log('Starting... waiting for playlist');
-    waitForUrl(/^https:\/\/www\.youtube\.com\/(playlist\?list=|user\/[^\/]+\/videos|feed\/subscriptions).*/, () => {
+    waitForUrl(/^https:\/\/www\.youtube\.com\/(playlist\?list=|(user|channel)\/[^\/]+\/videos|feed\/subscriptions).*/, () => {
       util.log('Reached playlist, adding search box');
       const playlistUrl = location.href;
       const { txtSearch, resultCount } = yps.render();
       const refresh = util.debounce(() => resultCount.render(...yps.search(txtSearch.value)), 50);
-      const itemWait = waitForElems(ITEM_SELECTOR, elem => {
-        yps._items.push({
-          elem,
-          name: util.q(TEXT_SELECTOR, elem).textContent.toLowerCase(),
-          watched: false
-        });
-        refresh();
+      const itemWait = waitForElems({
+        sel: ITEM_SELECTOR, 
+        onmatch: elem => {
+          yps._items.push({
+            elem,
+            name: util.q(TEXT_SELECTOR, elem).textContent.toLowerCase(),
+            watched: false
+          });
+          refresh();
+        }
       });
-      const progressWait = waitForElems(ITEM_PROGRESS_SELECTOR, prog => {
-        const watched = parseInt(prog.style.width) > 50;
-        if(!watched) return;
-        const itemElem = prog.closest(ITEM_SELECTOR);
-        const found = yps._items.find(item => item.elem === itemElem);
-        if(!found) return console.log('error, unable to find item parent', prog, itemElem, found);
-        found.watched = watched;
-        if(yps.hideWatched && watched) refresh();
+      const progressWait = waitForElems({
+        sel: ITEM_PROGRESS_SELECTOR, 
+        onmatch: prog => {
+          const watched = parseInt(prog.style.width) > 50;
+          if(!watched) return;
+          const itemElem = prog.closest(ITEM_SELECTOR);
+          const found = yps._items.find(item => item.elem === itemElem);
+          if(!found) return console.log('error, unable to find item parent', prog, itemElem, found);
+          found.watched = watched;
+          if(yps.hideWatched && watched) refresh();
+        }
       });
       const urlWaitId = waitForUrl(url => url !== playlistUrl, () => {
         util.log('leaving playlist, cleaning up');
-        [progressWait, itemWait, urlWaitId].forEach(wait => wait.stop());
+        [progressWait, itemWait, urlWaitId].forEach(wait => wait.stop && wait.stop() || clearInterval(wait));
         [txtSearch, resultCount].forEach(elem => elem.remove());
         yps._items = [];
       }, true);
