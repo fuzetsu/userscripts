@@ -15,7 +15,7 @@ function waitForElems(obj) {
   var type = window.MutationObserver ? (obj.mode || 'M') : 'S';
   var lastMutation = Date.now();
   var lastCall = Date.now();
-  var context = obj.context || document.body;
+  var context = obj.context;
   var sel = obj.sel;
   var config = obj.config || {
     subtree: true,
@@ -23,6 +23,7 @@ function waitForElems(obj) {
   };
   var onChange = obj.onchange;
   var queuedCall;
+  var domLoaded = document && document.readyState === 'complete';
 
   function throttle(func) {
     var now = Date.now();
@@ -56,16 +57,27 @@ function waitForElems(obj) {
       });
     }
   }
-  if (type === 'M') {
-    tick = new MutationObserver(function() {
-      if (sel) throttle.call(null, findElem.bind(null, sel));
-      if (onChange) onChange.apply(this, arguments);
-    });
-    tick.observe(context, config);
-  } else {
-    tick = setInterval(findElem.bind(null, sel), 300);
+  
+  function connect() {
+    context = context || document.body;
+    if (type === 'M') {
+      tick = new MutationObserver(function() {
+        if (sel) throttle.call(null, findElem.bind(null, sel));
+        if (onChange) onChange.apply(this, arguments);
+      });
+      tick.observe(context, config);
+    } else {
+      tick = setInterval(findElem.bind(null, sel), 300);
+    }
+    if (sel) findElem(sel);
   }
-  if (sel) findElem(sel);
+  
+  if(domLoaded) {
+    connect();
+  } else {
+    window.addEventListener('DOMContentLoaded', connect);
+  }
+  
   return {
     type: type,
     stop: function() {
@@ -75,13 +87,7 @@ function waitForElems(obj) {
         clearInterval(tick);
       }
     },
-    resume: function() {
-      if (type === 'M') {
-        tick.observe(context, config);
-      } else {
-        tick = setInterval(findElem.bind(null, sel), 300);
-      }
-    }
+    resume: connect
   };
 }
 /**
