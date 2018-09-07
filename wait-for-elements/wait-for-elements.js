@@ -23,7 +23,7 @@ function waitForElems(obj) {
   };
   var onChange = obj.onchange;
   var queuedCall;
-  var domLoaded = document && document.readyState === 'complete';
+  var domLoaded = document && document.readyState !== 'loading';
 
   function throttle(func) {
     var now = Date.now();
