@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Crunchyroll - Set Default Video Quality
-// @version 1.0.0
+// @version 1.0.1
 // @namespace fuzetsu/csdvq
 // @match https://static.crunchyroll.com/vilos/player.html
 // @match https://www.crunchyroll.com/*
@@ -29,7 +29,7 @@ let cfg = config.load()
 
 config.onsave = newCfg => {
   cfg = newCfg
-  setQuality(cfg.quality)
+  selectQuality(cfg.quality)
 }
 
 const p = (...args) => (console.log(...args), args[0])
