@@ -2,6 +2,7 @@
 // @name Crunchyroll Video Utilities
 // @version 1.0.1
 // @namespace fuzetsu/csdvqn
+// @description seek video with hotkeys and set default quality
 // @match https://static.crunchyroll.com/vilos/player.html
 // @match https://www.crunchyroll.com/*
 // @grant GM_registerMenuCommand
