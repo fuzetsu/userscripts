@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Crunchyroll Video Utilities
-// @version 1.0.1
+// @version 1.0.2
 // @namespace fuzetsu/csdvqn
 // @description seek video with hotkeys and set default quality
 // @match https://static.crunchyroll.com/vilos/player.html
@@ -78,8 +78,8 @@ const player = {
 }
 
 const seekKeys = {
-  l: 90,
-  b: -90,
+  l: 85,
+  b: -85,
   '}': 30,
   '{': -30,
   ']': 15,

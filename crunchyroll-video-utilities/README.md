@@ -8,4 +8,4 @@ Enables the following functionality on Crunchyroll's video player:
   - `j/k - volume down/up`
   - `[/] - 15 seconds backwards/forwards`
   - `{/} - 30 seconds backwards/forwards`
-  - `b/l - 90 seconds backwards/forwards` _(the length of a standard opening/ending)_
+  - `b/l - 85 seconds backwards/forwards` _(a bit under the length of a standard opening/ending)_
