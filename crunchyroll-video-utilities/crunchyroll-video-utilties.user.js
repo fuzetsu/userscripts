@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Crunchyroll Video Utilities
-// @version 1.0.2
+// @version 1.0.3
 // @namespace fuzetsu/csdvqn
 // @description seek video with hotkeys and set default quality
 // @match https://static.crunchyroll.com/vilos/player.html
@@ -11,11 +11,14 @@
 // @require https://gitcdn.xyz/cdn/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @require https://gitcdn.xyz/cdn/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
-
+/* globals unsafeWindow, GM_config, GM_registerMenuCommand, waitForElems */
 const sep = '~~@~~'
 const domain = 'https://www.crunchyroll.com'
-const qualitySelector = '.qualityMenuItemSelector'
-const settingsSelector = '.settingsMenuButton'
+const CSS = {
+  quality: '.qualityMenuItemSelector',
+  settings: '.settingsMenuButton',
+  playerBox: '#showmedia_video_box_wide'
+}
 
 // use publicly exposed Player.js object to control video player
 const vilosPlayer = () => unsafeWindow.VILOS_PLAYERJS
@@ -41,16 +44,19 @@ config.onsave = newCfg => {
 }
 
 const p = (...args) => (console.log(...args), args[0])
-const prevent = (e, fn) => (e.preventDefault(), fn(e))
+// const prevent = (e, fn) => (e.preventDefault(), fn(e))
+const applyStyle = (elem, styles) => Object.entries(styles).map(([k, v]) => (elem.style[k] = v))
+
+let isFullscreen = false
 
 const player = {
   setQuality: quality => {
     const btn =
       quality !== 'auto'
-        ? qq(qualitySelector)
+        ? qq(CSS.quality)
             .slice(2)
             .find(item => quality >= parseInt(item.textContent))
-        : qq(qualitySelector)[2]
+        : qq(CSS.quality)[2]
     if (btn) {
       // this causes the menu to open
       btn.click()
@@ -59,6 +65,22 @@ const player = {
     }
   },
   fullscreen: () => q('.vjs-fullscreen-control').click(),
+  fillTab: () => {
+    const playerBox = q(CSS.playerBox)
+    if (!playerBox) return p('playerbox not found')
+    isFullscreen = !isFullscreen
+    if (!isFullscreen) return playerBox.removeAttribute('style')
+    applyStyle(playerBox, {
+      position: 'fixed',
+      zIndex: 1000,
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      width: '100%',
+      height: '100%'
+    })
+  },
   nextEp: (back = false) =>
     q('.collection-carousel-media-link-current')
       .parentElement[back ? 'previousElementSibling' : 'nextElementSibling'].querySelector('a')
@@ -68,10 +90,10 @@ const player = {
   volumeUp: (val = 10) => vilosPlayer().getVolume(curVol => vilosPlayer().setVolume(curVol + val)),
   volumeDown: (val = -10) => player.volumeUp(val),
   toggleSettings: makeVisible => {
-    const btn = q(settingsSelector)
-    if (makeVisible) {
+    const btn = q(CSS.settings)
+    if (typeof makeVisible === 'boolean') {
       const isVisible = p(!!btn.offSetParent, '=== isVisible')
-      if (typeof makeVisible === 'boolean' && makeVisible === isVisible) return
+      if (makeVisible === isVisible) return
     }
     btn.click()
   }
@@ -95,6 +117,8 @@ const handleKey = key =>
     ? player.volumeDown()
     : key === 'k'
     ? player.volumeUp()
+    : key === 'w'
+    ? player.fillTab()
     : key in seekKeys
     ? player.skip(seekKeys[key])
     : null
@@ -114,10 +138,10 @@ if (isPlayerFrame) {
   // can only set quality from the player frame since the button is in its dom
   waitForElems({
     stop: true,
-    sel: qualitySelector + '.selected',
+    sel: CSS.quality + '.selected',
     onmatch: elem => {
       if (elem.textContent.toLowerCase().includes(cfg.quality))
-        return console.log('configured default already selected')
+        return p('configured default already selected')
       player.setQuality(cfg.quality)
     }
   })
