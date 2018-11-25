@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.3.0-beta
+// @version      1.3.1-beta
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -56,7 +56,7 @@ const util = {
   qq: (query, context) => Array.from((context || document).querySelectorAll(query)),
   get: (obj, str) => util.getPath(obj, str.split('.').reverse()),
   getPath: (obj, path) =>
-    obj === undefined ? null : path.length > 0 ? util.getPath(obj[path.pop()], path) : obj
+    obj == null ? null : path.length > 0 ? util.getPath(obj[path.pop()], path) : obj
 }
 
 const SCRIPT_NAME = 'Auto Close YouTube Ads'
