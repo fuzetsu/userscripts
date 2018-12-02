@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Crunchyroll Video Utilities
-// @version 1.0.3
+// @version 1.0.4
 // @namespace fuzetsu/csdvqn
 // @description seek video with hotkeys and set default quality
 // @match https://static.crunchyroll.com/vilos/player.html
@@ -129,9 +129,12 @@ const isPlayerFrame = location.href.includes('https://static.crunchyroll.com/vil
  * Keyboard events from within the player frame dont bubble up to main page where the player.js
  * object and the video links live, so use postMessage to send the keypresses there
  **/
+const pass = ['INPUT', 'TEXTAREA', 'SELECT']
 window.addEventListener(
   'keydown',
-  isPlayerFrame ? e => window.parent.postMessage(sep + e.key, domain) : e => handleKey(e.key)
+  isPlayerFrame
+    ? e => window.parent.postMessage(sep + e.key, domain)
+    : e => pass.includes(document.activeElement.nodeName) || handleKey(e.key)
 )
 
 if (isPlayerFrame) {
