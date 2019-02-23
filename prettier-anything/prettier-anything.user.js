@@ -2,12 +2,12 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.1
+// @version      0.0.2
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
-// @grant        none
+// @grant        GM_setClipboard
 // ==/UserScript==
-/* global prettier prettierPlugins */
+/* global prettier prettierPlugins GM_setClipboard */
 
 const p = (...args) => (console.log(...args), args[0])
 
@@ -37,7 +37,9 @@ const load = () => {
 window.addEventListener('keydown', e => {
   if (e.altKey && e.shiftKey && e.key === 'I') {
     const code = document.getSelection().toString()
-    if (!code) return
+    const clip = e.ctrlKey
+    p('key combo HIT, selection = ', code, '; clip = ', clip)
+    if (!code) return p('no selection, so nothing to do')
     e.preventDefault()
     p('--- PRETTIER START ---')
     p('Loading Prettier')
@@ -51,7 +53,12 @@ window.addEventListener('keydown', e => {
         semi: false,
         singleQuote: true
       })
-      document.execCommand('insertText', false, formatted)
+      if (clip) {
+        GM_setClipboard(formatted)
+        document.getSelection().empty()
+      } else {
+        document.execCommand('insertText', false, formatted)
+      }
       p('BEFORE:\n', code)
       p('AFTER:\n', formatted)
       p('--- PRETTIER END ---')
