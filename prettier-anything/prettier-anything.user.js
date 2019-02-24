@@ -9,27 +9,38 @@
 // ==/UserScript==
 /* global prettier prettierPlugins GM_setClipboard */
 
-const p = (...args) => (console.log(...args), args[0])
-
 const deps = [
   'https://unpkg.com/prettier/standalone.js',
   'https://unpkg.com/prettier/parser-babylon.js'
 ]
 
+const config = {
+  parser: 'babel',
+  printWidth: 100,
+  semi: false,
+  singleQuote: true
+}
+
+const p = (...args) => (console.log(...args), args[0])
+
+const makeElem = (name, opts = {}) => Object.assign(document.createElement(name), opts)
+
 let loaded = false
-const load = () => {
-  if (loaded) return Promise.resolve(true)
+const load = async () => {
+  if (loaded) return
   loaded = true
-  return Promise.all(
+  await Promise.all(
     deps.map(
       dep =>
-        new Promise(res => {
-          const script = document.createElement('script')
-          script.async = true
-          script.src = dep
-          script.onload = () => res()
-          document.body.appendChild(script)
-        })
+        new Promise(res =>
+          document.body.appendChild(
+            makeElem('script', {
+              async: true,
+              src: dep,
+              onload: () => res()
+            })
+          )
+        )
     )
   )
 }
@@ -47,11 +58,8 @@ window.addEventListener('keydown', e => {
     load().then(() => {
       p('Loaded, delta = ', Date.now() - loadStart)
       const formatted = prettier.format(code, {
-        parser: 'babel',
-        plugins: prettierPlugins,
-        printWidth: 100,
-        semi: false,
-        singleQuote: true
+        ...config,
+        plugins: prettierPlugins
       })
       if (clip) {
         GM_setClipboard(formatted)
