@@ -44,8 +44,6 @@ config.onsave = newCfg => {
 }
 
 const p = (...args) => (console.log(...args), args[0])
-// const prevent = (e, fn) => (e.preventDefault(), fn(e))
-const applyStyle = (elem, styles) => Object.entries(styles).map(([k, v]) => (elem.style[k] = v))
 
 let isFullscreen = false
 
@@ -70,7 +68,7 @@ const player = {
     if (!playerBox) return p('playerbox not found')
     isFullscreen = !isFullscreen
     if (!isFullscreen) return playerBox.removeAttribute('style')
-    applyStyle(playerBox, {
+    Object.assign(playerBox.style, {
       position: 'fixed',
       zIndex: 1000,
       top: 0,
