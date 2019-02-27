@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.2
+// @version      0.0.3
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
@@ -46,7 +46,7 @@ const load = async () => {
 }
 
 window.addEventListener('keydown', e => {
-  if (e.altKey && e.shiftKey && e.key === 'I') {
+  if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
     const code = document.getSelection().toString()
     const clip = e.ctrlKey
     p('key combo HIT, selection = ', code, '; clip = ', clip)
