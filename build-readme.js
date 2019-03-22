@@ -11,32 +11,37 @@ const parseMeta = script =>
     .filter(match => match)
     .reduce((meta, [, key, value]) => Object.assign(meta, { [key]: value.trim() }), {})
 
+const scriptData = (files, folder, file) => ({
+  file,
+  folder,
+  path: path.join(folder, file),
+  hasReadme: files.some(file => file.includes('README'))
+})
+
 const getScripts = () =>
   fs
-    .readdir('.')
+    .readdir(__dirname)
     .then(files => files.filter(file => !file.startsWith('.')))
     .then(files =>
       Promise.all(
         files.map(maybeDir =>
-          fs.stat('./' + maybeDir).then(handle =>
+          fs.stat(maybeDir).then(handle =>
             handle.isDirectory()
               ? fs
                   .readdir(maybeDir)
-                  .then(files => files.find(file => file.endsWith('.user.js')))
-                  .then(file => file && path.join(maybeDir, file))
+                  .then(files => [files, files.find(file => file.endsWith('.user.js'))])
+                  .then(([files, file]) => file && scriptData(files, maybeDir, file))
               : void 0
           )
         )
       )
     )
-    .then(files => files.filter(file => file))
-    .then(files =>
+    .then(scripts => scripts.filter(Boolean))
+    .then(scripts =>
       Promise.all(
-        files.map(file =>
-          fs.readFile(file).then(buf => ({
-            path: file,
-            file: path.basename(file),
-            folder: path.dirname(file),
+        scripts.map(script =>
+          fs.readFile(script.path).then(buf => ({
+            ...script,
             ...parseMeta(buf.toString())
           }))
         )
@@ -45,10 +50,13 @@ const getScripts = () =>
 
 const baseUrl = 'https://github.com/fuzetsu/userscripts'
 
-const formatScriptLine = script =>
-  `- [${script.name || p('NEEDS NAME', script)}](${baseUrl}/tree/master/${
-    script.folder
-  }) ~ [Install Now](${baseUrl}/raw/master/${script.folder}/${script.file})`
+const formatScriptLine = script => {
+  const installLink = `${baseUrl}/raw/master/${script.folder}/${script.file}`
+  const infoLink = script.hasReadme && `${baseUrl}/tree/master/${script.folder}`
+  return `- ${script.name} ~ ${
+    infoLink ? `[More info](${infoLink}) ~ ` : ''
+  }[Install Now](${installLink})`
+}
 
 const buildReadme = () =>
   getScripts()
