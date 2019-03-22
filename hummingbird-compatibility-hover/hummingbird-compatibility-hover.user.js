@@ -8,6 +8,7 @@
 // @match        *://forums.hummingbird.me/*
 // @grant        none
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?1
+// @deprecated   true
 // ==/UserScript==
 
 var SCRIPT_NAME = 'Hummingbird Compatibility Hover';

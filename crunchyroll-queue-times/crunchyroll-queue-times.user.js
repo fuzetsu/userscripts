@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name       Crunchyroll Queue Real Times
-// @namespace  http://www.fuzetsu.com/CRRT
-// @version    1.0.4
-// @description  Display countdown until next episode in the Crunchyroll Queue page
-// @match      http://www.crunchyroll.com/home/queue
-// @copyright  2014+, fuzetsu
+// @name        Crunchyroll Queue Real Times
+// @namespace   http://www.fuzetsu.com/CRRT
+// @version     1.0.4
+// @description Display countdown until next episode in the Crunchyroll Queue page
+// @match       http://www.crunchyroll.com/home/queue
+// @copyright   2014+, fuzetsu
+// @deprecated  true
 // ==/UserScript==
 
 var PREMIUM = 'rgb(255, 251, 223)',

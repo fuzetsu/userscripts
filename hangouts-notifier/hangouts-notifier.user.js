@@ -6,6 +6,7 @@
 // @author       fuzetsu
 // @match        https://hangouts.google.com/webchat/*
 // @grant        none
+// @deprecated   true
 // ==/UserScript==
 /* jshint -W097 */
 'use strict';

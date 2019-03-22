@@ -7,6 +7,7 @@
 // @match        *://www.kijiji.ca/*
 // @grant        none
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
+// @deprecated   true
 // ==/UserScript==
 
 (function() {

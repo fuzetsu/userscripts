@@ -6,6 +6,7 @@
 // @author       fuzetsu
 // @match        *://gfycat.com/*
 // @grant        none
+// @deprecated   true
 // ==/UserScript==
 
 var xhr = new XMLHttpRequest();
