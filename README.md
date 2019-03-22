@@ -10,7 +10,7 @@ View more information about a particular script by clicking on its name.
 ### Scripts
 
 |Name|Links||
-|-|-|-|
+|-|:-:|:-:|
 |Auto Close YouTube Ads|[Info](https://github.com/fuzetsu/userscripts/tree/master/auto-close-youtube-ads)|[Install](https://github.com/fuzetsu/userscripts/raw/master/auto-close-youtube-ads/auto-close-youtube-ads.user.js)|
 |Crunchyroll Video Utilities|[Info](https://github.com/fuzetsu/userscripts/tree/master/crunchyroll-video-utilities)|[Install](https://github.com/fuzetsu/userscripts/raw/master/crunchyroll-video-utilities/crunchyroll-video-utilties.user.js)|
 |Format JSON|_no readme_|[Install](https://github.com/fuzetsu/userscripts/raw/master/format-json/format-json.user.js)|
@@ -21,8 +21,8 @@ View more information about a particular script by clicking on its name.
 
 ### Utilities
 
-| Script Name       | Links            |                  |
-| ----------------- | ---------------- | ---------------- |
+| Script Name       |      Links       |                  |
+| ----------------- | :--------------: | :--------------: |
 | Wait for Elements | [Info](infoLink) | [Code](codeLink) |
 
 [infolink]: https://github.com/fuzetsu/userscripts/tree/master/wait-for-elements
@@ -31,7 +31,7 @@ View more information about a particular script by clicking on its name.
 ### Unmaintained
 
 |Name|Links||
-|-|-|-|
+|-|:-:|:-:|
 |Crunchyroll Queue Real Times|[Info](https://github.com/fuzetsu/userscripts/tree/master/crunchyroll-queue-times)|[Install](https://github.com/fuzetsu/userscripts/raw/master/crunchyroll-queue-times/crunchyroll-queue-times.user.js)|
 |Gfycat Redirect to Webm|[Info](https://github.com/fuzetsu/userscripts/tree/master/gfycat-redirect-to-webm)|[Install](https://github.com/fuzetsu/userscripts/raw/master/gfycat-redirect-to-webm/gfycat-redirect-to-webm.user.js)|
 |Hangouts Notifier|[Info](https://github.com/fuzetsu/userscripts/tree/master/hangouts-notifier)|[Install](https://github.com/fuzetsu/userscripts/raw/master/hangouts-notifier/hangouts-notifier.user.js)|

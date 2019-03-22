@@ -13,8 +13,8 @@ View more information about a particular script by clicking on its name.
 
 ### Utilities
 
-| Script Name       | Links            |                  |
-| ----------------- | ---------------- | ---------------- |
+| Script Name       |      Links       |                  |
+| ----------------- | :--------------: | :--------------: |
 | Wait for Elements | [Info](infoLink) | [Code](codeLink) |
 
 [infolink]: https://github.com/fuzetsu/userscripts/tree/master/wait-for-elements

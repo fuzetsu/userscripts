@@ -49,7 +49,7 @@ const getScripts = () =>
     )
 
 const baseUrl = 'https://github.com/fuzetsu/userscripts'
-const tableHeader = '|Name|Links||\n|-|-|-|\n'
+const tableHeader = '|Name|Links||\n|-|:-:|:-:|\n'
 
 const formatScriptLine = script => {
   const installLink = `${baseUrl}/raw/master/${script.folder}/${script.file}`
