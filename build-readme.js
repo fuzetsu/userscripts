@@ -53,38 +53,28 @@ const formatScriptLine = script =>
 const buildReadme = () =>
   getScripts()
     .then(scripts =>
-      `
-      # Userscripts
-
-      Various browser userscripts I created/maintain. Most are hosted on [greasyfork.org](greasyfork.org)
-      where they can be installed.
-      
-      You can install the script here on github to always have the latest development version (links below).
-
-      View more information about a particular script by clicking on its name.
-
-      ### Scripts
-
-      ${scripts
-        .filter(script => script.deprecated !== 'true')
-        .map(formatScriptLine)
-        .join('\n')}
-
-      ### Utilities
-
-      - [Wait for Elements](https://greasyfork.org/en/scripts/5679-wait-for-elements)
-
-      ### Unmaintained
-
-      ${scripts
-        .filter(script => script.deprecated === 'true')
-        .map(formatScriptLine)
-        .join('\n')}
-      `
-        .trim()
-        .split('\n')
-        .map(line => line.trim())
-        .join('\n')
+      fs.readFile('README.template.md').then(buf =>
+        buf
+          .toString()
+          .replace(
+            '<SCRIPTS>',
+            scripts
+              .filter(script => script.deprecated !== 'true')
+              .map(formatScriptLine)
+              .join('\n')
+          )
+          .replace(
+            '<UNMAINTAINED>',
+            scripts
+              .filter(script => script.deprecated === 'true')
+              .map(formatScriptLine)
+              .join('\n')
+              .trim()
+              .split('\n')
+              .map(line => line.trim())
+              .join('\n')
+          )
+      )
     )
     .then(readme => fs.writeFile('./README.md', readme))
 
