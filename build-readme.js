@@ -49,13 +49,14 @@ const getScripts = () =>
     )
 
 const baseUrl = 'https://github.com/fuzetsu/userscripts'
+const tableHeader = '|Name|Links||\n|-|-|-|\n'
 
 const formatScriptLine = script => {
   const installLink = `${baseUrl}/raw/master/${script.folder}/${script.file}`
   const infoLink = script.hasReadme && `${baseUrl}/tree/master/${script.folder}`
-  return `- ${script.name} ~ ${
-    infoLink ? `[More info](${infoLink}) ~ ` : ''
-  }[Install Now](${installLink})`
+  return `|${script.name}|${
+    infoLink ? `[More info](${infoLink})` : ''
+  }|[Install Now](${installLink})|`
 }
 
 const buildReadme = () =>
@@ -66,17 +67,19 @@ const buildReadme = () =>
           .toString()
           .replace(
             '<SCRIPTS>',
-            scripts
-              .filter(script => script.deprecated !== 'true')
-              .map(formatScriptLine)
-              .join('\n')
+            tableHeader +
+              scripts
+                .filter(script => script.deprecated !== 'true')
+                .map(formatScriptLine)
+                .join('\n')
           )
           .replace(
             '<UNMAINTAINED>',
-            scripts
-              .filter(script => script.deprecated === 'true')
-              .map(formatScriptLine)
-              .join('\n')
+            tableHeader +
+              scripts
+                .filter(script => script.deprecated === 'true')
+                .map(formatScriptLine)
+                .join('\n')
           )
       )
     )

@@ -13,7 +13,12 @@ View more information about a particular script by clicking on its name.
 
 ### Utilities
 
-- [Wait for Elements](https://greasyfork.org/en/scripts/5679-wait-for-elements)
+| Script Name       | Links                 |                  |
+| ----------------- | --------------------- | ---------------- |
+| Wait for Elements | [More Info](infoLink) | [Code](codeLink) |
+
+[infolink]: https://github.com/fuzetsu/userscripts/tree/master/wait-for-elements
+[codelink]: https://github.com/fuzetsu/userscripts/raw/master/wait-for-elements/wait-for-elements.js
 
 ### Unmaintained
 
