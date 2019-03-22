@@ -21,9 +21,9 @@ const getScripts = () =>
           fs.stat('./' + maybeDir).then(handle =>
             handle.isDirectory()
               ? fs
-                  .readdir('./' + maybeDir)
+                  .readdir(maybeDir)
                   .then(files => files.find(file => file.endsWith('.user.js')))
-                  .then(file => file && `${maybeDir}/${file}`)
+                  .then(file => file && path.join(maybeDir, file))
               : void 0
           )
         )
