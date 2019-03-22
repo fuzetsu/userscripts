@@ -15,7 +15,7 @@ View more information about a particular script by clicking on its name.
 
 | Script Name       |      Links       |                  |
 | ----------------- | :--------------: | :--------------: |
-| Wait for Elements | [Info](infoLink) | [Code](codeLink) |
+| Wait for Elements | [Info][infolink] | [Code][codelink] |
 
 [infolink]: https://github.com/fuzetsu/userscripts/tree/master/wait-for-elements
 [codelink]: https://github.com/fuzetsu/userscripts/raw/master/wait-for-elements/wait-for-elements.js
