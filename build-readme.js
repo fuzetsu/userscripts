@@ -55,7 +55,7 @@ const formatScriptLine = script => {
   const installLink = `${baseUrl}/raw/master/${script.folder}/${script.file}`
   const infoLink = script.hasReadme && `${baseUrl}/tree/master/${script.folder}`
   return `|${script.name}|${
-    infoLink ? `[More info](${infoLink})` : ''
+    infoLink ? `[More info](${infoLink})` : '_no readme_'
   }|[Install Now](${installLink})|`
 }
 

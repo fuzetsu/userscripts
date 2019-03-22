@@ -13,9 +13,9 @@ View more information about a particular script by clicking on its name.
 |-|-|-|
 |Auto Close YouTube Ads|[More info](https://github.com/fuzetsu/userscripts/tree/master/auto-close-youtube-ads)|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/auto-close-youtube-ads/auto-close-youtube-ads.user.js)|
 |Crunchyroll Video Utilities|[More info](https://github.com/fuzetsu/userscripts/tree/master/crunchyroll-video-utilities)|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/crunchyroll-video-utilities/crunchyroll-video-utilties.user.js)|
-|Format JSON||[Install Now](https://github.com/fuzetsu/userscripts/raw/master/format-json/format-json.user.js)|
+|Format JSON|_no readme_|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/format-json/format-json.user.js)|
 |Kitsu MAL Rating|[More info](https://github.com/fuzetsu/userscripts/tree/master/kitsu-mal-rating)|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/kitsu-mal-rating/kitsu-mal-rating.user.js)|
-|Prettier Anything||[Install Now](https://github.com/fuzetsu/userscripts/raw/master/prettier-anything/prettier-anything.user.js)|
+|Prettier Anything|_no readme_|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/prettier-anything/prettier-anything.user.js)|
 |YouTube Playlist Search|[More info](https://github.com/fuzetsu/userscripts/tree/master/youtube-playlist-search)|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/youtube-playlist-search/youtube-playlist-search.user.js)|
 |YouTube Playlist Time|[More info](https://github.com/fuzetsu/userscripts/tree/master/youtube-playlist-time)|[Install Now](https://github.com/fuzetsu/userscripts/raw/master/youtube-playlist-time/youtube-playlist-time.user.js)|
 
