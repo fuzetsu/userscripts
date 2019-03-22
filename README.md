@@ -21,7 +21,7 @@ View more information about a particular script by clicking on its name.
 
 - [Wait for Elements](https://greasyfork.org/en/scripts/5679-wait-for-elements)
 
-### Unmaintained Scripts
+### Unmaintained
 
 - [Crunchyroll Queue Real Times](https://github.com/fuzetsu/userscripts/tree/master/crunchyroll-queue-times) ~ [Install Now](https://github.com/fuzetsu/userscripts/raw/master/crunchyroll-queue-times/crunchyroll-queue-times.user.js)
 - [Gfycat Redirect to Webm](https://github.com/fuzetsu/userscripts/tree/master/gfycat-redirect-to-webm) ~ [Install Now](https://github.com/fuzetsu/userscripts/raw/master/gfycat-redirect-to-webm/gfycat-redirect-to-webm.user.js)

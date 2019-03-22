@@ -74,7 +74,7 @@ const buildReadme = () =>
 
       - [Wait for Elements](https://greasyfork.org/en/scripts/5679-wait-for-elements)
 
-      ### Unmaintained Scripts
+      ### Unmaintained
 
       ${scripts
         .filter(script => script.deprecated === 'true')
