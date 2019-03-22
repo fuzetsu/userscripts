@@ -63,18 +63,18 @@ const buildReadme = () =>
 
       View more information about a particular script by clicking on its name.
 
-      ### Regular Scripts
+      ### Scripts
 
       ${scripts
         .filter(script => script.deprecated !== 'true')
         .map(formatScriptLine)
         .join('\n')}
 
-      ### Utility Scripts
+      ### Utilities
 
       - [Wait for Elements](https://greasyfork.org/en/scripts/5679-wait-for-elements)
 
-      ### Ummaintained Scripts
+      ### Unmaintained Scripts
 
       ${scripts
         .filter(script => script.deprecated === 'true')
