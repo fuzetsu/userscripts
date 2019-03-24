@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.3.1
+// @version      1.3.2
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -21,12 +21,12 @@
  */
 const CSS = {
   skipButton: '.videoAdUiSkipButton,.ytp-ad-skip-button',
-  preSkipButton: '.videoAdUiPreSkipButton',
+  preSkipButton: '.videoAdUiPreSkipButton,.ytp-ad-preview-container',
   closeBannerAd: '.close-padding.contains-svg,a.close-button,.ytp-ad-overlay-close-button',
   muteButton: '.ytp-mute-button',
   muteIndicator: '.ytp-volume-slider-handle',
   adArea: '.videoAdUi,.ytp-ad-player-overlay',
-  adLength: '.videoAdUiAttribution'
+  adLength: '.videoAdUiAttribution,.ytp-ad-duration-remaining'
 }
 
 const util = {
