@@ -13,7 +13,7 @@
 // @require      https://gitcdn.xyz/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @require      https://gitcdn.xyz/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
-
+/* globals GM_getValue GM_setValue GM_deleteValue GM_registerMenuCommand GM_config waitForElems waitForUrl */
 /**
  * This section of the code holds the css selectors that point different parts of YouTube's
  * user interface. If the script ever breaks and you don't want to wait for me to fix it
@@ -61,7 +61,7 @@ const util = {
 
 const SCRIPT_NAME = 'Auto Close YouTube Ads'
 const SHORT_AD_MSG_LENGTH = 12000
-let TICKS = []
+const TICKS = []
 let DONT_SKIP = false
 
 const config = GM_config([
@@ -129,16 +129,16 @@ function upgradeConfig() {
     util.log('upgrading config version, current = ', conf.version, ', target = ', configVersion)
     lastVersion = conf.version
     switch (conf.version) {
-      case 1:
+      case 1: {
         const oldConf = {
           muteAd: util.storeGet('MUTE_AD'),
           hideAd: util.storeGet('HIDE_AD'),
           secWait: util.storeGet('SEC_WAIT')
         }
 
-        if (oldConf.muteAd !== undefined) conf.muteAd = !!oldConf.muteAd
-        if (oldConf.hideAd !== undefined) conf.hideAd = !!oldConf.hideAd
-        if (oldConf.secWait !== undefined && !isNaN(oldConf.secWait))
+        if (oldConf.muteAd != null) conf.muteAd = !!oldConf.muteAd
+        if (oldConf.hideAd != null) conf.hideAd = !!oldConf.hideAd
+        if (oldConf.secWait != null && !isNaN(oldConf.secWait))
           conf.secWaitBanner = conf.secWaitVideo = parseInt(oldConf.secWait)
 
         conf.version = 2
@@ -146,6 +146,7 @@ function upgradeConfig() {
         config.save(conf)
         ;['SEC_WAIT', 'HIDE_AD', 'MUTE_AD'].forEach(util.storeDel)
         break
+      }
     }
   }
 }
@@ -159,7 +160,6 @@ function createMessageElement() {
   )
   return elem
 }
-
 function showMessage(container, text, ms) {
   const message = createMessageElement()
   message.textContent = text
@@ -188,7 +188,7 @@ function setupCancelDiv(ad) {
     }
     ad.appendChild(cancelDiv)
   } else {
-    util.log(`skip button area wasn't there for some reason.. couldn't place cancel button.`)
+    util.log("skip button area wasn't there for some reason.. couldn't place cancel button.")
   }
 }
 
