@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.3.2
+// @version      1.4.0
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -20,13 +20,22 @@
  * chances are that it can be fixed by just updating these selectors here.
  */
 const CSS = {
+  // the button used to skip an ad
   skipButton: '.videoAdUiSkipButton,.ytp-ad-skip-button',
+  // the area showing the countdown to the skip button showing
   preSkipButton: '.videoAdUiPreSkipButton,.ytp-ad-preview-container',
+  // little x that closes banner ads
   closeBannerAd: '.close-padding.contains-svg,a.close-button,.ytp-ad-overlay-close-button',
+  // button that toggle mute on the video
   muteButton: '.ytp-mute-button',
+  // the slider bar handle that represents the current volume
   muteIndicator: '.ytp-volume-slider-handle',
+  // container for ad on video
   adArea: '.videoAdUi,.ytp-ad-player-overlay',
-  adLength: '.videoAdUiAttribution,.ytp-ad-duration-remaining'
+  // container that shows ad length eg 3:23
+  adLength: '.videoAdUiAttribution,.ytp-ad-duration-remaining',
+  // container for header ad on the home page
+  homeAdContainer: '#masthead-ad'
 }
 
 const util = {
@@ -309,6 +318,9 @@ util.log('Started')
 
 if (window.self === window.top) {
   let videoUrl
+  // close home ad whenever encountered
+  waitForElems({ sel: CSS.homeAdContainer, onmatch: ad => ad.remove() })
+  // wait for video page
   waitForUrl(/^https:\/\/www\.youtube\.com\/watch\?.*v=.+/, () => {
     if (videoUrl && location.href !== videoUrl) {
       util.log('Changed video, removing old wait')
