@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.4.0
+// @version      1.4.1
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -179,8 +179,8 @@ function showMessage(container, text, ms) {
 
 function setupCancelDiv(ad) {
   const skipArea = util.q(CSS.preSkipButton, ad)
-  const skipText = util.get(skipArea, 'firstChild.textContent')
-  if (skipText && ['will begin', 'will play'].some(snip => skipText.includes(snip))) {
+  const skipText = skipArea && skipArea.textContent.trim().replace(/\s+/g, ' ')
+  if (skipText && !['will begin', 'will play'].some(snip => skipText.includes(snip))) {
     const cancelClass = 'acya-cancel-skip'
     let cancelDiv = util.q('.' + cancelClass)
     if (cancelDiv) cancelDiv.remove()
