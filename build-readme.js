@@ -48,7 +48,7 @@ const getScripts = () =>
       )
     )
 
-const baseUrl = 'https://github.com/fuzetsu/userscripts'
+const baseUrl = 'https://github.com/niubilityfrontend/userscripts'
 const tableHeader = '|Name|Links||\n|-|:-:|:-:|\n'
 
 const formatScriptLine = script => {
