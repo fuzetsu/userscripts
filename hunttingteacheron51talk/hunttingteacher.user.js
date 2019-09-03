@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.1
+// @version      1.0.2
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -88,7 +88,30 @@
 		'}' +
 		'.s-t-page {   padding-top: 2px;}' +
 		'</style>');
+	const config = GM_config([{
+			key: 'pagecount',
+			label: '自动获取页数',
+			default: 10,
+			type: 'dropdown',
+			values: [0, 5, 10, 20, 50]
+		},
+		{
+			key: 'debug',
+			label: 'Show extra debug information.',
+			type: 'bool',
+			default: false
+		},
+		{
+			key: 'version',
+			type: 'hidden',
+			default: 1
+		}
+	])
 
+	const configVersion = 1
+	let conf = config.load()
+	config.onsave = cfg => (conf = cfg)
+	
 	$.each($(".item-top-cont"), function(i, item) {
 		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
 	});
@@ -343,7 +366,7 @@
 				'<div id="tabs-1">' +
 				"当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " +
 				"<div id='buttons'>" +
-				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取10页</button>&nbsp;" +
+				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取"+conf.pagecount+"页</button>&nbsp;" +
 				"</div>" +
 				"<br />有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>" +
 				"收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>" +
@@ -498,7 +521,7 @@
 					showLabel: true
 				}) //submit suggestion
 				.click(function() {
-					GM_setValue('autonextpage', 10);
+					GM_setValue('autonextpage', conf.pagecount);
 					if ($('.s-t-page .next-page').length == 0) {
 						GM_setValue('autonextpage', 0);
 					} else {

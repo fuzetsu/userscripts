@@ -42,6 +42,8 @@
 - 安装油猴浏览器插件后，极力推荐安装一个Userscript+的脚本，他可以根据你浏览的网站，列出所有可以使用的脚本，由你选择安装与否。https://greasyfork.org/zh-CN/scripts/24508-userscript-show-site-all-userjs
 
 ## 更新日志
+
+- v1.0.2 2019-9-3 add system config for auto get next page's count
 - v1.0.1 2019-9-3 - Modified the up rate to permillage ‰
 - v1.0.0 2019-8-27 - released a first stable version 
 - v0.1.33 2019-8-26 - add searching function to teacher list grid
