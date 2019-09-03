@@ -19,6 +19,7 @@
 // @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
 // @require      https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
+// @require      https://gitcdn.xyz/repo/niubilityfrontend/userscripts/master/libs/gm_config.js
 // ==/UserScript==
 (function() {
 	'use strict';
