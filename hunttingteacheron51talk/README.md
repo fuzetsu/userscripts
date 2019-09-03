@@ -28,7 +28,7 @@
 - 'name' 教师姓名， **点击可以转到教师的详细信息页**
 - 'indicator' 排序指标= 有效经验值x好评率+收藏数
 - '标签' 有效经验值
-- '率' 好评率
+- '率‰' 好评率
 - '收藏数' 收藏数
 - '学' 适合学生级别
 - '教' 教师教龄
@@ -42,6 +42,7 @@
 - 安装油猴浏览器插件后，极力推荐安装一个Userscript+的脚本，他可以根据你浏览的网站，列出所有可以使用的脚本，由你选择安装与否。https://greasyfork.org/zh-CN/scripts/24508-userscript-show-site-all-userjs
 
 ## 更新日志
+- v1.0.1 2019-9-3 - Modified the up rate to permillage ‰
 - v1.0.0 2019-8-27 - released a first stable version 
 - v0.1.33 2019-8-26 - add searching function to teacher list grid
 - v0.1.28 2019-8-23 - list and sort all teachers your searched recently
