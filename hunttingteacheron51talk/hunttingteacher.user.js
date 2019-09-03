@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.2
+// @version      1.0.3
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -13,6 +13,7 @@
 // @grant        GM_setValue
 // @grant        GM_listValues
 // @grant        GM_deleteValue
+// @grant        GM_registerMenuCommand
 // @require      http://code.jquery.com/jquery-3.4.1.min.js
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
@@ -111,8 +112,11 @@
 
 	const configVersion = 1
 	let conf = config.load()
-	config.onsave = cfg => (conf = cfg)
-	
+	config.onsave = cfg => {
+		conf = cfg;
+		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
+	}
+	GM_registerMenuCommand('Config', config.setup);
 	$.each($(".item-top-cont"), function(i, item) {
 		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
 	});
@@ -187,19 +191,27 @@
 		}
 		$.dequeue(document);
 	};
-	let maxlabel = 0,
+	let maxrate = 0,
+		minrate = 99999,
+		maxlabel = 0,
 		minlabel = 9999999,
 		maxfc = 0,
-		minfc = 999999;
+		minfc = 999999,
+		maxage=0,
+		minage=99999;
 
 	function updateTeacherinfoToUI(jqel, tinfo) {
-		maxlabel = (tinfo.label > maxlabel) ? tinfo.label : maxlabel;
-		minlabel = (tinfo.label < minlabel) ? tinfo.label : minlabel;
-		maxfc = (tinfo.favoritesCount > maxfc) ? tinfo.favoritesCount : maxfc;
-		minfc = (tinfo.favoritesCount < minfc) ? tinfo.favoritesCount : minfc;
+		if (tinfo.label > maxlabel) maxlabel = tinfo.label;
+		if (tinfo.label < minlabel) minlabel = tinfo.label;
+		if (tinfo.favoritesCount > maxfc) maxfc = tinfo.favoritesCount;
+		if (tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
+		if (tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
+		if (tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
+		if (tinfo.age > maxage) maxage = tinfo.age;
+		if (tinfo.age < minage) minage = tinfo.age;
 		jqel.attr("teacherinfo", JSON.stringify(tinfo));
 		jqel.find(".teacher-name")
-			.html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "‰|" + tinfo.favoritesCount +
+			.html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount +
 				"]");
 		jqel.find(".teacher-age")
 			.html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
@@ -277,7 +289,7 @@
 						if (jqr.find(".evaluate-content-left span").length >= 3) {
 							var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(3) * 100;
+							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
 							var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
 							var age = jqel.find(".teacher-age").text().match(num).clean("")[0];
 							var label = (function() {
@@ -353,10 +365,10 @@
 			var config = GM_getValue('filterconfig', {
 				l1: 300,
 				l2: maxlabel,
-				rate1: 96,
-				rate2: 100,
+				rate1: minage,
+				rate2: maxrate,
 				age1: 0,
-				age2: 110
+				age2: 100
 			});
 			$('body').append("<div id='filterdialog' title='Teacher Filter'>" +
 				"<div id='tabs'>" +
@@ -367,7 +379,8 @@
 				'<div id="tabs-1">' +
 				"当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " +
 				"<div id='buttons'>" +
-				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取"+conf.pagecount+"页</button>&nbsp;" +
+				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取" +
+				conf.pagecount + "页</button>&nbsp;" +
 				"</div>" +
 				"<br />有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>" +
 				"收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>" +
@@ -431,8 +444,8 @@
 			});
 			$("#thumbupRateslider").slider({
 				range: true,
-				min: 0,
-				max: 100,
+				min: minrate,
+				max: maxrate,
 				values: [config.rate1, 100],
 				slide: function(event, ui) {
 					$('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
@@ -552,7 +565,7 @@
 						datatype: "local",
 						height: 240,
 						//{ 'thumbup': thumbup, 'thumbdown': thumbdown, 'thumbupRate': thumbupRate, 'age': age, 'label': label, 'indicator': label * thumbupRate, 'favoritesCount': favoritesCount,'name':name }
-						colNames: ['type', 'name', 'indicator', '标签', '率‰', '收藏数', '学', '教', '好', '差', 'age'],
+						colNames: ['type', 'name', 'indicator', '标签', '率%', '收藏数', '学', '教', '好', '差', 'age'],
 						colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 							{
@@ -707,7 +720,7 @@
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
 		$('#filterdialog').dialog({
-			'width': '480'
+			'width': '550'
 		});
 		$('#filterdialog').parent().scrollFix();
 		$('#filterdialog').dialog("open");
