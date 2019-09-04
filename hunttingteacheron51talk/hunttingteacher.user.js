@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.3
+// @version      1.0.4
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -108,7 +108,7 @@
 		conf = cfg;
 		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
 	};
-	GM_registerMenuCommand('Config', config.setup);
+	GM_registerMenuCommand('配置', config.setup);
 	$.each($(".item-top-cont"), function(i, item) {
 		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
 	});
@@ -189,8 +189,8 @@
 		minlabel = 9999999,
 		maxfc = 0,
 		minfc = 999999,
-		maxage=0,
-		minage=99999;
+		maxage = 0,
+		minage = 99999;
 
 	function updateTeacherinfoToUI(jqel, tinfo) {
 		if (tinfo.label > maxlabel) maxlabel = tinfo.label;
@@ -454,8 +454,8 @@
 			});
 			$("#tAgeSlider").slider({
 				range: true,
-				min: 0,
-				max: 110,
+				min: minage,
+				max: maxage,
 				values: [config.age1, config.age2],
 				slide: function(event, ui) {
 					$('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
