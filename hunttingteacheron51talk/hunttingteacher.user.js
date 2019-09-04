@@ -98,24 +98,16 @@
 			values: [0, 5, 10, 20, 50]
 		},
 		{
-			key: 'debug',
-			label: 'Show extra debug information.',
-			type: 'bool',
-			default: false
-		},
-		{
 			key: 'version',
 			type: 'hidden',
 			default: 1
 		}
-	])
-
-	const configVersion = 1
-	let conf = config.load()
+	]);
+	let conf = config.load();
 	config.onsave = cfg => {
 		conf = cfg;
 		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
-	}
+	};
 	GM_registerMenuCommand('Config', config.setup);
 	$.each($(".item-top-cont"), function(i, item) {
 		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
