@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.4
+// @version      1.0.5
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -129,7 +129,9 @@
 		}
 		return this;
 	};
-	
+	Number.prototype.toString = function() {
+		return this.toFixed(2);
+	};
 	String.prototype.toFloat = function() {
 		return parseFloat(this);
 	};
@@ -281,7 +283,7 @@
 							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
 							var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-							var age = jqel.find(".teacher-age").text().match(num).clean("")[0];
+							var age = (jqel.find(".teacher-age").text().match(num).clean("")[0])+0;
 							var label = (function() {
 								let j_len = jqel.find(".label").text().match(num).clean("").length;
 								let l = 0;
