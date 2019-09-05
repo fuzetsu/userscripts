@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         gm_config
+// @name         gm_config_toolbar
 // @version      0.0.4
 // @namespace    https://github.com/niubilityfrontend
 // @description  greasyfork configuration toolbar on the script addins 
