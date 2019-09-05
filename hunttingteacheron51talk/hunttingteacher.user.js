@@ -129,9 +129,7 @@
 		}
 		return this;
 	};
-	Number.prototype.toString = function() {
-		return this.toFixed(2);
-	};
+	
 	String.prototype.toFloat = function() {
 		return parseFloat(this);
 	};
