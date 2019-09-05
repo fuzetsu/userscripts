@@ -166,13 +166,6 @@
 		var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
 		$('.s-t-content.f-cb').empty().append(sortEle);
 	};
-
-	function getUrlParam(name) {
-		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-		var r = window.location.search.substr(1).match(reg);
-		if (r != null) return unescape(r[2]);
-		return null;
-	}
 	/**
 	 * 提交运算函数到 document 的 fx 队列
 	 */
@@ -207,14 +200,12 @@
 				"]");
 		jqel.find(".teacher-age")
 			.html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
-
 		jqel //.attr('thumbup', tinfo.thumbup)
 			//.attr('thumbdown', tinfo.thumbdown)
 			//.attr('thumbupRate', tinfo.thumbupRate)
 			//.attr('age', tinfo.age)
 			//.attr('label', tinfo.label)
 			.attr('indicator', tinfo.indicator);
-
 	}
 
 	function executeFilters(uifilters) {
@@ -283,7 +274,7 @@
 							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
 							var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-							var age = (jqel.find(".teacher-age").text().match(num).clean("")[0])+0;
+							var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
 							var label = (function() {
 								let j_len = jqel.find(".label").text().match(num).clean("").length;
 								let l = 0;
@@ -452,10 +443,11 @@
 				GM_setValue('filterconfig', filterconfig);
 				executeFilters(uifilters);
 			});
+
 			$("#tAgeSlider").slider({
 				range: true,
-				min: minage,
-				max: maxage,
+				min: Number(minage),
+				max: Number(maxage),
 				values: [config.age1, config.age2],
 				slide: function(event, ui) {
 					$('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
@@ -536,6 +528,7 @@
 				});
 
 			$("#tabs").tabs({
+				active: '#tabs-1',
 				activate: function(event, ui) {
 					var teachers = [];
 					$.each(GM_listValues(), function(i, item) {
@@ -680,16 +673,6 @@
 						viewrecords: true,
 						sortorder: "desc",
 						grouping: false,
-						groupingView: {
-							groupField: ['type'], //分组属性
-							groupColumnShow: [true], //是否显示分组列
-							groupText: ['<b>{0} - {1} 条记录</b>'], //表头显示数据(每组中包含的数据量)
-							groupCollapse: true, //加载数据时是否只显示分组的组信息
-							groupSummary: [false], //是否显示汇总  如果为true需要在colModel中进行配置summaryType:'max',summaryTpl:'<b>Max: {0}</b>'
-							groupDataSorted: true, //分组中的数据是否排序
-							groupOrder: ['desc'], //分组后组的排列顺序
-							//showSummaryOnHide: true//是否在分组底部显示汇总信息并且当收起表格时是否隐藏下面的分组
-						},
 						autowidth: true,
 						caption: ""
 					}).jqGrid('filterToolbar', {
