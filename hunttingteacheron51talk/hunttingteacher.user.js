@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.7
+// @version      1.0.8
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -344,6 +344,15 @@
 		};
 	}
 	submit(function(next) {
+		var autonextpage = GM_getValue('autonextpage', 0);
+		if (autonextpage > 0) {
+			GM_setValue('autonextpage', autonextpage - 1);
+			if ($('.s-t-page .next-page').length == 0) {
+				GM_setValue('autonextpage', 0);
+			} else {
+				$('.s-t-page .next-page')[0].click();
+			}
+		}
 		try {
 			var config = GM_getValue('filterconfig', {
 				l1: 300,
@@ -446,8 +455,8 @@
 
 			$("#tAgeSlider").slider({
 				range: true,
-				min: Number(minage),// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-				max: Number(maxage),// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+				min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+				max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
 				values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
 				slide: function(event, ui) {
 					$('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
@@ -699,15 +708,6 @@
 		});
 		$('#filterdialog').parent().scrollFix();
 		$('#filterdialog').dialog("open");
-		var autonextpage = GM_getValue('autonextpage', 0);
-		if (autonextpage > 0) {
-			GM_setValue('autonextpage', autonextpage - 1);
-			if ($('.s-t-page .next-page').length == 0) {
-				GM_setValue('autonextpage', 0);
-			} else {
-				$('.s-t-page .next-page')[0].click();
-			}
-		}
 		next();
 	});
 })();
