@@ -1,3 +1,18 @@
+// ==UserScript==
+// @name         gm_config
+// @version      0.0.4
+// @namespace    https://github.com/niubilityfrontend
+// @description  greasyfork configuration toolbar on the script addins 
+// @author       jimbo
+// @license      OSL-3.0
+// @supportURL   https://github.com/niubilityfrontend/
+// @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_listValues
+// @grant        GM_deleteValue
+// @grant        GM_registerMenuCommand
+// ==/UserScript==
 (() => {
 	'use strict';
 
