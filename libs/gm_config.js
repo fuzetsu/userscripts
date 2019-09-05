@@ -22,7 +22,8 @@
 		const prefix = 'gm-config';
 
 		const addStyle = function() {
-			const css = `
+			const css =
+				`
 				.${prefix} {
 					display: grid;
 					align-items: center;
@@ -70,7 +71,10 @@
 
 		const load = function() {
 			const defaults = {};
-			settings.forEach(({ key, default: def }) => defaults[key] = def);
+			settings.forEach(({
+				key,
+				default: def
+			}) => defaults[key] = def);
 
 			let cfg = (typeof GM_getValue !== 'undefined') ? GM_getValue(storage) : localStorage.getItem(storage);
 			if (!cfg) return defaults;
@@ -87,7 +91,7 @@
 
 		const save = function(cfg) {
 			const data = JSON.stringify(cfg);
-			(typeof GM_setValue !== 'undefined') ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
+			(typeof GM_setValue !== 'undefined') ? GM_setValue(storage, data): localStorage.setItem(storage, data);
 		};
 
 		const setup = function() {
@@ -122,7 +126,9 @@
 				select.name = name;
 
 				const createOption = function(val) {
-					const { value = val, text = val } = val;
+					const {
+						value = val, text = val
+					} = val;
 					const option = document.createElement('option');
 					option.value = value;
 					option.textContent = text;
@@ -172,12 +178,15 @@
 				const controls = {};
 
 				const div = createContainer();
-				settings.filter(({ type }) => type !== 'hidden').forEach(setting => {
+				settings.filter(({
+					type
+				}) => type !== 'hidden').forEach(setting => {
 					const value = cfg[setting.key];
 
 					let control;
 					if (setting.type === 'text') {
-						control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline, setting.resizable);
+						control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline,
+							setting.resizable);
 					} else if (setting.type === 'number') {
 						control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);
 					} else if (setting.type === 'dropdown') {
@@ -200,7 +209,12 @@
 				});
 
 				div.appendChild(createButton('Save', () => {
-					settings.filter(({ type }) => type !== 'hidden').forEach(({ key, type }) => {
+					settings.filter(({
+						type
+					}) => type !== 'hidden').forEach(({
+						key,
+						type
+					}) => {
 						const control = controls[key];
 						cfg[key] = type === 'bool' ? control.checked : control.value;
 					});
