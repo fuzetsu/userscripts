@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.5
+// @version      1.0.7
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -348,7 +348,7 @@
 			var config = GM_getValue('filterconfig', {
 				l1: 300,
 				l2: maxlabel,
-				rate1: minage,
+				rate1: 97,
 				rate2: maxrate,
 				age1: 0,
 				age2: 100
@@ -429,7 +429,7 @@
 				range: true,
 				min: minrate,
 				max: maxrate,
-				values: [config.rate1, 100],
+				values: [config.rate1 < minrate ? minrate : config.rate1, maxrate],
 				slide: function(event, ui) {
 					$('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
 				},
@@ -446,9 +446,9 @@
 
 			$("#tAgeSlider").slider({
 				range: true,
-				min: Number(minage),
-				max: Number(maxage),
-				values: [config.age1, config.age2],
+				min: Number(minage),// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+				max: Number(maxage),// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+				values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
 				slide: function(event, ui) {
 					$('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
 				},
