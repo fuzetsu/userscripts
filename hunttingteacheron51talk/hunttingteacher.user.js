@@ -34,7 +34,7 @@
 	};
 	$("head").append(
 		'<link ' +
-		'href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css" ' +
+		'href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" ' +
 		'rel="stylesheet" type="text/css">'
 	);
 	$("head").append(
