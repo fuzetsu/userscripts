@@ -516,14 +516,14 @@
 					showLabel: false
 				}) //submit suggestion
 				.prop('href',
-					'https://github.com/niubilityfrontend/hunttingteacheron51talk/issues/new?assignees=&labels=&template=feature_request.md&title='
+					'https://github.com/niubilityfrontend/userscripts/hunttingteacheron51talk/issues/new?assignees=&labels=&template=feature_request.md&title='
 				)
 				.prop('target', '_blank')
 				.end().eq(5).button({
 					icon: 'ui-icon-help',
 					showLabel: false
 				}) //系统帮助
-				.prop('href', 'https://github.com/niubilityfrontend/hunttingteacheron51talk/blob/master/README.md')
+				.prop('href', 'https://github.com/niubilityfrontend/userscripts/hunttingteacheron51talk/blob/master/README.md')
 				.prop('target', '_blank')
 				.end().eq(6).button({
 					icon: 'ui-icon-seek-next',
