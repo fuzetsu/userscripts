@@ -34,7 +34,7 @@
 	};
 	$("head").append(
 		'<link ' +
-		'href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" ' +
+		'href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css" ' +
 		'rel="stylesheet" type="text/css">'
 	);
 	$("head").append(
@@ -42,6 +42,7 @@
 		'href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" ' +
 		'rel="stylesheet" type="text/css">'
 	);
+
 
 	$("head").append('<style type="text/css">' +
 		'.search-teachers .s-t-list .item-time-list {margin-top:315px;}' +
@@ -560,7 +561,18 @@
 						datatype: "local",
 						height: 240,
 						//{ 'thumbup': thumbup, 'thumbdown': thumbdown, 'thumbupRate': thumbupRate, 'age': age, 'label': label, 'indicator': label * thumbupRate, 'favoritesCount': favoritesCount,'name':name }
-						colNames: ['type', 'name', 'indicator', '标签', '率%', '收藏数', '学', '教', '好', '差', 'age'],
+						colNames: ['type',
+							'name',
+							'indicator',
+							'标签',
+							'率%',
+							'收藏数',
+							'学',
+							'教',
+							'好',
+							'差',
+							'age'
+						],
 						colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 							{
