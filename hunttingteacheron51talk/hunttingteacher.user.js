@@ -6,8 +6,8 @@
 // @author       jimbo
 // @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
-// @match        https://www.51talk.com/ReserveNew/index*
-// @match        http://www.51talk.com/ReserveNew/index*
+// @match        *://www.51talk.com/ReserveNew/index*
+// @match        *://www.51talk.com/TeacherNew/info/xxxxxxxx*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -113,7 +113,7 @@
 	$.each($(".item-top-cont"), function(i, item) {
 		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
 	});
-
+ 
 	function sleep(delay) {
 		var start = (new Date()).getTime();
 		while ((new Date()).getTime() - start < delay) {
@@ -601,8 +601,9 @@
 								width: 95,
 								sorttype: "string",
 								formatter: function(value, options, rData) {
-									return "<a href='http://www.51talk.com/TeacherNew/info/" + value + "' target='_blank' style='color:blue'>" + (!rData[
-										'name'] ? value : rData['name']) + "</a>";
+									return "<a href='http://www.51talk.com/TeacherNew/info/" + value +
+										"' target='_blank' style='color:blue'>" + (!rData[
+											'name'] ? value : rData['name']) + "</a>";
 								}
 							},
 							{
