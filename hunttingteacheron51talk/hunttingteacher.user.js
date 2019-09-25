@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.9
+// @version      1.0.10
 // @namespace    https://github.com/niubilityfrontend
 // @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
 // @author       jimbo
@@ -250,10 +250,13 @@
 				let tid = jqel.find(".teacher-details-link a").attr('href').replace(
 					"https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
 				var tinfokey = 'tinfo-' + tid;
-				var tinfoexpirekey = 'tinfoexpire-' + tid;
-				var tinfoexpire = GM_getValue(tinfoexpirekey, new Date().getTime());
-				if (new Date().getTime() - tinfoexpire < configExprMilliseconds) {
-					var tinfo = GM_getValue(tinfokey);
+				var tinfo = GM_getValue(tinfokey, {
+					expire: new Date(1970, 1, 1).getTime()
+				});
+				if (!tinfo.expire) {
+					tinfo.expire = new Date(1970, 1, 1).getTime();
+				}
+				if (new Date().getTime() - tinfo.expire < configExprMilliseconds) {
 					if (tinfo) {
 						updateTeacherinfoToUI(jqel, tinfo);
 						next();
@@ -300,9 +303,9 @@
 								'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
 								'favoritesCount': favoritesCount,
 								'name': name,
-								'type': type
+								'type': type,
+								'expire': new Date().getTime()
 							};
-							GM_setValue(tinfoexpirekey, new Date().getTime());
 							GM_setValue(tinfokey, tinfo);
 							updateTeacherinfoToUI(jqel, tinfo);
 						} else {
@@ -571,7 +574,8 @@
 							'教',
 							'好',
 							'差',
-							'age'
+							'age',
+							'Update'
 						],
 						colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
@@ -590,6 +594,7 @@
 									else return 'na';
 								}
 							},
+
 							{
 								name: 'tid',
 								index: 'tid',
@@ -672,19 +677,44 @@
 							{
 								name: 'thumbdown',
 								index: 'thumbdown',
-								width: 20,
+								width: 25,
 								sorttype: "float",
 								align: 'right'
 							},
 							{
 								name: 'age',
 								index: 'age',
-								width: 20,
+								width: 25,
 								sorttype: "float",
 								align: 'right',
 								searchoptions: {
 									sopt: ['le', 'ge', 'eq', ]
 								},
+							},
+							{
+								name: 'expire',
+								index: 'expire',
+								width: 40,
+								sorttype: "Date",
+								align: 'right',
+								searchoptions: {
+									sopt: ['cn']
+								},
+								formatter: function(value, options, rData) {
+									if (value) {
+										var d = new Date().getTime() - value;
+										if (d < 1000 * 60) {
+											return "刚刚";
+										} else if (d < 1000 * 60 * 60) {
+											return (d / 60000).toFixed(0) + "分";
+										} else if (d < 1000 * 60 * 60 * 24) {
+											return (d / 3600000).toFixed(0) + "时";
+										} else {
+											return (d / 86400000).toFixed(0) + "天";
+										}
+										return d;
+									} else return 'na';
+								}
 							},
 						],
 						multiselect: false,
@@ -717,7 +747,7 @@
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
 		$('#filterdialog').dialog({
-			'width': '550'
+			'width': '650'
 		});
 		$('#filterdialog').parent().scrollFix();
 		$('#filterdialog').dialog("open");
