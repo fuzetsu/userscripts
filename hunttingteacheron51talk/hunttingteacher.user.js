@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         辅助选老师-有效经验值|好评率|年龄|Top 5
-// @version      1.0.10
+// @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
+// @version      1.0.11
 // @namespace    https://github.com/niubilityfrontend
-// @description  51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5；有效经验值=所有标签数量相加后除以5；好评率=好评数/总评论数；年龄根据你的喜好选择。
+// @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
 // @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
@@ -601,7 +601,7 @@
 								width: 95,
 								sorttype: "string",
 								formatter: function(value, options, rData) {
-									return "<a href='http://www.51talk.com/TeacherNew/info/" + value + "' target='_blank'>" + (!rData[
+									return "<a href='http://www.51talk.com/TeacherNew/info/" + value + "' target='_blank' style='color:blue'>" + (!rData[
 										'name'] ? value : rData['name']) + "</a>";
 								}
 							},
