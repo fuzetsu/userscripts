@@ -7,7 +7,7 @@
 // @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
 // @match        *://www.51talk.com/ReserveNew/index*
-// @match        *://www.51talk.com/TeacherNew/info/xxxxxxxx*
+// @match        *://www.51talk.com/TeacherNew/info/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -42,7 +42,6 @@
 		'href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" ' +
 		'rel="stylesheet" type="text/css">'
 	);
-
 
 	$("head").append('<style type="text/css">' +
 		'.search-teachers .s-t-list .item-time-list {margin-top:315px;}' +
@@ -91,6 +90,7 @@
 		'}' +
 		'.s-t-page {   padding-top: 2px;}' +
 		'</style>');
+
 	const config = GM_config([{
 			key: 'pagecount',
 			label: '自动获取页数',
@@ -110,10 +110,7 @@
 		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
 	};
 	GM_registerMenuCommand('配置', config.setup);
-	$.each($(".item-top-cont"), function(i, item) {
-		item.innerHTML = item.innerHTML.replace('<!--', '').replace('-->', '');
-	});
- 
+
 	function sleep(delay) {
 		var start = (new Date()).getTime();
 		while ((new Date()).getTime() - start < delay) {
@@ -137,9 +134,8 @@
 		return parseFloat(this);
 	};
 	String.prototype.toInt = function() {
-		return parseint(this);
+		return parseInt(this);
 	};
-
 	String.prototype.startsWith = function(str) {
 		return this.slice(0, str.length) == str;
 	};
@@ -149,6 +145,15 @@
 	String.prototype.contains = function(str) {
 		return this.indexOf(str) > -1;
 	};
+	String.prototype.replaceAll = function(search, replacement) {
+		var target = this;
+		return target.replace(new RegExp(search, 'g'), replacement);
+	};
+
+	$(".item-top-cont").prop('innerHTML', function(i, val) {
+		return val.replaceAll('<!--', '').replaceAll('-->', '');
+	});
+
 	var asc = function(a, b) {
 		var av = $(a).attr('indicator');
 		var bv = $(b).attr('indicator');
@@ -243,6 +248,92 @@
 		$('#thidecount').text(hidecount);
 	}
 	let configExprMilliseconds = 1000 * 60 * 60 * GM_getValue('tinfoexprhours', 24 * 3); //缓存7天小时
+
+	function getUiFilters() {
+		var l1 = $("#tlabelslider").slider('values', 0);
+		var l2 = $("#tlabelslider").slider('values', 1);
+		var rate1 = $("#thumbupRateslider").slider('values', 0);
+		var rate2 = $("#thumbupRateslider").slider('values', 1);
+		var age1 = $("#tAgeSlider").slider('values', 0);
+		var age2 = $("#tAgeSlider").slider('values', 1);
+		var fc1 = $("#fcSlider").slider('values', 0);
+		var fc2 = $("#fcSlider").slider('values', 1);
+		return {
+			l1,
+			l2,
+			rate1,
+			rate2,
+			age1,
+			age2,
+			fc1,
+			fc2
+		};
+	}
+
+	function processTeacherDetailPage(jqr) {
+		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+			return val.replaceAll('<!--', '').replaceAll('-->', '');
+		});
+		var tinfo = GM_getValue(tinfokey);
+
+
+		if (jqr.find(".evaluate-content-left span").length >= 3) {
+			var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+			var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+			var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+		}
+
+		{
+			var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+			var age = Number(jqr.find(".teacher-age").text().match(num).clean("")[0]);
+			var label = (function() {
+				let j_len = jqr.find(".label").text().match(num).clean("").length;
+				let l = 0;
+				for (let j = 0; j < j_len; j++) {
+					l += Number(jqr.find(".label").text().match(num).clean("")[j]);
+				}
+				l = Math.ceil(l / 5);
+				return l;
+			})();
+			var name = jqr.find(".teacher-name").text();
+			var type = $('.s-t-top-list .li-active').text();
+			var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
+			var slevel = jqr.find('.sui-students').text();
+			var tinfo = {
+				'slevel': slevel,
+				'tage': tage,
+				'thumbup': thumbup,
+				'thumbdown': thumbdown,
+				'thumbupRate': thumbupRate,
+				'age': age,
+				'label': label,
+				'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
+				'favoritesCount': favoritesCount,
+				'name': name,
+				'type': type,
+				'expire': new Date().getTime()
+			};
+			GM_setValue(getinfokey(), tinfo);
+		} else {}
+	}
+
+
+	function gettid() {
+		//https://www.51talk.com/TeacherNew/info/t26501111
+		//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=all&has_msg=1
+		//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=good&has_msg=1
+		//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=bad&has_msg=1
+		return window.location.href.match(/(t\d+)/g);
+	}
+
+	function getinfokey() {
+		return 'tinfo-' + gettid();
+	}
+
+	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
+		processTeacherDetailPage($(document));
+	}
+
 	$(".item").each(function(index, el) {
 		submit(function(next) {
 			Pace.track(function() {
@@ -250,14 +341,13 @@
 				let tid = jqel.find(".teacher-details-link a").attr('href').replace(
 					"https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
 				var tinfokey = 'tinfo-' + tid;
-				var tinfo = GM_getValue(tinfokey, {
-					expire: new Date(1970, 1, 1).getTime()
-				});
-				if (!tinfo.expire) {
-					tinfo.expire = new Date(1970, 1, 1).getTime();
-				}
-				if (new Date().getTime() - tinfo.expire < configExprMilliseconds) {
-					if (tinfo) {
+				var tinfo = GM_getValue(tinfokey);
+				if (tinfo) {
+					if (!tinfo.expire) {
+						tinfo.expire = new Date(1970, 1, 1).getTime();
+					}
+					if (new Date().getTime() - tinfo.expire < configExprMilliseconds) {
+
 						updateTeacherinfoToUI(jqel, tinfo);
 						next();
 						return true;
@@ -273,6 +363,10 @@
 					dateType: 'html',
 					success: function(r) {
 						var jqr = $(r);
+						if (jqr.find('.teacher-name-tit').length > 0) {
+							var tempitem = jqr.find('.teacher-name-tit')[0];
+							tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
+						}
 						if (jqr.find(".evaluate-content-left span").length >= 3) {
 							var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
@@ -327,26 +421,6 @@
 		});
 	});
 
-	function getUiFilters() {
-		var l1 = $("#tlabelslider").slider('values', 0);
-		var l2 = $("#tlabelslider").slider('values', 1);
-		var rate1 = $("#thumbupRateslider").slider('values', 0);
-		var rate2 = $("#thumbupRateslider").slider('values', 1);
-		var age1 = $("#tAgeSlider").slider('values', 0);
-		var age2 = $("#tAgeSlider").slider('values', 1);
-		var fc1 = $("#fcSlider").slider('values', 0);
-		var fc2 = $("#fcSlider").slider('values', 1);
-		return {
-			l1,
-			l2,
-			rate1,
-			rate2,
-			age1,
-			age2,
-			fc1,
-			fc2
-		};
-	}
 	submit(function(next) {
 		var autonextpage = GM_getValue('autonextpage', 0);
 		if (autonextpage > 0) {
@@ -638,7 +712,7 @@
 							{
 								name: 'favoritesCount',
 								index: 'favoritesCount',
-								width: 30,
+								width: 35,
 								align: "right",
 								sorttype: "float",
 								searchoptions: {
@@ -668,7 +742,7 @@
 							{
 								name: 'thumbup',
 								index: 'thumbup',
-								width: 25,
+								width: 40,
 								align: "right",
 								sorttype: "float",
 								searchoptions: {
@@ -726,7 +800,7 @@
 						viewrecords: true,
 						sortorder: "desc",
 						grouping: false,
-						autowidth: true,
+						//autowidth: true,
 						caption: ""
 					}).jqGrid('filterToolbar', {
 						searchOperators: true
@@ -747,6 +821,10 @@
 	submit(function(next) {
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
+		if (window.location.href.toLocaleLowerCase().contains("teachernew/info")) {
+			$("#tabs").tabs("option", "active", 1);
+			$("#tabs").tabs("option", "disabled", [0]);
+		}
 		$('#filterdialog').dialog({
 			'width': '650'
 		});
