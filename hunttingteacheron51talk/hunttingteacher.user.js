@@ -248,7 +248,7 @@
 		$('#thidecount').text(hidecount);
 	}
 	let configExprMilliseconds = 1000 * 60 * 60 * GM_getValue('tinfoexprhours', 24 * 3); //缓存7天小时
-
+	let num = /[0-9]*/g;
 	function getUiFilters() {
 		var l1 = $("#tlabelslider").slider('values', 0);
 		var l2 = $("#tlabelslider").slider('values', 1);
@@ -274,19 +274,19 @@
 		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
 			return val.replaceAll('<!--', '').replaceAll('-->', '');
 		});
-		var tinfo = GM_getValue(tinfokey);
+		var tinfo = GM_getValue(getinfokey(),{});
 
 
 		if (jqr.find(".evaluate-content-left span").length >= 3) {
-			var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-			var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+			tinfo.thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
 		}
 
 		{
-			var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-			var age = Number(jqr.find(".teacher-age").text().match(num).clean("")[0]);
-			var label = (function() {
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+			tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+			tinfo.label = (function() {
 				let j_len = jqr.find(".label").text().match(num).clean("").length;
 				let l = 0;
 				for (let j = 0; j < j_len; j++) {
@@ -295,26 +295,13 @@
 				l = Math.ceil(l / 5);
 				return l;
 			})();
-			var name = jqr.find(".teacher-name").text();
-			var type = $('.s-t-top-list .li-active').text();
-			var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
-			var slevel = jqr.find('.sui-students').text();
-			var tinfo = {
-				'slevel': slevel,
-				'tage': tage,
-				'thumbup': thumbup,
-				'thumbdown': thumbdown,
-				'thumbupRate': thumbupRate,
-				'age': age,
-				'label': label,
-				'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
-				'favoritesCount': favoritesCount,
-				'name': name,
-				'type': type,
-				'expire': new Date().getTime()
-			};
+			tinfo.name = jqr.find(".t-name").text();
+			tinfo.type = $('.s-t-top-list .li-active').text();
+			tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+			tinfo.slevel = jqr.find('.sui-students').text();
+
 			GM_setValue(getinfokey(), tinfo);
-		} else {}
+		}
 	}
 
 
@@ -355,7 +342,7 @@
 				}
 				// ajax 请求一定要包含在一个函数中
 				var start = (new Date()).getTime();
-				let num = /[0-9]*/g;
+			
 				$.ajax({
 					url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid +
 						'&type=bad&has_msg=1',
