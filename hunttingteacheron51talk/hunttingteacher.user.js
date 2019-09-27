@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.11
+// @version      1.0.12
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
 // @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
 // @match        *://www.51talk.com/ReserveNew/index*
-// @match        *://www.51talk.com/TeacherNew/info/*
+// @match        *://www.51talk.com/TeacherNew/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -249,6 +249,7 @@
 	}
 	let configExprMilliseconds = 1000 * 60 * 60 * GM_getValue('tinfoexprhours', 24 * 3); //缓存7天小时
 	let num = /[0-9]*/g;
+
 	function getUiFilters() {
 		var l1 = $("#tlabelslider").slider('values', 0);
 		var l2 = $("#tlabelslider").slider('values', 1);
@@ -274,34 +275,35 @@
 		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
 			return val.replaceAll('<!--', '').replaceAll('-->', '');
 		});
-		var tinfo = GM_getValue(getinfokey(),{});
-
-
-		if (jqr.find(".evaluate-content-left span").length >= 3) {
+		var tinfo = GM_getValue(getinfokey(), {});
+		tinfo.label = (function() {
+			let l = 0;
+			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
+				l += Number(val);
+			});
+			l = Math.ceil(l / 5);
+			return l;
+		})();
+		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
 			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			tinfo.thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
-		}
-
-		{
-			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-			tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
-			tinfo.label = (function() {
-				let j_len = jqr.find(".label").text().match(num).clean("").length;
-				let l = 0;
-				for (let j = 0; j < j_len; j++) {
-					l += Number(jqr.find(".label").text().match(num).clean("")[j]);
-				}
-				l = Math.ceil(l / 5);
-				return l;
-			})();
-			tinfo.name = jqr.find(".t-name").text();
-			tinfo.type = $('.s-t-top-list .li-active').text();
-			tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
 			tinfo.slevel = jqr.find('.sui-students').text();
-
-			GM_setValue(getinfokey(), tinfo);
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
 		}
+		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+
+		tinfo.name = jqr.find(".t-name").text().trim();
+		tinfo.type = $('.s-t-top-list .li-active').text().trim();
+		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+
+
+		tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+		//tinfo. type = $('.s-t-top-list .li-active').text();
+		tinfo.expire = new Date().getTime();
+		GM_setValue(getinfokey(), tinfo);
+
 	}
 
 
@@ -342,7 +344,7 @@
 				}
 				// ajax 请求一定要包含在一个函数中
 				var start = (new Date()).getTime();
-			
+
 				$.ajax({
 					url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid +
 						'&type=bad&has_msg=1',
@@ -369,6 +371,7 @@
 								l = Math.ceil(l / 5);
 								return l;
 							})();
+							var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
 							var name = jqel.find(".teacher-name").text();
 							var type = $('.s-t-top-list .li-active').text();
 							var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
@@ -384,9 +387,16 @@
 								'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
 								'favoritesCount': favoritesCount,
 								'name': name,
-								'type': type,
+
+								'isfavorite': isfavorite,
 								'expire': new Date().getTime()
 							};
+							if (type != '收藏外教') {
+								tinfo.type = type;
+							} else {
+								//tinfo.type=type
+								tinfo.isfavorite = true;
+							}
 							GM_setValue(tinfokey, tinfo);
 							updateTeacherinfoToUI(jqel, tinfo);
 						} else {
@@ -625,21 +635,11 @@
 						datatype: "local",
 						height: 240,
 						//{ 'thumbup': thumbup, 'thumbdown': thumbdown, 'thumbupRate': thumbupRate, 'age': age, 'label': label, 'indicator': label * thumbupRate, 'favoritesCount': favoritesCount,'name':name }
-						colNames: ['type',
-							'name',
-							'indicator',
-							'标签',
-							'率%',
-							'收藏数',
-							'学',
-							'教',
-							'好',
-							'差',
-							'age',
-							'Update'
+						colNames: ['类', '爱', '名', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
+							'更新'
 						],
 						colModel: [
-							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
+							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}	
 							{
 								name: 'type',
 								index: 'type',
@@ -655,7 +655,21 @@
 									else return 'na';
 								}
 							},
-
+							{
+								name: 'isfavorite',
+								index: 'isfavorite',
+								width: 49,
+								sorttype: "string",
+								align: 'left',
+								searchoptions: {
+									sopt: ['cn']
+								},
+								formatter: function(value, options, rData) {
+									if (value)
+										return '收藏';
+									else return '';
+								}
+							},
 							{
 								name: 'tid',
 								index: 'tid',
@@ -808,7 +822,7 @@
 	submit(function(next) {
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
-		if (window.location.href.toLocaleLowerCase().contains("teachernew/info")) {
+		if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
 			$("#tabs").tabs("option", "active", 1);
 			$("#tabs").tabs("option", "disabled", [0]);
 		}
