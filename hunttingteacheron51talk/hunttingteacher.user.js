@@ -684,7 +684,7 @@
 							{
 								name: 'indicator',
 								index: 'indicator',
-								width: 35,
+								width: 45,
 								sorttype: "float",
 								align: 'right',
 								searchoptions: {
