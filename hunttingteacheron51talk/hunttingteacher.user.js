@@ -580,7 +580,7 @@
 					showLabel: false
 				}) //submit suggestion
 				.prop('href',
-					'https://github.com/niubilityfrontend/userscripts/hunttingteacheron51talk/issues/new?assignees=&labels=&template=feature_request.md&title='
+					'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title='
 				)
 				.prop('target', '_blank')
 				.end().eq(5).button({
