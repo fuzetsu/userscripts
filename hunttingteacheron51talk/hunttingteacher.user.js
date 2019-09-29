@@ -182,6 +182,7 @@
 		}
 		$.dequeue(document);
 	};
+	
 	let maxrate = 0,
 		minrate = 99999,
 		maxlabel = 0,
@@ -271,42 +272,6 @@
 		};
 	}
 
-	function processTeacherDetailPage(jqr) {
-		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
-			return val.replaceAll('<!--', '').replaceAll('-->', '');
-		});
-		var tinfo = GM_getValue(getinfokey(), {});
-		tinfo.label = (function() {
-			let l = 0;
-			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
-				l += Number(val);
-			});
-			l = Math.ceil(l / 5);
-			return l;
-		})();
-		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
-			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.slevel = jqr.find('.sui-students').text();
-			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-		}
-		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
-
-		tinfo.name = jqr.find(".t-name").text().trim();
-		tinfo.type = $('.s-t-top-list .li-active').text().trim();
-		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
-
-
-		tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
-		//tinfo. type = $('.s-t-top-list .li-active').text();
-		tinfo.expire = new Date().getTime();
-		GM_setValue(getinfokey(), tinfo);
-
-	}
-
-
 	function gettid() {
 		//https://www.51talk.com/TeacherNew/info/t26501111
 		//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=all&has_msg=1
@@ -317,10 +282,6 @@
 
 	function getinfokey() {
 		return 'tinfo-' + gettid();
-	}
-
-	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
-		processTeacherDetailPage($(document));
 	}
 
 	$(".item").each(function(index, el) {
@@ -833,4 +794,44 @@
 		$('#filterdialog').dialog("open");
 		next();
 	});
+
+	function processTeacherDetailPage(jqr) {
+		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+			return val.replaceAll('<!--', '').replaceAll('-->', '');
+		});
+		var tinfo = GM_getValue(getinfokey(), {});
+		tinfo.label = (function() {
+			let l = 0;
+			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
+				l += Number(val);
+			});
+			l = Math.ceil(l / 5);
+			return l;
+		})();
+		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+			tinfo.slevel = jqr.find('.sui-students').text();
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+		}
+		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+
+		tinfo.name = jqr.find(".t-name").text().trim();
+		tinfo.type = $('.s-t-top-list .li-active').text().trim();
+		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+
+
+		tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+		//tinfo. type = $('.s-t-top-list .li-active').text();
+		tinfo.expire = new Date().getTime();
+		GM_setValue(getinfokey(), tinfo);
+
+	}
+
+	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
+		processTeacherDetailPage($(document));
+	}
+
 })();
