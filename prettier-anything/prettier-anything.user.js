@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.3
+// @version      0.0.4
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
@@ -47,7 +47,10 @@ const load = async () => {
 
 window.addEventListener('keydown', e => {
   if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
-    const code = document.getSelection().toString()
+    const elem = document.activeElement
+    if (!elem || !['INPUT', 'TEXTAREA'].includes(elem.nodeName)) return
+    const { selectionStart: start, selectionEnd: end } = elem
+    const code = elem.value.slice(start, end)
     const clip = e.ctrlKey
     p('key combo HIT, selection = ', code, '; clip = ', clip)
     if (!code) return p('no selection, so nothing to do')
@@ -65,7 +68,10 @@ window.addEventListener('keydown', e => {
         GM_setClipboard(formatted)
         document.getSelection().empty()
       } else {
-        document.execCommand('insertText', false, formatted)
+        // set value directly in firefox
+        if (typeof InstallTrigger !== 'undefined')
+          elem.value = elem.value.slice(0, start) + formatted + elem.value.slice(end)
+        else document.execCommand('insertText', false, formatted)
       }
       p('BEFORE:\n', code)
       p('AFTER:\n', formatted)
