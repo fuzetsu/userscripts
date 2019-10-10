@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.7
+// @version      0.1.0
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
