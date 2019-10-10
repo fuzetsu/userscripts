@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.5
+// @version      0.0.6
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
@@ -92,7 +92,7 @@ const prettify = async clip => {
 
 window.addEventListener('keydown', e => {
   if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
+    e.preventDefault()
     prettify(e.ctrlKey)
-    return false
   }
 })
