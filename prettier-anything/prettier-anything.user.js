@@ -104,6 +104,7 @@ const prettify = async clip => {
   p('Loaded, delta = ', Date.now() - loadStart)
   const formatted = prettier.format(code, {
     ...JSON.parse(config.prettierrc || '{}'),
+    parser: 'babel',
     plugins: prettierPlugins
   })
   if (clip) {
