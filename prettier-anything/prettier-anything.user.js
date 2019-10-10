@@ -2,13 +2,13 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.4
+// @version      0.0.5
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-/* global prettier prettierPlugins GM_setClipboard, GM_xmlhttpRequest */
+/* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest */
 
 'use strict'
 
@@ -46,8 +46,7 @@ const load = () => {
 const getSelection = () => {
   const elem = document.activeElement
   if (['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
-    const { selectionStart: start, selectionEnd: end } = elem
-    return elem.value.slice(start, end)
+    return elem.value.slice(elem.selectionStart, elem.selectionEnd)
   } else if (elem.contentEditable) {
     if (!document.getSelection().toString()) return
     document.execCommand('copy')
@@ -59,44 +58,41 @@ const getSelection = () => {
 
 const insertText = text => {
   const elem = document.activeElement
-  if (['INPUT', 'TEXTAREA'].includes(elem.nodeName) && typeof InstallTrigger !== 'undefined') {
-    console.log('blahhh')
-    const { selectionStart: start, selectionEnd: end } = elem
-    elem.value = elem.value.slice(0, start) + text + elem.value.slice(end)
+  if (typeof InstallTrigger !== 'undefined' && ['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
+    elem.value =
+      elem.value.slice(0, elem.selectionStart) + text + elem.value.slice(elem.selectionEnd)
   } else {
     document.execCommand('insertText', false, text)
   }
 }
 
-window.addEventListener('keydown', e => {
-  console.log(e)
-  if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
-    ;(async () => {
-      const code = await getSelection()
-      const clip = e.ctrlKey
-      p('key combo HIT, selection = ', code, '; clip = ', clip)
-      if (!code) return p('no selection, so nothing to do')
-      e.preventDefault()
-      p('--- PRETTIER START ---')
-      p('Loading Prettier')
-      const loadStart = Date.now()
+const prettify = async clip => {
+  const code = getSelection()
+  p('key combo HIT, selection = ', code, '; clip = ', clip)
+  if (!code) return p('no selection, so nothing to do')
+  p('--- PRETTIER START ---')
+  p('Loading Prettier')
+  const loadStart = Date.now()
+  await load()
+  p('Loaded, delta = ', Date.now() - loadStart)
+  const formatted = prettier.format(code, {
+    ...config,
+    plugins: prettierPlugins
+  })
+  if (clip) {
+    GM_setClipboard(formatted)
+    document.getSelection().empty()
+  } else {
+    insertText(formatted)
+  }
+  p('BEFORE:\n', code)
+  p('AFTER:\n', formatted)
+  p('--- PRETTIER END ---')
+}
 
-      await load()
-      p('Loaded, delta = ', Date.now() - loadStart)
-      const formatted = prettier.format(code, {
-        ...config,
-        plugins: prettierPlugins
-      })
-      if (clip) {
-        GM_setClipboard(formatted)
-        document.getSelection().empty()
-      } else {
-        insertText(formatted)
-      }
-      p('BEFORE:\n', code)
-      p('AFTER:\n', formatted)
-      p('--- PRETTIER END ---')
-    })()
+window.addEventListener('keydown', e => {
+  if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
+    prettify(e.ctrlKey)
     return false
   }
 })
