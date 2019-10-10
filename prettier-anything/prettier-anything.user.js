@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.6
+// @version      0.0.7
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @grant        GM_setClipboard
@@ -102,11 +102,13 @@ const prettify = async clip => {
   const loadStart = Date.now()
   await load()
   p('Loaded, delta = ', Date.now() - loadStart)
-  const formatted = prettier.format(code, {
+  const conf = {
     ...JSON.parse(config.prettierrc || '{}'),
     parser: 'babel',
     plugins: prettierPlugins
-  })
+  }
+  p('formatting using conf:', conf)
+  const formatted = prettier.format(code, conf)
   if (clip) {
     GM_setClipboard(formatted)
     document.getSelection().empty()
