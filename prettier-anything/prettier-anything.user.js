@@ -7,8 +7,12 @@
 // @match        *://*/*
 // @grant        GM_setClipboard
 // @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/97da73126493ac16e0a147534edef3fe8665ef16/libs/gm_config.js
 // ==/UserScript==
-/* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest */
+/* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
 
 'use strict'
 
@@ -27,12 +31,35 @@ const loadDep = url =>
     })
   })
 
-const config = {
-  parser: 'babel',
-  printWidth: 100,
-  semi: false,
-  singleQuote: true
-}
+const Config = GM_config([
+  {
+    key: 'prettierrc',
+    label: 'Prettier Config',
+    default: '{}',
+    type: 'text',
+    multiline: true,
+    resizable: true
+  },
+  {
+    key: 'binding',
+    label: 'Key Binding',
+    type: 'keybinding',
+    default: { altKey: true, shiftKey: true, key: 'I' },
+    requireModifier: true,
+    requireKey: true
+  },
+  {
+    key: 'copyBinding',
+    label: 'Copy Key Binding',
+    type: 'keybinding',
+    default: { ctrlKey: true, altKey: true, shiftKey: true, key: 'I' },
+    requireModifier: true,
+    requireKey: true
+  }
+])
+GM_registerMenuCommand('Prettier Anywhere Settings', Config.setup)
+let config = Config.load()
+Config.onsave = cfg => (config = cfg)
 
 const p = (...args) => (console.log(...args), args[0])
 
@@ -76,7 +103,7 @@ const prettify = async clip => {
   await load()
   p('Loaded, delta = ', Date.now() - loadStart)
   const formatted = prettier.format(code, {
-    ...config,
+    ...JSON.parse(config.prettierrc || '{}'),
     plugins: prettierPlugins
   })
   if (clip) {
@@ -90,9 +117,19 @@ const prettify = async clip => {
   p('--- PRETTIER END ---')
 }
 
+const keyBindingsMatch = (a, b) =>
+  !!a.ctrlKey === !!b.ctrlKey &&
+  !!a.altKey === !!b.altKey &&
+  !!a.shiftKey === !!b.shiftKey &&
+  !!a.metaKey === !!b.metaKey &&
+  a.key.toUpperCase() === b.key.toUpperCase()
+
 window.addEventListener('keydown', e => {
-  if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
+  if (keyBindingsMatch(e, config.binding)) {
     e.preventDefault()
-    prettify(e.ctrlKey)
+    prettify()
+  } else if (keyBindingsMatch(e, config.copyBinding)) {
+    e.preventDefault()
+    prettify(true)
   }
 })
