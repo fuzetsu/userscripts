@@ -10,7 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/97da73126493ac16e0a147534edef3fe8665ef16/libs/gm_config.js
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/b06cf8745c97944945b646fde8a44888a939110e/libs/gm_config.js
 // ==/UserScript==
 /* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
 
