@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.14
+// @version      1.0.15
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -302,9 +302,9 @@
 			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.slevel = jqr.find('.sui-students').text();
-			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+			tinfo.slevel = jqr.find('.sui-students').text();			
 		}
+		tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
 		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
 		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
 
