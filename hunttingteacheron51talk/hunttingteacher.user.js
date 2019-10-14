@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.13
+// @version      1.0.14
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -182,7 +182,7 @@
 		}
 		$.dequeue(document);
 	};
-	
+
 	let maxrate = 0,
 		minrate = 99999,
 		maxlabel = 0,
@@ -248,6 +248,7 @@
 		$('#tcount').text(tcount);
 		$('#thidecount').text(hidecount);
 	}
+
 	let configExprMilliseconds = 1000 * 60 * 60 * GM_getValue('tinfoexprhours', 24 * 3); //缓存7天小时
 	let num = /[0-9]*/g;
 
@@ -282,6 +283,43 @@
 
 	function getinfokey() {
 		return 'tinfo-' + gettid();
+	}
+
+	function processTeacherDetailPage(jqr) {
+		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+			return val.replaceAll('<!--', '').replaceAll('-->', '');
+		});
+		var tinfo = GM_getValue(getinfokey(), {});
+		tinfo.label = (function() {
+			let l = 0;
+			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
+				l += Number(val);
+			});
+			l = Math.ceil(l / 5);
+			return l;
+		})();
+		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+			tinfo.slevel = jqr.find('.sui-students').text();
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+		}
+		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+
+		tinfo.name = jqr.find(".t-name").text().trim();
+		//无法获取type
+		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
+		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+		tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+		tinfo.expire = new Date().getTime();
+		GM_setValue(getinfokey(), tinfo);
+
+	}
+
+	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
+		processTeacherDetailPage($(document));
 	}
 
 	$(".item").each(function(index, el) {
@@ -632,12 +670,12 @@
 								}
 							},
 							{
-								name: 'tid',
-								index: 'tid',
+								name: 'name',
+								index: 'name',
 								width: 95,
 								sorttype: "string",
 								formatter: function(value, options, rData) {
-									return "<a href='http://www.51talk.com/TeacherNew/info/" + value +
+									return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] +
 										"' target='_blank' style='color:blue'>" + (!rData[
 											'name'] ? value : rData['name']) + "</a>";
 								}
@@ -795,44 +833,6 @@
 		next();
 	});
 
-	function processTeacherDetailPage(jqr) {
-		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
-			return val.replaceAll('<!--', '').replaceAll('-->', '');
-		});
-		var tinfo = GM_getValue(getinfokey(), {});
-		tinfo.label = (function() {
-			let l = 0;
-			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
-				l += Number(val);
-			});
-			l = Math.ceil(l / 5);
-			return l;
-		})();
-		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
-			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.slevel = jqr.find('.sui-students').text();
-			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-		}
-		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
 
-		tinfo.name = jqr.find(".t-name").text().trim();
-		//无法获取type
-		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
-		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
-
-
-		tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
-		//tinfo. type = $('.s-t-top-list .li-active').text();
-		tinfo.expire = new Date().getTime();
-		GM_setValue(getinfokey(), tinfo);
-
-	}
-
-	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
-		processTeacherDetailPage($(document));
-	}
 
 })();
