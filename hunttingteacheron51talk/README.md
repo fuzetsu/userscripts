@@ -1,7 +1,7 @@
 # 51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5
 ## 功能 What
-![instructions](Instructions.png)
-![instructions](Instructions2.png)
+![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/Instructions.png)
+![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/Instructions2.png)
 ### 页面优化
 - 显示教师年龄
 - 有效经验值=所有标签数量求和后除以5的近似整数，显示在教师名字下方【优选外教推荐值为300以上，欧美外教推荐100以上】
@@ -37,9 +37,9 @@
 - 'age' 教师年龄
 
 ## 如何使用 How
-- 这是一个油猴（tampermonkey）脚本，需要先学习如何安装使用油猴（如果这是你的第一次，只要学会了，你一定会爱上他），学习/安装油猴请移步https://greasyfork.org/zh-CN
-- 此脚本的发布地址：https://greasyfork.org/zh-CN/scripts/388276-%E8%BE%85%E5%8A%A9%E9%80%89%E8%80%81%E5%B8%88-%E6%9C%89%E6%95%88%E7%BB%8F%E9%AA%8C%E5%80%BC-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-top-5
-- 安装油猴浏览器插件后，极力推荐安装一个Userscript+的脚本，他可以根据你浏览的网站，列出所有可以使用的脚本，由你选择安装与否。https://greasyfork.org/zh-CN/scripts/24508-userscript-show-site-all-userjs
+- 这是一个油猴（tampermonkey）脚本，需要先学习如何安装使用油猴（如果这是你的第一次，只要学会了，你一定会爱上他），学习/安装油猴请移步[Greasyfork中文网站](https://greasyfork.org/zh-CN)
+- 此脚本的发布地址：[Greasyfork](https://greasyfork.org/zh-CN/scripts/388276-%E8%BE%85%E5%8A%A9%E9%80%89%E8%80%81%E5%B8%88-%E6%9C%89%E6%95%88%E7%BB%8F%E9%AA%8C%E5%80%BC-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-top-5)
+- 安装油猴浏览器插件后，极力推荐安装一个Userscript+的脚本，他可以根据你浏览的网站，列出所有可以使用的脚本，由你选择安装与否。[Userscript+ from greasyfork](https://greasyfork.org/zh-CN/scripts/24508-userscript-show-site-all-userjs)
 
 ## 更新日志
 

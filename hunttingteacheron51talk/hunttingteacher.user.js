@@ -596,7 +596,7 @@
 					icon: 'ui-icon-help',
 					showLabel: false
 				}) //系统帮助
-				.prop('href', 'https://github.com/niubilityfrontend/userscripts/hunttingteacheron51talk/blob/master/README.md')
+				.prop('href', 'https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/README.md')							   
 				.prop('target', '_blank')
 				.end().eq(6).button({
 					icon: 'ui-icon-seek-next',
