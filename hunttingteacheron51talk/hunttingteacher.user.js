@@ -302,7 +302,7 @@
 			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.slevel = jqr.find('.sui-students').text();			
+			tinfo.slevel = jqr.find('.sui-students').text();
 		}
 		tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
 		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
@@ -596,7 +596,8 @@
 					icon: 'ui-icon-help',
 					showLabel: false
 				}) //系统帮助
-				.prop('href', 'https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/README.md')							   
+				.prop('href',
+					'https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/README.md')
 				.prop('target', '_blank')
 				.end().eq(6).button({
 					icon: 'ui-icon-seek-next',
@@ -820,6 +821,7 @@
 	});
 	submit(function(next) {
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
+		$('#tabs-1').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
 		if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
 			$("#tabs").tabs("option", "active", 1);
