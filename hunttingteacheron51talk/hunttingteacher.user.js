@@ -303,7 +303,7 @@
 			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
 			tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
-			tinfo.slevel = jqr.find('.sui-students').text();			
+			tinfo.slevel = jqr.find('.sui-students').text();
 			tinfo.expire = new Date().getTime();
 		}
 		tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
@@ -312,7 +312,7 @@
 		tinfo.name = jqr.find(".t-name").text().trim();
 		//无法获取type
 		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
-		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);		
+		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
 		GM_setValue(getinfokey(), tinfo);
 
 	}
@@ -571,7 +571,7 @@
 				.css({
 					width: '20px'
 				})
-				.val(GM_getValue('tinfoexprhours', configExprMilliseconds/3600000))
+				.val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000))
 				.end().eq(3).button({
 					icon: 'ui-icon-trash',
 					showLabel: false
