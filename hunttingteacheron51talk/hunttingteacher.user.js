@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.16
+// @version      1.0.17
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -249,7 +249,7 @@
 		$('#thidecount').text(hidecount);
 	}
 
-	let configExprMilliseconds = 1000 * 60 * 60 * GM_getValue('tinfoexprhours', 24 * 3); //缓存7天小时
+	let configExprMilliseconds = 3600000 * GM_getValue('tinfoexprhours', 24); //缓存7天小时
 	let num = /[0-9]*/g;
 
 	function getUiFilters() {
@@ -571,7 +571,7 @@
 				.css({
 					width: '20px'
 				})
-				.val(GM_getValue('tinfoexprhours', 12))
+				.val(GM_getValue('tinfoexprhours', configExprMilliseconds/3600000))
 				.end().eq(3).button({
 					icon: 'ui-icon-trash',
 					showLabel: false
