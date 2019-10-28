@@ -646,7 +646,7 @@
 						height: 240,
 						//{ 'thumbup': thumbup, 'thumbdown': thumbdown, 'thumbupRate': thumbupRate, 'age': age, 'label': label, 'indicator': label * thumbupRate, 'favoritesCount': favoritesCount,'name':name }
 						colNames: ['类', '爱', '名', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
-							'更新', 'effective'
+							'更新', '批号'
 						],
 						colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
