@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.17
+// @version      1.0.18
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -482,14 +482,15 @@
 				filterconfig.l2 = l2;
 				GM_setValue('filterconfig', filterconfig);
 				executeFilters(uifilters);
-			}); { //配置信息兼容处理 0.1.25 增加收藏次数
-				var filterconfig = GM_getValue('filterconfig');
-				if (filterconfig && (!filterconfig.fc1 || !filterconfig.fc2)) {
-					filterconfig.fc1 = minfc;
-					filterconfig.fc2 = maxfc;
-					GM_setValue('filterconfig', filterconfig);
-				}
-			}
+			}); 
+			// { //配置信息兼容处理 0.1.25 增加收藏次数
+			// 	var filterconfig = GM_getValue('filterconfig');
+			// 	if (filterconfig && (!filterconfig.fc1 || !filterconfig.fc2)) {
+			// 		filterconfig.fc1 = minfc;
+			// 		filterconfig.fc2 = maxfc;
+			// 		GM_setValue('filterconfig', filterconfig);
+			// 	}
+			// }
 			$("#fcSlider").slider({
 				range: true,
 				min: minfc,
