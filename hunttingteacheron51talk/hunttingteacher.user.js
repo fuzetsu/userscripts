@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.18
+// @version      1.0.19
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -97,6 +97,13 @@
 			default: 10,
 			type: 'dropdown',
 			values: [0, 5, 10, 20, 50]
+		},
+		{
+			key: 'batchtimezoneMinutes',
+			label: '预定耗费时间（分钟）',
+			default: 60,
+			type: 'dropdown',
+			values: [5, 10, 20, 30, 50, 60, 90, 120]
 		},
 		{
 			key: 'version',
@@ -330,11 +337,13 @@
 				var tinfokey = 'tinfo-' + tid;
 				var tinfo = GM_getValue(tinfokey);
 				if (tinfo) {
+					var now = new Date().getTime();
 					if (!tinfo.expire) {
 						tinfo.expire = new Date(1970, 1, 1).getTime();
 					}
-					if (new Date().getTime() - tinfo.expire < configExprMilliseconds) {
-
+					tinfo.effectivetime = (now / 1000 / 60 / conf.batchtimezoneMinutes).toFixed(0);
+					GM_setValue(tinfokey, tinfo);
+					if (now - tinfo.expire < configExprMilliseconds) {
 						updateTeacherinfoToUI(jqel, tinfo);
 						next();
 						return true;
@@ -387,7 +396,8 @@
 								'name': name,
 
 								'isfavorite': isfavorite,
-								'expire': new Date().getTime()
+								'expire': new Date().getTime(),
+								'effectivetime': (new Date().getTime() / 1000 / 60 / conf.batchtimezoneMinutes).toFixed(0)
 							};
 							if (type != '收藏外教') {
 								tinfo.type = type;
@@ -482,7 +492,7 @@
 				filterconfig.l2 = l2;
 				GM_setValue('filterconfig', filterconfig);
 				executeFilters(uifilters);
-			}); 
+			});
 			// { //配置信息兼容处理 0.1.25 增加收藏次数
 			// 	var filterconfig = GM_getValue('filterconfig');
 			// 	if (filterconfig && (!filterconfig.fc1 || !filterconfig.fc2)) {
@@ -636,10 +646,10 @@
 						height: 240,
 						//{ 'thumbup': thumbup, 'thumbdown': thumbdown, 'thumbupRate': thumbupRate, 'age': age, 'label': label, 'indicator': label * thumbupRate, 'favoritesCount': favoritesCount,'name':name }
 						colNames: ['类', '爱', '名', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
-							'更新'
+							'更新', 'effective'
 						],
 						colModel: [
-							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}	
+							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 							{
 								name: 'type',
 								index: 'type',
@@ -792,13 +802,27 @@
 									} else return 'na';
 								}
 							},
+							{
+								name: 'effectivetime',
+								index: 'effectivetime',
+								width: 40,
+								sorttype: "Date",
+								align: 'right',
+								searchoptions: {
+									sopt: ['cn']
+								},
+								formatter: function(value, options, rData) {
+									return value;
+								}
+							},
 						],
 						multiselect: false,
 						rowNum: 10,
 						rowList: [5, 10, 20, 30],
 						pager: '#pager5',
-						sortname: 'indicator',
+						sortname: 'effectivetime desc,indicator desc',
 						viewrecords: true,
+						multiSort: true,
 						sortorder: "desc",
 						grouping: false,
 						//autowidth: true,
