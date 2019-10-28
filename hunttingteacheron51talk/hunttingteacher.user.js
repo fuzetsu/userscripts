@@ -452,12 +452,13 @@
 				'<li><a href="#tabs-1">Search Teachers</a></li>' +
 				'<li><a href="#tabs-2">Sorted Teachers</a></li>' +
 				'</ul>' +
-				'<div id="tabs-1">' +
-				"当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " +
-				"<div id='buttons'>" +
+				"<br /><div id='buttons'>" +
 				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取" +
 				conf.pagecount + "页</button>&nbsp;" +
 				"</div>" +
+				'<div id="tabs-1">' +
+				"当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " +
+
 				"<br />有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>" +
 				"收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>" +
 				"好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>" +
@@ -623,7 +624,7 @@
 				});
 
 			$("#tabs").tabs({
-				active: '#tabs-1',
+				active: '#tabs-2',
 				activate: function(event, ui) {
 					var teachers = [];
 					$.each(GM_listValues(), function(i, item) {
@@ -847,8 +848,8 @@
 		$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
 		$('#tabs-1').before($(".s-t-page").prop('outerHTML'));
 		sortByIndicator(desc);
+		$("#tabs").tabs("option", "active", 1);
 		if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
-			$("#tabs").tabs("option", "active", 1);
 			$("#tabs").tabs("option", "disabled", [0]);
 		}
 		$('#filterdialog').dialog({
