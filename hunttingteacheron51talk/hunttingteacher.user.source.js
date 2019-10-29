@@ -650,7 +650,7 @@
 					}
 				}) // 缓存过期时间（小时）
 				.css({
-					width: '20px'
+					width: '40px'
 				})
 				.val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000))
 				.end().eq(3).button({
