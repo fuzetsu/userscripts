@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.20
+// @version      1.0.21
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -117,7 +117,7 @@
 			label: '自动获取页数',
 			default: 10,
 			type: 'dropdown',
-			values: [0, 5, 10, 20, 50]
+			values: [0, 5, 10, 20, 50, 1000]
 		},
 		{
 			key: 'batchtimezoneMinutes',
@@ -358,7 +358,7 @@
 		processTeacherDetailPage($(document));
 	}
 	submit(function(next) {
-		var autonextpage = GM_getValue('autonextpage', 0);
+		var autonextpage = GM_getValue('autonextpage', 0) - 1;
 		if (autonextpage > 0) {
 			let dialog = $(
 				`<div id="dialog-confirm" title="是否停止自动寻找老师?">
