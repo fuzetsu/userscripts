@@ -578,7 +578,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				icon: 'ui-icon-help',
 				showLabel: false
 			}) //系统帮助
-			.prop('href', 'https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/README.md').prop('target', '_blank').end().eq(6).button({
+			.prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end().eq(6).button({
 				icon: 'ui-icon-seek-next',
 				showLabel: true
 			}) //submit suggestion
