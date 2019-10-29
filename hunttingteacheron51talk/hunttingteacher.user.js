@@ -300,7 +300,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	}
 	submit(function (next) {
 		var autonextpage = GM_getValue('autonextpage', 0) - 1;
-		if (autonextpage > 0) {
+		if (autonextpage > 0 && $('.s-t-page .next-page').length > 0) {
 			var _buttons;
 
 			var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + autonextpage + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + autonextpage * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');

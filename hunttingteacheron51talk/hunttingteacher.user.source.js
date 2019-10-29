@@ -359,7 +359,7 @@
 	}
 	submit(function(next) {
 		var autonextpage = GM_getValue('autonextpage', 0) - 1;
-		if (autonextpage > 0) {
+		if (autonextpage > 0 && $('.s-t-page .next-page').length > 0) {
 			let dialog = $(
 				`<div id="dialog-confirm" title="是否停止自动寻找老师?">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
