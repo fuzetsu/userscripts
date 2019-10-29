@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.19
+// @version      1.0.20
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -24,6 +24,26 @@
 // ==/UserScript==
 (function() {
 	'use strict';
+	/**
+	 * 提交运算函数到 document 的 fx 队列
+	 */
+	var submit = function(fun) {
+		var queue = $.queue(document, "fx", fun);
+		if (queue[0] == 'inprogress') {
+			return;
+		}
+		$.dequeue(document);
+	};
+
+	function getorAdd(key, fun) {
+		let data = sessionStorage.getItem(key);
+		if (!data) {
+			data = fun(key);
+			sessionStorage.setItem(key, data);
+			return data;
+		}
+		return data;
+	}
 
 	Pace.Options = {
 		ajax: false, // disabled
@@ -180,26 +200,8 @@
 		var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
 		$('.s-t-content.f-cb').empty().append(sortEle);
 	};
-	/**
-	 * 提交运算函数到 document 的 fx 队列
-	 */
-	var submit = function(fun) {
-		var queue = $.queue(document, "fx", fun);
-		if (queue[0] == 'inprogress') {
-			return;
-		}
-		$.dequeue(document);
-	};
 
-	function getorAdd(key, fun) {
-		let data = sessionStorage.getItem(key);
-		if (!data) {
-			data = fun(key);
-			sessionStorage.setItem(key, data);
-			return data;
-		}
-		return data;
-	}
+
 
 	function getBatchNumber() {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
@@ -207,6 +209,7 @@
 			return new Date().getTime();
 		});
 	}
+
 	$(".s-t-days-list>li").click(function() {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
 		sessionStorage.setItem(batchnumber, new Date().getTime());
@@ -354,137 +357,142 @@
 	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
 		processTeacherDetailPage($(document));
 	}
-
-	var autonextpage = GM_getValue('autonextpage', 0);
-	if (autonextpage > 0) {
-		let dialog = $(`<div id="dialog-confirm" title="是否停止自动寻找老师?">
-			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>即将获取后边${autonextpage}
-			页的数据，约${autonextpage * 28 }个教师?</p>
-			</div>`);
-		dialog.appendTo('body');
-		dialog.dialog({
-			resizable: false,
-			height: "auto",
-			width: 400,
-			modal: true,
-			buttons: {
-				"停止获取": function() {
-					$(this).dialog("close");
-				},
-				[`取${(autonextpage*0.25).toFixed(0)}页`]: function() {
-					GM_setValue('autonextpage', (autonextpage*0.25).toFixed(0));
-					$(this).dialog("close");
-				},
-				[`取${(autonextpage*0.5).toFixed(0)}页`]: function() {
-					GM_setValue('autonextpage', (autonextpage*0.5).toFixed(0));
-					$(this).dialog("close");
-				},
-				[`取${(autonextpage*0.75).toFixed(0)}页`]: function() {
-					GM_setValue('autonextpage', (autonextpage*0.75).toFixed(0));
-					$(this).dialog("close");
-				}
-			}
-		});
-	}
-
-	$(".item").each(function(index, el) {
-		submit(function(next) {
-			Pace.track(function() {
-				let jqel = $(el);
-				let tid = jqel.find(".teacher-details-link a").attr('href').replace(
-					"https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
-				var tinfokey = 'tinfo-' + tid;
-				var tinfo = GM_getValue(tinfokey);
-				if (tinfo) {
-					var now = new Date().getTime();
-					if (!tinfo.expire) {
-						tinfo.expire = new Date(1970, 1, 1).getTime();
-					}
-					tinfo.effectivetime = getBatchNumber();
-					GM_setValue(tinfokey, tinfo);
-					if (now - tinfo.expire < configExprMilliseconds) {
-						updateTeacherinfoToUI(jqel, tinfo);
-						next();
-						return true;
-					}
-				}
-				// ajax 请求一定要包含在一个函数中
-				var start = (new Date()).getTime();
-
-				$.ajax({
-					url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid +
-						'&type=bad&has_msg=1',
-					type: 'GET',
-					dateType: 'html',
-					success: function(r) {
-						var jqr = $(r);
-						if (jqr.find('.teacher-name-tit').length > 0) {
-							var tempitem = jqr.find('.teacher-name-tit')[0];
-							tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
-						}
-						if (jqr.find(".evaluate-content-left span").length >= 3) {
-							var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
-							var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-							var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
-							var label = (function() {
-								let j_len = jqel.find(".label").text().match(num).clean("").length;
-								let l = 0;
-								for (let j = 0; j < j_len; j++) {
-									l += Number(jqel.find(".label").text().match(num).clean("")[j]);
-								}
-								l = Math.ceil(l / 5);
-								return l;
-							})();
-							var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-							var name = jqel.find(".teacher-name").text();
-							var type = $('.s-t-top-list .li-active').text();
-							var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
-							var slevel = jqr.find('.sui-students').text();
-							var tinfo = {
-								'slevel': slevel,
-								'tage': tage,
-								'thumbup': thumbup,
-								'thumbdown': thumbdown,
-								'thumbupRate': thumbupRate,
-								'age': age,
-								'label': label,
-								'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
-								'favoritesCount': favoritesCount,
-								'name': name,
-
-								'isfavorite': isfavorite,
-								'expire': new Date().getTime(),
-								'effectivetime': getBatchNumber()
-							};
-							if (type != '收藏外教') {
-								tinfo.type = type;
-							} else {
-								//tinfo.type=type
-								tinfo.isfavorite = true;
-							}
-							GM_setValue(tinfokey, tinfo);
-							updateTeacherinfoToUI(jqel, tinfo);
-						} else {
-							console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
-						}
+	submit(function(next) {
+		var autonextpage = GM_getValue('autonextpage', 0);
+		if (autonextpage > 0) {
+			let dialog = $(
+				`<div id="dialog-confirm" title="是否停止自动寻找老师?">
+			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+			即将停止自动获取后边<b>${autonextpage}</b>页的数据，约${autonextpage * 28 }个教师?</p>
+			</div>`
+			);
+			dialog.appendTo('body');
+			dialog.dialog({
+				resizable: false,
+				height: "auto",
+				width: 400,
+				modal: false,
+				buttons: {
+					"立即停止": function() {
+						$(this).dialog("close");
 					},
-					error: function(data) {
-						console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(
-							data));
+					[`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+						GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
+						$(this).dialog("close");
+					},
+					[`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+						GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+						$(this).dialog("close");
+					},
+					[`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+						GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+						$(this).dialog("close");
 					}
-				}).always(function() {
-					while ((new Date()).getTime() - start < 600) {
-						continue;
+				}
+			});
+		}
+		next();
+	});
+	submit(function(next) {
+		$(".item").each(function(index, el) {
+			submit(function(next) {
+				Pace.track(function() {
+					let jqel = $(el);
+					let tid = jqel.find(".teacher-details-link a").attr('href').replace(
+						"https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+					var tinfokey = 'tinfo-' + tid;
+					var tinfo = GM_getValue(tinfokey);
+					if (tinfo) {
+						var now = new Date().getTime();
+						if (!tinfo.expire) {
+							tinfo.expire = new Date(1970, 1, 1).getTime();
+						}
+						tinfo.effectivetime = getBatchNumber();
+						GM_setValue(tinfokey, tinfo);
+						if (now - tinfo.expire < configExprMilliseconds) {
+							updateTeacherinfoToUI(jqel, tinfo);
+							next();
+							return true;
+						}
 					}
-					next();
-				});
+					// ajax 请求一定要包含在一个函数中
+					var start = (new Date()).getTime();
 
+					$.ajax({
+						url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid +
+							'&type=bad&has_msg=1',
+						type: 'GET',
+						dateType: 'html',
+						success: function(r) {
+							var jqr = $(r);
+							if (jqr.find('.teacher-name-tit').length > 0) {
+								var tempitem = jqr.find('.teacher-name-tit')[0];
+								tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
+							}
+							if (jqr.find(".evaluate-content-left span").length >= 3) {
+								var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+								var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+								var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+								var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+								var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
+								var label = (function() {
+									let j_len = jqel.find(".label").text().match(num).clean("").length;
+									let l = 0;
+									for (let j = 0; j < j_len; j++) {
+										l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+									}
+									l = Math.ceil(l / 5);
+									return l;
+								})();
+								var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+								var name = jqel.find(".teacher-name").text();
+								var type = $('.s-t-top-list .li-active').text();
+								var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
+								var slevel = jqr.find('.sui-students').text();
+								var tinfo = {
+									'slevel': slevel,
+									'tage': tage,
+									'thumbup': thumbup,
+									'thumbdown': thumbdown,
+									'thumbupRate': thumbupRate,
+									'age': age,
+									'label': label,
+									'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
+									'favoritesCount': favoritesCount,
+									'name': name,
+
+									'isfavorite': isfavorite,
+									'expire': new Date().getTime(),
+									'effectivetime': getBatchNumber()
+								};
+								if (type != '收藏外教') {
+									tinfo.type = type;
+								} else {
+									//tinfo.type=type
+									tinfo.isfavorite = true;
+								}
+								GM_setValue(tinfokey, tinfo);
+								updateTeacherinfoToUI(jqel, tinfo);
+							} else {
+								console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
+							}
+						},
+						error: function(data) {
+							console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(
+								data));
+						}
+					}).always(function() {
+						while ((new Date()).getTime() - start < 600) {
+							continue;
+						}
+						next();
+					});
+
+				});
 			});
 		});
+		next();
 	});
-
 	submit(function(next) {
 		var autonextpage = GM_getValue('autonextpage', 0);
 		if (autonextpage > 0) {
@@ -492,6 +500,7 @@
 			if ($('.s-t-page .next-page').length == 0) {
 				GM_setValue('autonextpage', 0);
 			} else {
+
 				$('.s-t-page .next-page')[0].click();
 				return false;
 			}

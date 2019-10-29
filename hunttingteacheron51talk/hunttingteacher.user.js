@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.19
+// @version      1.0.20
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -28,6 +28,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // ==/UserScript==
 (function () {
 	'use strict';
+	/**
+  * 提交运算函数到 document 的 fx 队列
+  */
+
+	var submit = function submit(fun) {
+		var queue = $.queue(document, "fx", fun);
+		if (queue[0] == 'inprogress') {
+			return;
+		}
+		$.dequeue(document);
+	};
+
+	function getorAdd(key, fun) {
+		var data = sessionStorage.getItem(key);
+		if (!data) {
+			data = fun(key);
+			sessionStorage.setItem(key, data);
+			return data;
+		}
+		return data;
+	}
 
 	Pace.Options = {
 		ajax: false, // disabled
@@ -129,26 +150,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
 		$('.s-t-content.f-cb').empty().append(sortEle);
 	};
-	/**
-  * 提交运算函数到 document 的 fx 队列
-  */
-	var submit = function submit(fun) {
-		var queue = $.queue(document, "fx", fun);
-		if (queue[0] == 'inprogress') {
-			return;
-		}
-		$.dequeue(document);
-	};
-
-	function getorAdd(key, fun) {
-		var data = sessionStorage.getItem(key);
-		if (!data) {
-			data = fun(key);
-			sessionStorage.setItem(key, data);
-			return data;
-		}
-		return data;
-	}
 
 	function getBatchNumber() {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
@@ -156,6 +157,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			return new Date().getTime();
 		});
 	}
+
 	$(".s-t-days-list>li").click(function () {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
 		sessionStorage.setItem(batchnumber, new Date().getTime());
@@ -296,129 +298,132 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
 		processTeacherDetailPage($(document));
 	}
+	submit(function (next) {
+		var autonextpage = GM_getValue('autonextpage', 0);
+		if (autonextpage > 0) {
+			var _buttons;
 
-	var autonextpage = GM_getValue('autonextpage', 0);
-	if (autonextpage > 0) {
-		var _buttons;
-
-		var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\u5373\u5C06\u83B7\u53D6\u540E\u8FB9' + autonextpage + '\n\t\t\t\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + autonextpage * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');
-		dialog.appendTo('body');
-		dialog.dialog({
-			resizable: false,
-			height: "auto",
-			width: 400,
-			modal: true,
-			buttons: (_buttons = {
-				"停止获取": function _() {
+			var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + autonextpage + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + autonextpage * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');
+			dialog.appendTo('body');
+			dialog.dialog({
+				resizable: false,
+				height: "auto",
+				width: 400,
+				modal: false,
+				buttons: (_buttons = {
+					"立即停止": function _() {
+						$(this).dialog("close");
+					}
+				}, _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.25).toFixed(0) + '\u9875', function undefined() {
+					GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
 					$(this).dialog("close");
-				}
-			}, _defineProperty(_buttons, '\u53D6' + (autonextpage * 0.25).toFixed(0) + '\u9875', function undefined() {
-				GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
-				$(this).dialog("close");
-			}), _defineProperty(_buttons, '\u53D6' + (autonextpage * 0.5).toFixed(0) + '\u9875', function undefined() {
-				GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
-				$(this).dialog("close");
-			}), _defineProperty(_buttons, '\u53D6' + (autonextpage * 0.75).toFixed(0) + '\u9875', function undefined() {
-				GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
-				$(this).dialog("close");
-			}), _buttons)
-		});
-	}
-
-	$(".item").each(function (index, el) {
-		submit(function (next) {
-			Pace.track(function () {
-				var jqel = $(el);
-				var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
-				var tinfokey = 'tinfo-' + tid;
-				var tinfo = GM_getValue(tinfokey);
-				if (tinfo) {
-					var now = new Date().getTime();
-					if (!tinfo.expire) {
-						tinfo.expire = new Date(1970, 1, 1).getTime();
-					}
-					tinfo.effectivetime = getBatchNumber();
-					GM_setValue(tinfokey, tinfo);
-					if (now - tinfo.expire < configExprMilliseconds) {
-						updateTeacherinfoToUI(jqel, tinfo);
-						next();
-						return true;
-					}
-				}
-				// ajax 请求一定要包含在一个函数中
-				var start = new Date().getTime();
-
-				$.ajax({
-					url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
-					type: 'GET',
-					dateType: 'html',
-					success: function success(r) {
-						var jqr = $(r);
-						if (jqr.find('.teacher-name-tit').length > 0) {
-							var tempitem = jqr.find('.teacher-name-tit')[0];
-							tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
+				}), _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.5).toFixed(0) + '\u9875', function undefined() {
+					GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+					$(this).dialog("close");
+				}), _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.75).toFixed(0) + '\u9875', function undefined() {
+					GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+					$(this).dialog("close");
+				}), _buttons)
+			});
+		}
+		next();
+	});
+	submit(function (next) {
+		$(".item").each(function (index, el) {
+			submit(function (next) {
+				Pace.track(function () {
+					var jqel = $(el);
+					var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+					var tinfokey = 'tinfo-' + tid;
+					var tinfo = GM_getValue(tinfokey);
+					if (tinfo) {
+						var now = new Date().getTime();
+						if (!tinfo.expire) {
+							tinfo.expire = new Date(1970, 1, 1).getTime();
 						}
-						if (jqr.find(".evaluate-content-left span").length >= 3) {
-							var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-							var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-							var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
-							var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-							var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
-							var label = function () {
-								var j_len = jqel.find(".label").text().match(num).clean("").length;
-								var l = 0;
-								for (var j = 0; j < j_len; j++) {
-									l += Number(jqel.find(".label").text().match(num).clean("")[j]);
-								}
-								l = Math.ceil(l / 5);
-								return l;
-							}();
-							var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-							var name = jqel.find(".teacher-name").text();
-							var type = $('.s-t-top-list .li-active').text();
-							var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
-							var slevel = jqr.find('.sui-students').text();
-							var tinfo = {
-								'slevel': slevel,
-								'tage': tage,
-								'thumbup': thumbup,
-								'thumbdown': thumbdown,
-								'thumbupRate': thumbupRate,
-								'age': age,
-								'label': label,
-								'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
-								'favoritesCount': favoritesCount,
-								'name': name,
-
-								'isfavorite': isfavorite,
-								'expire': new Date().getTime(),
-								'effectivetime': getBatchNumber()
-							};
-							if (type != '收藏外教') {
-								tinfo.type = type;
-							} else {
-								//tinfo.type=type
-								tinfo.isfavorite = true;
-							}
-							GM_setValue(tinfokey, tinfo);
+						tinfo.effectivetime = getBatchNumber();
+						GM_setValue(tinfokey, tinfo);
+						if (now - tinfo.expire < configExprMilliseconds) {
 							updateTeacherinfoToUI(jqel, tinfo);
-						} else {
-							console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
+							next();
+							return true;
 						}
-					},
-					error: function error(data) {
-						console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(data));
 					}
-				}).always(function () {
-					while (new Date().getTime() - start < 600) {
-						continue;
-					}
-					next();
+					// ajax 请求一定要包含在一个函数中
+					var start = new Date().getTime();
+
+					$.ajax({
+						url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
+						type: 'GET',
+						dateType: 'html',
+						success: function success(r) {
+							var jqr = $(r);
+							if (jqr.find('.teacher-name-tit').length > 0) {
+								var tempitem = jqr.find('.teacher-name-tit')[0];
+								tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
+							}
+							if (jqr.find(".evaluate-content-left span").length >= 3) {
+								var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+								var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+								var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+								var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+								var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
+								var label = function () {
+									var j_len = jqel.find(".label").text().match(num).clean("").length;
+									var l = 0;
+									for (var j = 0; j < j_len; j++) {
+										l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+									}
+									l = Math.ceil(l / 5);
+									return l;
+								}();
+								var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+								var name = jqel.find(".teacher-name").text();
+								var type = $('.s-t-top-list .li-active').text();
+								var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
+								var slevel = jqr.find('.sui-students').text();
+								var tinfo = {
+									'slevel': slevel,
+									'tage': tage,
+									'thumbup': thumbup,
+									'thumbdown': thumbdown,
+									'thumbupRate': thumbupRate,
+									'age': age,
+									'label': label,
+									'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
+									'favoritesCount': favoritesCount,
+									'name': name,
+
+									'isfavorite': isfavorite,
+									'expire': new Date().getTime(),
+									'effectivetime': getBatchNumber()
+								};
+								if (type != '收藏外教') {
+									tinfo.type = type;
+								} else {
+									//tinfo.type=type
+									tinfo.isfavorite = true;
+								}
+								GM_setValue(tinfokey, tinfo);
+								updateTeacherinfoToUI(jqel, tinfo);
+							} else {
+								console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
+							}
+						},
+						error: function error(data) {
+							console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(data));
+						}
+					}).always(function () {
+						while (new Date().getTime() - start < 600) {
+							continue;
+						}
+						next();
+					});
 				});
 			});
 		});
+		next();
 	});
-
 	submit(function (next) {
 		var autonextpage = GM_getValue('autonextpage', 0);
 		if (autonextpage > 0) {
@@ -426,6 +431,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			if ($('.s-t-page .next-page').length == 0) {
 				GM_setValue('autonextpage', 0);
 			} else {
+
 				$('.s-t-page .next-page')[0].click();
 				return false;
 			}
