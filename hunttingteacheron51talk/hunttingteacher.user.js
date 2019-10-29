@@ -312,6 +312,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				modal: false,
 				buttons: (_buttons = {
 					"立即停止": function _() {
+						GM_setValue('autonextpage', 0);
 						$(this).dialog("close");
 					}
 				}, _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.25).toFixed(0) + '\u9875', function undefined() {

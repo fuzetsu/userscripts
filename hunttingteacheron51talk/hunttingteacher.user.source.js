@@ -374,6 +374,7 @@
 				modal: false,
 				buttons: {
 					"立即停止": function() {
+						GM_setValue('autonextpage', 0);
 						$(this).dialog("close");
 					},
 					[`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
