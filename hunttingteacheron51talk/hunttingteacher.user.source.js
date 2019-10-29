@@ -677,7 +677,7 @@
 					showLabel: false
 				}) //系统帮助
 				.prop('href',
-					'https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/README.md')
+					'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk')
 				.prop('target', '_blank')
 				.end().eq(6).button({
 					icon: 'ui-icon-seek-next',
