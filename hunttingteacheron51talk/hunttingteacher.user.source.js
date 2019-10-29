@@ -450,6 +450,7 @@
 								var type = $('.s-t-top-list .li-active').text();
 								var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
 								var slevel = jqr.find('.sui-students').text();
+								jqr.remove();
 								var tinfo = {
 									'slevel': slevel,
 									'tage': tage,
