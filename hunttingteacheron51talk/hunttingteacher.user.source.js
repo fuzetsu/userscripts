@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.0
+// @version      1.1.1
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -218,7 +218,10 @@
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
 		sessionStorage.setItem(batchnumber, new Date().getTime());
 	});
-
+	$(".s-t-top-list>li>a").click(function() {
+		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+		sessionStorage.setItem(batchnumber, new Date().getTime());
+	});
 
 	let maxrate = 0,
 		minrate = 99999,
