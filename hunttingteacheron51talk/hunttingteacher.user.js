@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.0.21
+// @version      1.1.0
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -66,7 +66,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	var config = GM_config([{
 		key: 'pagecount',
 		label: '自动获取页数',
-		default: 10,
+		default: 20,
 		type: 'dropdown',
 		values: [0, 5, 10, 20, 50, 1000]
 	}, {
