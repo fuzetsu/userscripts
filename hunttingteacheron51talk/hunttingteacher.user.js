@@ -58,10 +58,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			selectors: ['#filterdialog']
 		}
 	};
-	$("head").append('<link ' + 'href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" ' + 'rel="stylesheet" type="text/css">');
-	$("head").append('<link ' + 'href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" ' + 'rel="stylesheet" type="text/css">');
+	$("head").append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n\t\t<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">');
 
-	$("head").append('<style type="text/css">' + '.search-teachers .s-t-list .item-time-list {margin-top:315px;}' + '.search-teachers .s-t-list .item {   height: 679px; }' + '.search-teachers .s-t-list .s-t-content { margin-right: 0px;}' + '.search-teachers { width: 100%; }' + '.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}' + '.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }' + '.pace {' + '  -webkit-pointer-events: none;' + '  pointer-events: none;' + '  -webkit-user-select: none;' + '  -moz-user-select: none;' + '  user-select: none;' + '}' + '.pace-inactive {' + '  display: none;' + '}' + '.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}' + '.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}' + '.pace .pace-progress {' + '  background: #29d;' + '  position: fixed;' + '  z-index: 2000;' + '  top: 0;' + '  right: 100%;' + '  width: 100%;' + '  height: 2px;' + '}' + '.search-teachers .s-t-top .s-t-days .s-t-days-list li {' + ' float: left;' + ' width: 118px;' + ' height: 34px;' + ' line-height: 34px;' + ' margin-right: 5px;' + ' margin-bottom: 5px;' + '}' + '.search-teachers .s-t-top .s-t-top-details {' + ' padding: 2px 0 2px 30px;' + '}' + '.search-teachers .s-t-top .s-t-top-right {' + ' height: auto;' + '}' + '.search-teachers .s-t-top .s-t-top-left .condition-item {' + ' margin-bottom: 2px;' + '}' + '.s-t-page {   padding-top: 2px;}' + '</style>');
+	$("head").append('<style type="text/css">\n\t\t.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n\t\t.search-teachers .s-t-list .item {   height: 679px; }\n\t\t.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n\t\t.search-teachers { width: 100%; }\n\t\t.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n\t\t.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n\t\t.pace {\n\t\t  -webkit-pointer-events: none;\n\t\t  pointer-events: none;\n\t\t  -webkit-user-select: none;\n\t\t  -moz-user-select: none;\n\t\t  user-select: none;\n\t\t}\n\t\t.pace-inactive {\n\t\t  display: none;\n\t\t}\n\t\t.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n\t\t.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n\t\t.pace .pace-progress {\n\t\t  background: #29d;\n\t\t  position: fixed;\n\t\t  z-index: 2000;\n\t\t  top: 0;\n\t\t  right: 100%;\n\t\t  width: 100%;\n\t\t  height: 2px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n\t\t float: left;\n\t\t width: 118px;\n\t\t height: 34px;\n\t\t line-height: 34px;\n\t\t margin-right: 5px;\n\t\t margin-bottom: 5px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-details {\n\t\t padding: 2px 0 2px 30px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-right {\n\t\t height: auto;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-left .condition-item {\n\t\t margin-bottom: 2px;\n\t\t}\n\t\t.s-t-page {   padding-top: 2px;}\n\t\t</style>');
 
 	var config = GM_config([{
 		key: 'pagecount',
@@ -93,6 +92,63 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			continue;
 		}
 	}
+
+	Date.prototype.toString = function (format) {
+		var _o;
+
+		var getPaddedComp = function getPaddedComp(comp) {
+			return parseInt(comp) < 10 ? '0' + comp : comp;
+		},
+		    formattedDate = format,
+		    o = (_o = {
+			"[y|Y]{4}": function yY4(date) {
+				return date.getFullYear();
+			}, // year
+			"[y|Y]{2}": function yY2(date) {
+				return date.getFullYear().toString().slice(2);
+			}, // year
+			"MM": function MM(date) {
+				return getPaddedComp(date.getMonth() + 1);
+			}, //month
+			"M": function M(date) {
+				return date.getMonth() + 1;
+			}, //month
+			"[d|D]{2}": function dD2(date) {
+				return getPaddedComp(date.getDate());
+			}, //day
+			"[d|D]{1}": function dD1(date) {
+				return date.getDate();
+			}, //day
+			"h{2}": function h2(date) {
+				return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+			}, //hour
+			"h{1}": function h1(date) {
+				return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+			}, //hour
+			"H{2}": function H2(date) {
+				return getPaddedComp(date.getHours());
+			} }, _defineProperty(_o, 'h{1}', function h1(date) {
+			return date.getHours();
+		}), _defineProperty(_o, "m{2}", function m2(date) {
+			return getPaddedComp(date.getMinutes());
+		}), _defineProperty(_o, "m{1}", function m1(date) {
+			return date.getMinutes();
+		}), _defineProperty(_o, "s+", function s(date) {
+			return getPaddedComp(date.getSeconds());
+		}), _defineProperty(_o, "f+", function f(date) {
+			return getPaddedComp(date.getMilliseconds());
+		}), _defineProperty(_o, "b+", function b(date) {
+			return date.getHours() >= 12 ? 'PM' : 'AM';
+		}), _o);
+
+		for (var k in o) {
+			if (new RegExp("(" + k + ")").test(format)) {
+				formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+			}
+		}
+		return formattedDate;
+	};
+
 	//删除数组中的空元素
 	Array.prototype.clean = function () {
 		var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
@@ -764,6 +820,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 								sopt: ['cn']
 							},
 							formatter: function formatter(value, options, rData) {
+								var date = new Date(value);
+								if (date instanceof Date && !isNaN(date.valueOf())) {
+									return date.toString('MMddHHmmss');
+								}
 								return value;
 							}
 						}],
@@ -803,7 +863,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			$("#tabs").tabs("option", "disabled", [0]);
 		}
 		$('#filterdialog').dialog({
-			'width': '650'
+			'width': '700'
 		});
 		$('#filterdialog').parent().scrollFix();
 		$('#filterdialog').dialog("open");

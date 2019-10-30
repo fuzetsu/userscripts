@@ -54,63 +54,57 @@
 		}
 	};
 	$("head").append(
-		'<link ' +
-		'href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" ' +
-		'rel="stylesheet" type="text/css">'
-	);
-	$("head").append(
-		'<link ' +
-		'href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" ' +
-		'rel="stylesheet" type="text/css">'
+		`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`
 	);
 
-	$("head").append('<style type="text/css">' +
-		'.search-teachers .s-t-list .item-time-list {margin-top:315px;}' +
-		'.search-teachers .s-t-list .item {   height: 679px; }' +
-		'.search-teachers .s-t-list .s-t-content { margin-right: 0px;}' +
-		'.search-teachers { width: 100%; }' +
-		'.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}' +
-		'.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }' +
-		'.pace {' +
-		'  -webkit-pointer-events: none;' +
-		'  pointer-events: none;' +
-		'  -webkit-user-select: none;' +
-		'  -moz-user-select: none;' +
-		'  user-select: none;' +
-		'}' +
-		'.pace-inactive {' +
-		'  display: none;' +
-		'}' +
-		'.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}' +
-		'.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}' +
-		'.pace .pace-progress {' +
-		'  background: #29d;' +
-		'  position: fixed;' +
-		'  z-index: 2000;' +
-		'  top: 0;' +
-		'  right: 100%;' +
-		'  width: 100%;' +
-		'  height: 2px;' +
-		'}' +
-		'.search-teachers .s-t-top .s-t-days .s-t-days-list li {' +
-		' float: left;' +
-		' width: 118px;' +
-		' height: 34px;' +
-		' line-height: 34px;' +
-		' margin-right: 5px;' +
-		' margin-bottom: 5px;' +
-		'}' +
-		'.search-teachers .s-t-top .s-t-top-details {' +
-		' padding: 2px 0 2px 30px;' +
-		'}' +
-		'.search-teachers .s-t-top .s-t-top-right {' +
-		' height: auto;' +
-		'}' +
-		'.search-teachers .s-t-top .s-t-top-left .condition-item {' +
-		' margin-bottom: 2px;' +
-		'}' +
-		'.s-t-page {   padding-top: 2px;}' +
-		'</style>');
+	$("head").append(`<style type="text/css">
+		.search-teachers .s-t-list .item-time-list {margin-top:315px;}
+		.search-teachers .s-t-list .item {   height: 679px; }
+		.search-teachers .s-t-list .s-t-content { margin-right: 0px;}
+		.search-teachers { width: 100%; }
+		.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
+		.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }
+		.pace {
+		  -webkit-pointer-events: none;
+		  pointer-events: none;
+		  -webkit-user-select: none;
+		  -moz-user-select: none;
+		  user-select: none;
+		}
+		.pace-inactive {
+		  display: none;
+		}
+		.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}
+		.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}
+		.pace .pace-progress {
+		  background: #29d;
+		  position: fixed;
+		  z-index: 2000;
+		  top: 0;
+		  right: 100%;
+		  width: 100%;
+		  height: 2px;
+		}
+		.search-teachers .s-t-top .s-t-days .s-t-days-list li {
+		 float: left;
+		 width: 118px;
+		 height: 34px;
+		 line-height: 34px;
+		 margin-right: 5px;
+		 margin-bottom: 5px;
+		}
+		.search-teachers .s-t-top .s-t-top-details {
+		 padding: 2px 0 2px 30px;
+		}
+		.search-teachers .s-t-top .s-t-top-right {
+		 height: auto;
+		}
+		.search-teachers .s-t-top .s-t-top-left .condition-item {
+		 margin-bottom: 2px;
+		}
+		.s-t-page {   padding-top: 2px;}
+		</style>`);
 
 	const config = GM_config([{
 			key: 'pagecount',
