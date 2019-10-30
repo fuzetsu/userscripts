@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.1
+// @version      1.1.2
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -58,7 +58,8 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`
 	);
 
-	$("head").append(`<style type="text/css">
+	$("head").append(
+		`<style type="text/css">
 		.search-teachers .s-t-list .item-time-list {margin-top:315px;}
 		.search-teachers .s-t-list .item {   height: 679px; }
 		.search-teachers .s-t-list .s-t-content { margin-right: 0px;}
@@ -104,7 +105,8 @@
 		 margin-bottom: 2px;
 		}
 		.s-t-page {   padding-top: 2px;}
-		</style>`);
+		</style>`
+	);
 
 	const config = GM_config([{
 			key: 'pagecount',
@@ -139,72 +141,72 @@
 			continue;
 		}
 	}
+	
+	(function() {
+		Date.prototype.toString = function(format) {
+			let getPaddedComp = function(comp) {
+					return ((parseInt(comp) < 10) ? ('0' + comp) : comp)
+				},
+				formattedDate = format,
+				o = {
+					"[y|Y]{4}": date => date.getFullYear(), // year
+					"[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
+					"MM": date => getPaddedComp(date.getMonth() + 1), //month
+					"M": date => date.getMonth() + 1, //month
+					"[d|D]{2}": date => getPaddedComp(date.getDate()), //day
+					"[d|D]{1}": date => date.getDate(), //day
+					"h{2}": date => getPaddedComp((date.getHours() > 12) ? date.getHours() % 12 : date.getHours()), //hour
+					"h{1}": date => (date.getHours() > 12) ? date.getHours() % 12 : date.getHours(), //hour
+					"H{2}": date => getPaddedComp(date.getHours()), //hour
+					"h{1}": date => date.getHours(), //hour
+					"m{2}": date => getPaddedComp(date.getMinutes()), //minute
+					"m{1}": date => date.getMinutes(), //minute
+					"s+": date => getPaddedComp(date.getSeconds()), //second
+					"f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
+					"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
+				};
 
-	Date.prototype.toString = function(format) {
-
-		let getPaddedComp = function(comp) {
-				return ((parseInt(comp) < 10) ? ('0' + comp) : comp)
-			},
-			formattedDate = format,
-			o = {
-				"[y|Y]{4}": date => date.getFullYear(), // year
-				"[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
-				"MM": date => getPaddedComp(date.getMonth() + 1), //month
-				"M": date => date.getMonth() + 1, //month
-				"[d|D]{2}": date => getPaddedComp(date.getDate()), //day
-				"[d|D]{1}": date => date.getDate(), //day
-				"h{2}": date => getPaddedComp((date.getHours() > 12) ? date.getHours() % 12 : date.getHours()), //hour
-				"h{1}": date => (date.getHours() > 12) ? date.getHours() % 12 : date.getHours(), //hour
-				"H{2}": date => getPaddedComp(date.getHours()), //hour
-				"h{1}": date => date.getHours(), //hour
-				"m{2}": date => getPaddedComp(date.getMinutes()), //minute
-				"m{1}": date => date.getMinutes(), //minute
-				"s+": date => getPaddedComp(date.getSeconds()), //second
-				"f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
-				"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
-			};
-
-		for (var k in o) {
-			if (new RegExp("(" + k + ")").test(format)) {
-				formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+			for (var k in o) {
+				if (new RegExp("(" + k + ")").test(format)) {
+					formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+				}
 			}
-		}
-		return formattedDate;
-	};
+			return formattedDate;
+		};
 
-	//删除数组中的空元素
-	Array.prototype.clean = function(deleteValue = "") {
-		for (var i = 0; i < this.length; i++) {
-			if (this[i] == deleteValue) {
-				this.splice(i, 1);
-				i--;
+		//删除数组中的空元素
+		Array.prototype.clean = function(deleteValue = "") {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] == deleteValue) {
+					this.splice(i, 1);
+					i--;
+				}
 			}
-		}
-		return this;
-	};
-	Number.prototype.toString = function() {
-		return this.toFixed(2);
-	};
-	String.prototype.toFloat = function() {
-		return parseFloat(this);
-	};
-	String.prototype.toInt = function() {
-		return parseInt(this);
-	};
-	String.prototype.startsWith = function(str) {
-		return this.slice(0, str.length) == str;
-	};
-	String.prototype.endsWith = function(str) {
-		return this.slice(-str.length) == str;
-	};
-	String.prototype.contains = function(str) {
-		return this.indexOf(str) > -1;
-	};
-	String.prototype.replaceAll = function(search, replacement) {
-		var target = this;
-		return target.replace(new RegExp(search, 'g'), replacement);
-	};
-
+			return this;
+		};
+		Number.prototype.toString = function() {
+			return this.toFixed(2);
+		};
+		String.prototype.toFloat = function() {
+			return parseFloat(this);
+		};
+		String.prototype.toInt = function() {
+			return parseInt(this);
+		};
+		String.prototype.startsWith = function(str) {
+			return this.slice(0, str.length) == str;
+		};
+		String.prototype.endsWith = function(str) {
+			return this.slice(-str.length) == str;
+		};
+		String.prototype.contains = function(str) {
+			return this.indexOf(str) > -1;
+		};
+		String.prototype.replaceAll = function(search, replacement) {
+			var target = this;
+			return target.replace(new RegExp(search, 'g'), replacement);
+		};
+	})();
 
 	$(".item-top-cont").prop('innerHTML', function(i, val) {
 		return val.replaceAll('<!--', '').replaceAll('-->', '');
@@ -228,8 +230,6 @@
 		var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
 		$('.s-t-content.f-cb').empty().append(sortEle);
 	};
-
-
 
 	function getBatchNumber() {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
@@ -547,34 +547,35 @@
 				age1: minage,
 				age2: maxage
 			});
-			$('body').append("<div id='filterdialog' title='Teacher Filter'>" +
-				"<div id='tabs'>" +
-				"<ul>" +
-				'<li><a href="#tabs-1">Search Teachers</a></li>' +
-				'<li><a href="#tabs-2">Sorted Teachers</a></li>' +
-				'</ul>' +
-				"<br /><div id='buttons'>" +
-				"<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取" +
-				conf.pagecount + "页</button>&nbsp;" +
-				"</div>" +
-				'<div id="tabs-1">' +
-				"当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " +
-
-				"<br />有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>" +
-				"收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>" +
-				"好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>" +
-				"年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>" +
-				'</div>' // tab 1 end
-				+
-				'<div id="tabs-2">' +
-				'<table id="teachertab"></table>' +
-				'<div id="pager5"></div>' +
-				'</div>' //tab 2 end
-				+
-				"</div>" //tabs end
-
-				+
-				"</div>");
+			$('body').append(`
+				<div id='filterdialog' title='Teacher Filter'>
+					<div id='tabs'>
+						<ul>
+							<li><a href="#tabs-1">Search Teachers</a></li>
+							<li><a href="#tabs-2">Sorted Teachers</a></li>
+						</ul>
+						<br />
+						<div id='buttons'>
+							<button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
+							<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
+							<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
+							<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
+							<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;
+							<button id='auotonextpage'>自动获取${conf.pagecount}页</button>&nbsp;
+						</div>
+						<div id="tabs-1">
+							当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
+							有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>
+							收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>
+							好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>
+							年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>
+						</div>
+						<div id="tabs-2">
+							<table id="teachertab"></table>
+							<div id="pager5"></div>
+						</div>
+					</div>
+				</div>`);
 			$('body').append("<div id='teachlistdialog' style='display:none;'></div>");
 			$('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
 			$("#tlabelslider").slider({
@@ -736,9 +737,12 @@
 						}
 					});
 					teachers = teachers.sort(function(t1, t2) {
-						if (t1.indicator == t2.indicator)
-							return t1.favoritesCount > t2.favoritesCount;
-						return t1.indicator > t2.indicator;
+						if(t1.effectivetime==t2.effectivetime){							
+							if (t1.indicator == t2.indicator)
+								return t1.favoritesCount > t2.favoritesCount;
+							return t1.indicator > t2.indicator;
+						}
+						return t1.effectivetime>t2.effectivetime;
 					});
 
 					var jqtable = $("#teachertab");
@@ -914,9 +918,9 @@
 									sopt: ['cn']
 								},
 								formatter: function(value, options, rData) {
-									var date = new Date(value);
+									var date = new Date(Number(value));
 									if (date instanceof Date && !isNaN(date.valueOf())) {
-										return date.toString('MMddHHmmss');
+										return date.toString('HHmmss');
 									}
 									return value;
 								}

@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.1
+// @version      1.1.2
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -93,96 +93,98 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		}
 	}
 
-	Date.prototype.toString = function (format) {
-		var _o;
+	(function () {
+		Date.prototype.toString = function (format) {
+			var _o;
 
-		var getPaddedComp = function getPaddedComp(comp) {
-			return parseInt(comp) < 10 ? '0' + comp : comp;
-		},
-		    formattedDate = format,
-		    o = (_o = {
-			"[y|Y]{4}": function yY4(date) {
-				return date.getFullYear();
-			}, // year
-			"[y|Y]{2}": function yY2(date) {
-				return date.getFullYear().toString().slice(2);
-			}, // year
-			"MM": function MM(date) {
-				return getPaddedComp(date.getMonth() + 1);
-			}, //month
-			"M": function M(date) {
-				return date.getMonth() + 1;
-			}, //month
-			"[d|D]{2}": function dD2(date) {
-				return getPaddedComp(date.getDate());
-			}, //day
-			"[d|D]{1}": function dD1(date) {
-				return date.getDate();
-			}, //day
-			"h{2}": function h2(date) {
-				return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
-			}, //hour
-			"h{1}": function h1(date) {
-				return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
-			}, //hour
-			"H{2}": function H2(date) {
-				return getPaddedComp(date.getHours());
-			} }, _defineProperty(_o, 'h{1}', function h1(date) {
-			return date.getHours();
-		}), _defineProperty(_o, "m{2}", function m2(date) {
-			return getPaddedComp(date.getMinutes());
-		}), _defineProperty(_o, "m{1}", function m1(date) {
-			return date.getMinutes();
-		}), _defineProperty(_o, "s+", function s(date) {
-			return getPaddedComp(date.getSeconds());
-		}), _defineProperty(_o, "f+", function f(date) {
-			return getPaddedComp(date.getMilliseconds());
-		}), _defineProperty(_o, "b+", function b(date) {
-			return date.getHours() >= 12 ? 'PM' : 'AM';
-		}), _o);
+			var getPaddedComp = function getPaddedComp(comp) {
+				return parseInt(comp) < 10 ? '0' + comp : comp;
+			},
+			    formattedDate = format,
+			    o = (_o = {
+				"[y|Y]{4}": function yY4(date) {
+					return date.getFullYear();
+				}, // year
+				"[y|Y]{2}": function yY2(date) {
+					return date.getFullYear().toString().slice(2);
+				}, // year
+				"MM": function MM(date) {
+					return getPaddedComp(date.getMonth() + 1);
+				}, //month
+				"M": function M(date) {
+					return date.getMonth() + 1;
+				}, //month
+				"[d|D]{2}": function dD2(date) {
+					return getPaddedComp(date.getDate());
+				}, //day
+				"[d|D]{1}": function dD1(date) {
+					return date.getDate();
+				}, //day
+				"h{2}": function h2(date) {
+					return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+				}, //hour
+				"h{1}": function h1(date) {
+					return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+				}, //hour
+				"H{2}": function H2(date) {
+					return getPaddedComp(date.getHours());
+				} }, _defineProperty(_o, 'h{1}', function h1(date) {
+				return date.getHours();
+			}), _defineProperty(_o, "m{2}", function m2(date) {
+				return getPaddedComp(date.getMinutes());
+			}), _defineProperty(_o, "m{1}", function m1(date) {
+				return date.getMinutes();
+			}), _defineProperty(_o, "s+", function s(date) {
+				return getPaddedComp(date.getSeconds());
+			}), _defineProperty(_o, "f+", function f(date) {
+				return getPaddedComp(date.getMilliseconds());
+			}), _defineProperty(_o, "b+", function b(date) {
+				return date.getHours() >= 12 ? 'PM' : 'AM';
+			}), _o);
 
-		for (var k in o) {
-			if (new RegExp("(" + k + ")").test(format)) {
-				formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+			for (var k in o) {
+				if (new RegExp("(" + k + ")").test(format)) {
+					formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+				}
 			}
-		}
-		return formattedDate;
-	};
+			return formattedDate;
+		};
 
-	//删除数组中的空元素
-	Array.prototype.clean = function () {
-		var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+		//删除数组中的空元素
+		Array.prototype.clean = function () {
+			var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
 
-		for (var i = 0; i < this.length; i++) {
-			if (this[i] == deleteValue) {
-				this.splice(i, 1);
-				i--;
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] == deleteValue) {
+					this.splice(i, 1);
+					i--;
+				}
 			}
-		}
-		return this;
-	};
-	Number.prototype.toString = function () {
-		return this.toFixed(2);
-	};
-	String.prototype.toFloat = function () {
-		return parseFloat(this);
-	};
-	String.prototype.toInt = function () {
-		return parseInt(this);
-	};
-	String.prototype.startsWith = function (str) {
-		return this.slice(0, str.length) == str;
-	};
-	String.prototype.endsWith = function (str) {
-		return this.slice(-str.length) == str;
-	};
-	String.prototype.contains = function (str) {
-		return this.indexOf(str) > -1;
-	};
-	String.prototype.replaceAll = function (search, replacement) {
-		var target = this;
-		return target.replace(new RegExp(search, 'g'), replacement);
-	};
+			return this;
+		};
+		Number.prototype.toString = function () {
+			return this.toFixed(2);
+		};
+		String.prototype.toFloat = function () {
+			return parseFloat(this);
+		};
+		String.prototype.toInt = function () {
+			return parseInt(this);
+		};
+		String.prototype.startsWith = function (str) {
+			return this.slice(0, str.length) == str;
+		};
+		String.prototype.endsWith = function (str) {
+			return this.slice(-str.length) == str;
+		};
+		String.prototype.contains = function (str) {
+			return this.indexOf(str) > -1;
+		};
+		String.prototype.replaceAll = function (search, replacement) {
+			var target = this;
+			return target.replace(new RegExp(search, 'g'), replacement);
+		};
+	})();
 
 	$(".item-top-cont").prop('innerHTML', function (i, val) {
 		return val.replaceAll('<!--', '').replaceAll('-->', '');
@@ -507,11 +509,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				age1: minage,
 				age2: maxage
 			});
-			$('body').append("<div id='filterdialog' title='Teacher Filter'>" + "<div id='tabs'>" + "<ul>" + '<li><a href="#tabs-1">Search Teachers</a></li>' + '<li><a href="#tabs-2">Sorted Teachers</a></li>' + '</ul>' + "<br /><div id='buttons'>" + "<button id='asc' title='当前为降序，点击后按升序排列'>升序</button><button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;<button id='auotonextpage'>自动获取" + conf.pagecount + "页</button>&nbsp;" + "</div>" + '<div id="tabs-1">' + "当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。 " + "<br />有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>" + "收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>" + "好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>" + "年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>" + '</div>' // tab 1 end
-			+ '<div id="tabs-2">' + '<table id="teachertab"></table>' + '<div id="pager5"></div>' + '</div>' //tab 2 end
-			+ "</div>" //tabs end
-
-			+ "</div>");
+			$('body').append('\n\t\t\t\t<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t<br />\n\t\t\t\t\t\t<div id=\'buttons\'>\n\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;<a>?</a>&nbsp;\n\t\t\t\t\t\t\t<button id=\'auotonextpage\'>\u81EA\u52A8\u83B7\u53D6' + conf.pagecount + '\u9875</button>&nbsp;\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>');
 			$('body').append("<div id='teachlistdialog' style='display:none;'></div>");
 			$('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
 			$("#tlabelslider").slider({
@@ -664,8 +662,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 						}
 					});
 					teachers = teachers.sort(function (t1, t2) {
-						if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount;
-						return t1.indicator > t2.indicator;
+						if (t1.effectivetime == t2.effectivetime) {
+							if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount;
+							return t1.indicator > t2.indicator;
+						}
+						return t1.effectivetime > t2.effectivetime;
 					});
 
 					var jqtable = $("#teachertab");
@@ -820,9 +821,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 								sopt: ['cn']
 							},
 							formatter: function formatter(value, options, rData) {
-								var date = new Date(value);
+								var date = new Date(Number(value));
 								if (date instanceof Date && !isNaN(date.valueOf())) {
-									return date.toString('MMddHHmmss');
+									return date.toString('HHmmss');
 								}
 								return value;
 							}
