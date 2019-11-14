@@ -760,7 +760,7 @@
 							{
 								name: 'type',
 								index: 'type',
-								width: 49,
+								width: 55,
 								sorttype: "string",
 								align: 'left',
 								searchoptions: {
@@ -820,7 +820,7 @@
 							{
 								name: 'thumbupRate',
 								index: 'thumbupRate',
-								width: 30,
+								width: 35,
 								align: "right",
 								sorttype: "float",
 								searchoptions: {
@@ -840,10 +840,11 @@
 							{
 								name: 'slevel',
 								index: 'slevel',
-								width: 55,
+								width: 65,
 								sorttype: "string",
 								align: 'left',
 								searchoptions: {
+									defaultValue: '中级',
 									sopt: ['cn', 'nc']
 								},
 							},
@@ -860,7 +861,7 @@
 							{
 								name: 'thumbup',
 								index: 'thumbup',
-								width: 40,
+								width: 45,
 								align: "right",
 								sorttype: "float",
 								searchoptions: {
@@ -870,14 +871,14 @@
 							{
 								name: 'thumbdown',
 								index: 'thumbdown',
-								width: 25,
+								width: 30,
 								sorttype: "float",
 								align: 'right'
 							},
 							{
 								name: 'age',
 								index: 'age',
-								width: 25,
+								width: 30,
 								sorttype: "float",
 								align: 'right',
 								searchoptions: {
@@ -887,7 +888,7 @@
 							{
 								name: 'expire',
 								index: 'expire',
-								width: 40,
+								width: 35,
 								sorttype: "Date",
 								align: 'right',
 								searchoptions: {
@@ -912,7 +913,7 @@
 							{
 								name: 'effectivetime',
 								index: 'effectivetime',
-								width: 60,
+								width: 50,
 								sorttype: "float",
 								align: 'right',
 								searchoptions: {
