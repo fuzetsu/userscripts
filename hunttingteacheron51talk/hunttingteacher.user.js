@@ -354,6 +354,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
 		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
 		GM_setValue(getinfokey(), tinfo);
+
+		jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
+			return val + ' \n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">\u8D5E' + tinfo.thumbup + '</span>\n\t\t\t<span class="age age-line">\u8E29' + tinfo.thumbdown + '</span>\t\t\t\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570' + tinfo.label + '</span>\n\t\t\t';
+		});
 	}
 
 	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
@@ -751,7 +755,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 							sorttype: "string",
 							align: 'left',
 							searchoptions: {
-								defaultValue: '中级',
+								//defaultValue: '中级',
 								sopt: ['cn', 'nc']
 							}
 						}, {

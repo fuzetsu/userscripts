@@ -382,6 +382,15 @@
 		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
 		GM_setValue(getinfokey(), tinfo);
 
+		jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
+			return `${val} 
+			<span class="age age-line">指标${tinfo.indicator }</span>
+			<span class="age age-line">率${tinfo.thumbupRate}%</span>
+			<span class="age age-line">赞${tinfo.thumbup}</span>
+			<span class="age age-line">踩${tinfo.thumbdown}</span>			
+			<span class="age age-line">标签数${tinfo.label}</span>
+			`;
+		});		 
 	}
 
 	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
@@ -844,7 +853,7 @@
 								sorttype: "string",
 								align: 'left',
 								searchoptions: {
-									defaultValue: '中级',
+									//defaultValue: '中级',
 									sopt: ['cn', 'nc']
 								},
 							},
