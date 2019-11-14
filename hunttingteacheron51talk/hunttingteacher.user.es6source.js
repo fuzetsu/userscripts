@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.2
+// @version      1.1.3
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -35,14 +35,13 @@
 		$.dequeue(document);
 	};
 
-	function getorAdd(key, fun) {
-		let data = sessionStorage.getItem(key);
-		if (!data) {
-			data = fun(key);
+	function getorAdd(key, func) {
+		if (!(key in sessionStorage)) {
+			var data = (typeof(func) == 'function') ? func(key) : func;
 			sessionStorage.setItem(key, data);
 			return data;
 		}
-		return data;
+		return sessionStorage.getItem(key);
 	}
 
 	Pace.Options = {
@@ -141,7 +140,7 @@
 			continue;
 		}
 	}
-	
+
 	(function() {
 		Date.prototype.toString = function(format) {
 			let getPaddedComp = function(comp) {
@@ -547,7 +546,8 @@
 				age1: minage,
 				age2: maxage
 			});
-			$('body').append(`
+			$('body').append(
+				`
 				<div id='filterdialog' title='Teacher Filter'>
 					<div id='tabs'>
 						<ul>
@@ -575,7 +575,8 @@
 							<div id="pager5"></div>
 						</div>
 					</div>
-				</div>`);
+				</div>`
+			);
 			$('body').append("<div id='teachlistdialog' style='display:none;'></div>");
 			$('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
 			$("#tlabelslider").slider({
@@ -737,12 +738,12 @@
 						}
 					});
 					teachers = teachers.sort(function(t1, t2) {
-						if(t1.effectivetime==t2.effectivetime){							
+						if (t1.effectivetime == t2.effectivetime) {
 							if (t1.indicator == t2.indicator)
 								return t1.favoritesCount > t2.favoritesCount;
 							return t1.indicator > t2.indicator;
 						}
-						return t1.effectivetime>t2.effectivetime;
+						return t1.effectivetime > t2.effectivetime;
 					});
 
 					var jqtable = $("#teachertab");
