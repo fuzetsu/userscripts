@@ -130,7 +130,7 @@
 	let conf = config.load();
 	config.onsave = cfg => {
 		conf = cfg;
-		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
+		$('#auotonextpage').text('自动获取' + getAutoNextPagesCount() + "页");
 	};
 	GM_registerMenuCommand('配置', config.setup);
 
@@ -236,6 +236,21 @@
 			return new Date().getTime();
 		});
 	}
+
+	function getPagesCount() {
+		var pages = Number($('.s-t-page>.next-page:first').prev().text());
+		var curr = Number($('.s-t-page>.active:first').text());
+		if (pages) return pages - curr;
+		else return 0;
+	}
+
+	function getAutoNextPagesCount() {
+		var pages = getPagesCount();
+		if (conf.pagecount > pages)
+			return pages;
+		else return conf.pagecount;
+	}
+
 
 	$(".s-t-days-list>li").click(function() {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
@@ -350,59 +365,63 @@
 
 	function getinfokey() {
 		return 'tinfo-' + gettid();
-	}
+	};
+	//详细页面时更新缓存
+	{
 
-	function processTeacherDetailPage(jqr) {
-		jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
-			return val.replaceAll('<!--', '').replaceAll('-->', '');
-		});
-		var tinfo = GM_getValue(getinfokey(), {});
-		tinfo.label = (function() {
-			let l = 0;
-			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
-				l += Number(val);
+		function processTeacherDetailPage(jqr) {
+			jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+				return val.replaceAll('<!--', '').replaceAll('-->', '');
 			});
-			l = Math.ceil(l / 5);
-			return l;
-		})();
-		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
-			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
-			tinfo.slevel = jqr.find('.sui-students').text();
-			tinfo.expire = new Date().getTime();
-		}
-		tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
-		tinfo.name = jqr.find(".t-name").text().trim();
-		//无法获取type
-		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
-		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
-		GM_setValue(getinfokey(), tinfo);
+			var tinfo = GM_getValue(getinfokey(), {});
+			tinfo.label = (function() {
+				let l = 0;
+				$.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
+					l += Number(val);
+				});
+				l = Math.ceil(l / 5);
+				return l;
+			})();
+			if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+				tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+				tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+				tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+				tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+				tinfo.slevel = jqr.find('.sui-students').text();
+				tinfo.expire = new Date().getTime();
+			}
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+			tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+			tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+			tinfo.name = jqr.find(".t-name").text().trim();
+			//无法获取type
+			//tinfo.type = $('.s-t-top-list .li-active').text().trim();
+			tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+			GM_setValue(getinfokey(), tinfo);
 
-		jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
-			return `${val} 
+			jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
+				return `${val} 
 			<span class="age age-line">指标${tinfo.indicator }</span>
 			<span class="age age-line">率${tinfo.thumbupRate}%</span>
 			<span class="age age-line">赞${tinfo.thumbup}</span>
 			<span class="age age-line">踩${tinfo.thumbdown}</span>			
 			<span class="age age-line">标签数${tinfo.label}</span>
 			`;
-		});		 
-	}
+			});
+		}
 
-	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
-		processTeacherDetailPage($(document));
+		if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
+			processTeacherDetailPage($(document));
+		}
 	}
+	// 自动获取时,显示停止按钮
 	submit(function(next) {
-		var autonextpage = GM_getValue('autonextpage', 0) - 1;
-		if (autonextpage > 0 && $('.s-t-page .next-page').length > 0) {
+		var autonextpage = GM_getValue('autonextpage', 1) - 1;
+		if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
 			let dialog = $(
 				`<div id="dialog-confirm" title="是否停止自动寻找老师?">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-			即将停止自动获取后边<b>${autonextpage}</b>页的数据，约${autonextpage * 28 }个教师?</p>
+			即将停止自动获取后边<b>${autonextpage}</b>页的数据，约${(autonextpage) * 28 }个教师?</p>
 			</div>`
 			);
 			dialog.appendTo('body');
@@ -433,6 +452,8 @@
 		}
 		next();
 	});
+
+	//获取列表中数据
 	submit(function(next) {
 		$(".item").each(function(index, el) {
 			submit(function(next) {
@@ -534,11 +555,12 @@
 		});
 		next();
 	});
+
 	submit(function(next) {
 		var autonextpage = GM_getValue('autonextpage', 0);
 		if (autonextpage > 0) {
 			GM_setValue('autonextpage', autonextpage - 1);
-			if ($('.s-t-page .next-page').length == 0) {
+			if ($('.s-t-page>.next-page').length == 0) {
 				GM_setValue('autonextpage', 0);
 			} else {
 
@@ -570,7 +592,7 @@
 							<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
 							<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
 							<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;
-							<button id='auotonextpage'>自动获取${conf.pagecount}页</button>&nbsp;
+							<button id='auotonextpage'>自动获取${getAutoNextPagesCount()}页</button>&nbsp;
 						</div>
 						<div id="tabs-1">
 							当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
@@ -727,7 +749,7 @@
 					showLabel: true
 				}) //submit suggestion
 				.click(function() {
-					GM_setValue('autonextpage', conf.pagecount);
+					GM_setValue('autonextpage', getAutoNextPagesCount());
 					if ($('.s-t-page .next-page').length == 0) {
 						GM_setValue('autonextpage', 0);
 					} else {

@@ -81,7 +81,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	var conf = config.load();
 	config.onsave = function (cfg) {
 		conf = cfg;
-		$('#auotonextpage').text('自动获取' + conf.pagecount + "页");
+		$('#auotonextpage').text('自动获取' + getAutoNextPagesCount() + "页");
 	};
 	GM_registerMenuCommand('配置', config.setup);
 
@@ -215,6 +215,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		});
 	}
 
+	function getPagesCount() {
+		var pages = Number($('.s-t-page>.next-page:first').prev().text());
+		var curr = Number($('.s-t-page>.active:first').text());
+		if (pages) return pages - curr;else return 0;
+	}
+
+	function getAutoNextPagesCount() {
+		var pages = getPagesCount();
+		if (conf.pagecount > pages) return pages;else return conf.pagecount;
+	}
+
 	$(".s-t-days-list>li").click(function () {
 		var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
 		sessionStorage.setItem(batchnumber, new Date().getTime());
@@ -323,49 +334,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 	function getinfokey() {
 		return 'tinfo-' + gettid();
-	}
-
-	function processTeacherDetailPage(jqr) {
-		jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
-			return val.replaceAll('<!--', '').replaceAll('-->', '');
-		});
-		var tinfo = GM_getValue(getinfokey(), {});
-		tinfo.label = function () {
-			var l = 0;
-			$.each(jqr.find(".t-d-label").text().match(num).clean(""), function (i, val) {
-				l += Number(val);
+	};
+	//详细页面时更新缓存
+	{
+		var processTeacherDetailPage = function processTeacherDetailPage(jqr) {
+			jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
+				return val.replaceAll('<!--', '').replaceAll('-->', '');
 			});
-			l = Math.ceil(l / 5);
-			return l;
-		}();
-		if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
-			tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-			tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-			tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
-			tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
-			tinfo.slevel = jqr.find('.sui-students').text();
-			tinfo.expire = new Date().getTime();
+			var tinfo = GM_getValue(getinfokey(), {});
+			tinfo.label = function () {
+				var l = 0;
+				$.each(jqr.find(".t-d-label").text().match(num).clean(""), function (i, val) {
+					l += Number(val);
+				});
+				l = Math.ceil(l / 5);
+				return l;
+			}();
+			if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+				tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+				tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+				tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+				tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+				tinfo.slevel = jqr.find('.sui-students').text();
+				tinfo.expire = new Date().getTime();
+			}
+			tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+			tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+			tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+			tinfo.name = jqr.find(".t-name").text().trim();
+			//无法获取type
+			//tinfo.type = $('.s-t-top-list .li-active').text().trim();
+			tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+			GM_setValue(getinfokey(), tinfo);
+
+			jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
+				return val + ' \n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">\u8D5E' + tinfo.thumbup + '</span>\n\t\t\t<span class="age age-line">\u8E29' + tinfo.thumbdown + '</span>\t\t\t\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570' + tinfo.label + '</span>\n\t\t\t';
+			});
+		};
+
+		if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
+			processTeacherDetailPage($(document));
 		}
-		tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-		tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-		tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
-		tinfo.name = jqr.find(".t-name").text().trim();
-		//无法获取type
-		//tinfo.type = $('.s-t-top-list .li-active').text().trim();
-		tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
-		GM_setValue(getinfokey(), tinfo);
-
-		jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
-			return val + ' \n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">\u8D5E' + tinfo.thumbup + '</span>\n\t\t\t<span class="age age-line">\u8E29' + tinfo.thumbdown + '</span>\t\t\t\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570' + tinfo.label + '</span>\n\t\t\t';
-		});
 	}
-
-	if (window.location.href.toLocaleLowerCase().contains("teachernew")) {
-		processTeacherDetailPage($(document));
-	}
+	// 自动获取时,显示停止按钮
 	submit(function (next) {
-		var autonextpage = GM_getValue('autonextpage', 0) - 1;
-		if (autonextpage > 0 && $('.s-t-page .next-page').length > 0) {
+		var autonextpage = GM_getValue('autonextpage', 1) - 1;
+		if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
 			var _buttons;
 
 			var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + autonextpage + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + autonextpage * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');
@@ -394,6 +408,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		}
 		next();
 	});
+
+	//获取列表中数据
 	submit(function (next) {
 		$(".item").each(function (index, el) {
 			submit(function (next) {
@@ -491,11 +507,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		});
 		next();
 	});
+
 	submit(function (next) {
 		var autonextpage = GM_getValue('autonextpage', 0);
 		if (autonextpage > 0) {
 			GM_setValue('autonextpage', autonextpage - 1);
-			if ($('.s-t-page .next-page').length == 0) {
+			if ($('.s-t-page>.next-page').length == 0) {
 				GM_setValue('autonextpage', 0);
 			} else {
 
@@ -512,7 +529,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				age1: minage,
 				age2: maxage
 			});
-			$('body').append('\n\t\t\t\t<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t<br />\n\t\t\t\t\t\t<div id=\'buttons\'>\n\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;<a>?</a>&nbsp;\n\t\t\t\t\t\t\t<button id=\'auotonextpage\'>\u81EA\u52A8\u83B7\u53D6' + conf.pagecount + '\u9875</button>&nbsp;\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>');
+			$('body').append('\n\t\t\t\t<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t<br />\n\t\t\t\t\t\t<div id=\'buttons\'>\n\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;<a>?</a>&nbsp;\n\t\t\t\t\t\t\t<button id=\'auotonextpage\'>\u81EA\u52A8\u83B7\u53D6' + getAutoNextPagesCount() + '\u9875</button>&nbsp;\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>');
 			$('body').append("<div id='teachlistdialog' style='display:none;'></div>");
 			$('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
 			$("#tlabelslider").slider({
@@ -645,7 +662,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				showLabel: true
 			}) //submit suggestion
 			.click(function () {
-				GM_setValue('autonextpage', conf.pagecount);
+				GM_setValue('autonextpage', getAutoNextPagesCount());
 				if ($('.s-t-page .next-page').length == 0) {
 					GM_setValue('autonextpage', 0);
 				} else {
