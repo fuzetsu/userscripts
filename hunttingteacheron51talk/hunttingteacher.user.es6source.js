@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.3
+// @version      1.1.4
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -416,12 +416,12 @@
 	}
 	// 自动获取时,显示停止按钮
 	submit(function(next) {
-		var autonextpage = GM_getValue('autonextpage', 1) - 1;
+		var autonextpage = GM_getValue('autonextpage', 1) ;
 		if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
 			let dialog = $(
 				`<div id="dialog-confirm" title="是否停止自动寻找老师?">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-			即将停止自动获取后边<b>${autonextpage}</b>页的数据，约${(autonextpage) * 28 }个教师?</p>
+			即将停止自动获取后边<b>${autonextpage-1}</b>页的数据，约${(autonextpage-1) * 28 }个教师?</p>
 			</div>`
 			);
 			dialog.appendTo('body');

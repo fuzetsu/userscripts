@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.3
+// @version      1.1.4
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -378,11 +378,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	}
 	// 自动获取时,显示停止按钮
 	submit(function (next) {
-		var autonextpage = GM_getValue('autonextpage', 1) - 1;
+		var autonextpage = GM_getValue('autonextpage', 1);
 		if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
 			var _buttons;
 
-			var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + autonextpage + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + autonextpage * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');
+			var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u5BFB\u627E\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpage - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpage - 1) * 28 + '\u4E2A\u6559\u5E08?</p>\n\t\t\t</div>');
 			dialog.appendTo('body');
 			dialog.dialog({
 				resizable: false,
