@@ -133,9 +133,9 @@
 		'url': url,
 		'tid': url.match(/(t\d+)/g),
 		'pagecount': conf.pagecount,
-		'isDetailPage': url.contains("TeacherNew"),
-		'isListPage': url.contains('ReserveNew'),
-		'isCoursePage': url.contains('user/study_center')
+		'isDetailPage': url.contains("reachernew"),
+		'isListPage': url.contains('reservenew'),
+		'isCoursePage': url.contains('study_center')
 	};
 
 	function gettid() {
