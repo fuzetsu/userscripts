@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.6
+// @version      1.1.7
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -30,57 +30,57 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (function () {
 	'use strict';
 
-	//重构类型方法
+	//重载类型方法
 
 	(function () {
+		var _o;
+
+		var getPaddedComp = function getPaddedComp(comp) {
+			return parseInt(comp) < 10 ? '0' + comp : comp;
+		},
+		    o = (_o = {
+			"[y|Y]{4}": function yY4(date) {
+				return date.getFullYear();
+			}, // year
+			"[y|Y]{2}": function yY2(date) {
+				return date.getFullYear().toString().slice(2);
+			}, // year
+			"MM": function MM(date) {
+				return getPaddedComp(date.getMonth() + 1);
+			}, //month
+			"M": function M(date) {
+				return date.getMonth() + 1;
+			}, //month
+			"[d|D]{2}": function dD2(date) {
+				return getPaddedComp(date.getDate());
+			}, //day
+			"[d|D]{1}": function dD1(date) {
+				return date.getDate();
+			}, //day
+			"h{2}": function h2(date) {
+				return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+			}, //hour
+			"h{1}": function h1(date) {
+				return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+			}, //hour
+			"H{2}": function H2(date) {
+				return getPaddedComp(date.getHours());
+			} }, _defineProperty(_o, 'h{1}', function h1(date) {
+			return date.getHours();
+		}), _defineProperty(_o, "m{2}", function m2(date) {
+			return getPaddedComp(date.getMinutes());
+		}), _defineProperty(_o, "m{1}", function m1(date) {
+			return date.getMinutes();
+		}), _defineProperty(_o, "s+", function s(date) {
+			return getPaddedComp(date.getSeconds());
+		}), _defineProperty(_o, "f+", function f(date) {
+			return getPaddedComp(date.getMilliseconds());
+		}), _defineProperty(_o, "b+", function b(date) {
+			return date.getHours() >= 12 ? 'PM' : 'AM';
+		}), _o);
+
 		Date.prototype.toString = function (format) {
-			var _o;
-
-			var getPaddedComp = function getPaddedComp(comp) {
-				return parseInt(comp) < 10 ? '0' + comp : comp;
-			},
-			    formattedDate = format,
-			    o = (_o = {
-				"[y|Y]{4}": function yY4(date) {
-					return date.getFullYear();
-				}, // year
-				"[y|Y]{2}": function yY2(date) {
-					return date.getFullYear().toString().slice(2);
-				}, // year
-				"MM": function MM(date) {
-					return getPaddedComp(date.getMonth() + 1);
-				}, //month
-				"M": function M(date) {
-					return date.getMonth() + 1;
-				}, //month
-				"[d|D]{2}": function dD2(date) {
-					return getPaddedComp(date.getDate());
-				}, //day
-				"[d|D]{1}": function dD1(date) {
-					return date.getDate();
-				}, //day
-				"h{2}": function h2(date) {
-					return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
-				}, //hour
-				"h{1}": function h1(date) {
-					return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
-				}, //hour
-				"H{2}": function H2(date) {
-					return getPaddedComp(date.getHours());
-				} }, _defineProperty(_o, 'h{1}', function h1(date) {
-				return date.getHours();
-			}), _defineProperty(_o, "m{2}", function m2(date) {
-				return getPaddedComp(date.getMinutes());
-			}), _defineProperty(_o, "m{1}", function m1(date) {
-				return date.getMinutes();
-			}), _defineProperty(_o, "s+", function s(date) {
-				return getPaddedComp(date.getSeconds());
-			}), _defineProperty(_o, "f+", function f(date) {
-				return getPaddedComp(date.getMilliseconds());
-			}), _defineProperty(_o, "b+", function b(date) {
-				return date.getHours() >= 12 ? 'PM' : 'AM';
-			}), _o);
-
+			var formattedDate = format;
 			for (var k in o) {
 				if (new RegExp("(" + k + ")").test(format)) {
 					formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
@@ -162,7 +162,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		'url': url,
 		'tid': url.match(/(t\d+)/g),
 		'pagecount': conf.pagecount,
-		'isDetailPage': url.contains("teachercomment"),
+		'isDetailPage': url.contains("teachernew"),
 		'isListPage': url.contains('reservenew'),
 		'isCoursePage': url.contains('study_center')
 	};
