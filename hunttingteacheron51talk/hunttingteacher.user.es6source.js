@@ -614,18 +614,20 @@
 				$('body').append(
 					`<div id='filterdialog' title='Teacher Filter'>
 					<div id='tabs'>
-						<ul>
-							<li><a href="#tabs-1">Search Teachers</a></li>
-							<li><a href="#tabs-2">Sorted Teachers</a></li>
-						</ul>
-						<br />
-						<div id='buttons'>
-							<button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
-							<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
-							<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
-							<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
-							<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;
-							<button id='auotonextpage'>自动获取${getAutoNextPagesCount()}页</button>&nbsp;
+						<div>	
+							<ul>
+								<li><a href="#tabs-1">Search Teachers</a></li>
+								<li><a href="#tabs-2">Sorted Teachers</a></li>
+							</ul>
+							<br />
+							<div id='buttons' style='text-align: center;'>
+								<button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
+								<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
+								<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
+								<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
+								<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;
+								<button id='auotonextpage'>自动获取${getAutoNextPagesCount()}页</button>&nbsp;
+							</div>
 						</div>
 						<div id="tabs-1">
 							当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
@@ -1034,7 +1036,7 @@
 		//弹出信息框
 		submit(function(next) {
 			$('.s-t-list').before($(".s-t-page").prop('outerHTML'));
-			$('#tabs-1').before($(".s-t-page").prop('outerHTML'));
+			$('#tabs>div:first').append($(".s-t-page").prop('outerHTML'));
 			sortByIndicator(desc);
 			$("#tabs").tabs("option", "active", 1);
 
