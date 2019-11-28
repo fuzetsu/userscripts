@@ -732,7 +732,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 							data: teachers,
 							datatype: "local",
 							height: 240,
-							colNames: ['查询批号', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
+							colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
 							colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 							{
