@@ -336,6 +336,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	};
 
 	if (settings.isListPage) {
+		var getTeacherInfoInList = function getTeacherInfoInList(jqel) {
+			var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
+			var label = function () {
+				var j_len = jqel.find(".label").text().match(num).clean("").length;
+				var l = 0;
+				for (var j = 0; j < j_len; j++) {
+					l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+				}
+				l = Math.ceil(l / 5);
+				return l;
+			}();
+			var name = jqel.find(".teacher-name").text();
+			var type = $('.s-t-top-list .li-active').text();
+			var effectivetime = getBatchNumber();
+			if (type == '收藏外教') {
+				var isfavorite = true;
+				return {
+					age: age,
+					label: label,
+					name: name,
+					effectivetime: effectivetime,
+					isfavorite: isfavorite
+				};
+			} else return {
+				age: age,
+				label: label,
+				name: name,
+				effectivetime: effectivetime,
+				type: type
+			};
+		};
+
+		//获取列表中数据
+
+
 		$(".item-top-cont").prop('innerHTML', function (i, val) {
 			return val.replaceAll('<!--', '').replaceAll('-->', '');
 		});
@@ -384,21 +419,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			}
 			next();
 		});
-		//获取列表中数据
+
 		submit(function (next) {
 			$(".item").each(function (index, el) {
 				submit(function (next) {
 					Pace.track(function () {
 						var jqel = $(el);
 						var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+
 						var tinfokey = 'tinfo-' + tid;
+						var teacherlistinfo = getTeacherInfoInList(jqel);
 						var tinfo = GM_getValue(tinfokey);
 						if (tinfo) {
 							var now = new Date().getTime();
 							if (!tinfo.expire) {
 								tinfo.expire = new Date(1970, 1, 1).getTime();
 							}
-							tinfo.effectivetime = getBatchNumber();
+							tinfo = $.extend(tinfo, teacherlistinfo);
 							GM_setValue(tinfokey, tinfo);
 							if (now - tinfo.expire < configExprMilliseconds) {
 								updateTeacherinfoToUI(jqel, tinfo);
@@ -408,7 +445,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 						}
 						// ajax 请求一定要包含在一个函数中
 						var start = new Date().getTime();
-
 						$.ajax({
 							url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
 							type: 'GET',
@@ -424,44 +460,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 									var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 									var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
 									var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-									var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
-									var label = function () {
-										var j_len = jqel.find(".label").text().match(num).clean("").length;
-										var l = 0;
-										for (var j = 0; j < j_len; j++) {
-											l += Number(jqel.find(".label").text().match(num).clean("")[j]);
-										}
-										l = Math.ceil(l / 5);
-										return l;
-									}();
 									var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-									var name = jqel.find(".teacher-name").text();
-									var type = $('.s-t-top-list .li-active').text();
 									var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
 									var slevel = jqr.find('.sui-students').text();
 									jqr.remove();
+
 									var tinfo = {
 										'slevel': slevel,
 										'tage': tage,
 										'thumbup': thumbup,
 										'thumbdown': thumbdown,
 										'thumbupRate': thumbupRate,
-										'age': age,
-										'label': label,
-										'indicator': Math.ceil(label * thumbupRate / 100) + favoritesCount,
+										'indicator': Math.ceil(teacherlistinfo.label * thumbupRate / 100) + favoritesCount,
 										'favoritesCount': favoritesCount,
-										'name': name,
-
 										'isfavorite': isfavorite,
-										'expire': new Date().getTime(),
-										'effectivetime': getBatchNumber()
+										'expire': new Date().getTime()
 									};
-									if (type != '收藏外教') {
-										tinfo.type = type;
-									} else {
-										//tinfo.type=type
-										tinfo.isfavorite = true;
-									}
+									tinfo = $.extend(tinfo, teacherlistinfo);
 									GM_setValue(tinfokey, tinfo);
 									updateTeacherinfoToUI(jqel, tinfo);
 								} else {
@@ -554,8 +569,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 						if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
 						return t1.indicator > t2.indicator ? -1 : 1;
 					}).map(function (val, idx) {
-						if (isNaN(indexs[val.type])) indexs[val.type] = 0;
-						indexs[val.type] += 1;
+						if (isNaN(indexs[val.type])) {
+							indexs[val.type] = 1;
+						} else {
+							indexs[val.type] += 1;
+						}
 						val.rank = indexs[val.type];
 						return val;
 					});
@@ -714,17 +732,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 							data: teachers,
 							datatype: "local",
 							height: 240,
-							colNames: ['排名', '类', '爱', 'Name', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新', '批号'],
+							colNames: ['查询批号', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
 							colModel: [
 							//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 							{
-								name: 'rank',
-								index: 'rank',
-								width: 40,
+								name: 'effectivetime',
+								index: 'effectivetime',
+								width: 50,
 								sorttype: "float",
 								align: 'right',
 								searchoptions: {
-									sopt: ['le']
+									sopt: ['cn']
+								},
+								formatter: function formatter(value, options, rData) {
+									var date = new Date(Number(value));
+									if (date instanceof Date && !isNaN(date.valueOf())) {
+										return date.toString('HHmmss');
+									}
+									return value;
 								}
 							}, {
 								name: 'type',
@@ -739,6 +764,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 									if (value) return value;else return 'na';
 								}
 							}, {
+								name: 'rank',
+								index: 'rank',
+								width: 40,
+								sorttype: "float",
+								align: 'right',
+								searchoptions: {
+									sopt: ['le']
+								}
+							}, {
+								name: 'name',
+								index: 'name',
+								width: 95,
+								sorttype: "string",
+								formatter: function formatter(value, options, rData) {
+									return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!rData['name'] ? value : rData['name']) + "</a>";
+								}
+							}, {
 								name: 'isfavorite',
 								index: 'isfavorite',
 								width: 49,
@@ -749,14 +791,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 								},
 								formatter: function formatter(value, options, rData) {
 									if (value) return '收藏';else return '';
-								}
-							}, {
-								name: 'name',
-								index: 'name',
-								width: 95,
-								sorttype: "string",
-								formatter: function formatter(value, options, rData) {
-									return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!rData['name'] ? value : rData['name']) + "</a>";
 								}
 							}, {
 								name: 'indicator',
@@ -859,22 +893,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 										}
 										return d;
 									} else return 'na';
-								}
-							}, {
-								name: 'effectivetime',
-								index: 'effectivetime',
-								width: 50,
-								sorttype: "float",
-								align: 'right',
-								searchoptions: {
-									sopt: ['cn']
-								},
-								formatter: function formatter(value, options, rData) {
-									var date = new Date(Number(value));
-									if (date instanceof Date && !isNaN(date.valueOf())) {
-										return date.toString('HHmmss');
-									}
-									return value;
 								}
 							}],
 							multiselect: false,
