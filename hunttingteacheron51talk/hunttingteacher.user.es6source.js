@@ -547,6 +547,7 @@
 					return false;
 				}
 			}
+			next();
 		});
 	}
 
@@ -594,6 +595,7 @@
 		}
 		submit(function(next) {
 			processTeacherDetailPage($(document));
+			next();
 		});
 	}
 
@@ -1054,6 +1056,7 @@
 		submit(function(next) {
 			$('.course_lock').removeClass('course_lock').addClass('course_unlock');
 			$('img.course_mask').removeClass('course_mask').attr('src', '');
+			next();
 		});
 	}
 })();
