@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.8
+// @version      1.1.9
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -534,20 +534,19 @@
 					});
 				});
 			});
+			//翻页
+			var autonextpage = GM_getValue('autonextpage', 0);
+			if (autonextpage > 0) {
+				GM_setValue('autonextpage', autonextpage - 1);
+				if ($('.s-t-page>.next-page').length == 0) {
+					GM_setValue('autonextpage', 0);
+				} else {
+					$('.s-t-page .next-page')[0].click();
+					return false;
+				}
+			}
 			next();
 		});
-
-		//翻页
-		var autonextpage = GM_getValue('autonextpage', 0);
-		if (autonextpage > 0) {
-			GM_setValue('autonextpage', autonextpage - 1);
-			if ($('.s-t-page>.next-page').length == 0) {
-				GM_setValue('autonextpage', 0);
-			} else {
-				$('.s-t-page .next-page')[0].click();
-				return false;
-			}
-		}
 	}
 
 	if (settings.isDetailPage) {
