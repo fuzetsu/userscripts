@@ -11,6 +11,7 @@
 ### 页签Sorted Teachers **主要功能**
 表格形式列出所有缓存教师信息，点击列头均可排序，第二行有简单过滤功能，自己琢磨一下
 列说明
+- '排名' 教师在其分类下的排名
 - 'type' 教师类别-优选、收藏、欧美
 - 'name' 教师姓名， **点击可以转到教师的详细信息页**
 - 'indicator' 排序指标= 有效经验值x好评率+收藏数
@@ -51,7 +52,7 @@
 - 安装油猴浏览器插件后，极力推荐安装一个Userscript+的脚本，他可以根据你浏览的网站，列出所有可以使用的脚本，由你选择安装与否。[Userscript+ from greasyfork](https://greasyfork.org/zh-CN/scripts/24508-userscript-show-site-all-userjs)
 
 ## 更新日志
-
+- v1.1.8 2019-11-28 add feature - show the rank of teachers by teacher type
 - [v1.0.21](https://greasyfork.org/zh-CN/scripts/388276-51talk选择最好最合适的老师-经验-好评率-年龄-收藏数?version=744811) 2019-10-29 - Add feture: record the search batch and sorted teachers within this batch
 -   [v1.0.20](https://greasyfork.org/zh-CN/scripts/388276-51talk选择最好最合适的老师-经验-好评率-年龄-收藏数?version=744806) 2019-10-29 - use ES6 andd add futrue stoping auto get next page[D[D
 -   [v1.0.19](https://greasyfork.org/zh-CN/scripts/388276-51talk选择最好最合适的老师-经验-好评率-年龄-收藏数?version=744800) 2019-10-29 - add feture ability to sort teacher by seach batch

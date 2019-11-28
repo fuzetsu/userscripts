@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.7
+// @version      1.1.8
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -523,6 +523,17 @@
 			next();
 		});
 
+		//翻页
+		var autonextpage = GM_getValue('autonextpage', 0);
+		if (autonextpage > 0) {
+			GM_setValue('autonextpage', autonextpage - 1);
+			if ($('.s-t-page>.next-page').length == 0) {
+				GM_setValue('autonextpage', 0);
+			} else {
+				$('.s-t-page .next-page')[0].click();
+				return false;
+			}
+		}
 	}
 
 	if (settings.isDetailPage) {
@@ -575,16 +586,7 @@
 	if (settings.isListPage || settings.isDetailPage) {
 		//构建插件信息
 		submit(function(next) {
-			var autonextpage = GM_getValue('autonextpage', 0);
-			if (autonextpage > 0) {
-				GM_setValue('autonextpage', autonextpage - 1);
-				if ($('.s-t-page>.next-page').length == 0) {
-					GM_setValue('autonextpage', 0);
-				} else {
-					$('.s-t-page .next-page')[0].click();
-					return false;
-				}
-			}
+
 
 			try {
 				var config = GM_getValue('filterconfig', {
@@ -767,36 +769,54 @@
 						}
 					});
 
+				function getCatchedTeachers() {
+					var teachers = [];
+					$.each(GM_listValues(), function(i, item) {
+						if (item.startsWith('tinfo-')) {
+							var t = GM_getValue(item);
+							t.tid = item.slice(6, item.length);
+							teachers.push(t);
+						}
+					});
+					var indexs = {};
+					teachers = teachers.sort(function(t1, t2) {
+						if (t1.indicator == t2.indicator)
+							return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
+						return t1.indicator > t2.indicator ? -1 : 1;
+					}).map((val, idx) => {
+						if (isNaN(indexs[val.type]))
+							indexs[val.type] = 0;
+						indexs[val.type] += 1;
+						val.rank = indexs[val.type];
+						return val;
+					});
+					return teachers;
+				}
 				$("#tabs").tabs({
 					active: '#tabs-2',
 					activate: function(event, ui) {
-						var teachers = [];
-						$.each(GM_listValues(), function(i, item) {
-							if (item.startsWith('tinfo-')) {
-								var t = GM_getValue(item);
-								t.tid = item.slice(6, item.length);
-								teachers.push(t);
-							}
-						});
-						teachers = teachers.sort(function(t1, t2) {
-							if (t1.effectivetime == t2.effectivetime) {
-								if (t1.indicator == t2.indicator)
-									return t1.favoritesCount > t2.favoritesCount;
-								return t1.indicator > t2.indicator;
-							}
-							return t1.effectivetime > t2.effectivetime;
-						});
+						if (ui.newPanel.attr('id') != 'tabs-2') return;
+						var teachers = getCatchedTeachers();
 						var jqtable = $("#teachertab");
 						jqtable.jqGrid({
 							data: teachers,
 							datatype: "local",
 							height: 240,
-							colNames: ['类', '爱', '名', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
+							colNames: ['排名', '类', '爱', 'Name', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
 								'更新', '批号'
 							],
 							colModel: [
 								//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 								{
+									name: 'rank',
+									index: 'rank',
+									width: 40,
+									sorttype: "float",
+									align: 'right',
+									searchoptions: {
+										sopt: ['le']
+									}
+								}, {
 									name: 'type',
 									index: 'type',
 									width: 55,
