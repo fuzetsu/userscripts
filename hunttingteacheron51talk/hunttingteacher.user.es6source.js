@@ -116,7 +116,7 @@
 	let conf = config.load();
 	config.onsave = cfg => {
 		conf = cfg;
-		$('#auotonextpage').text('自动获取' + getAutoNextPagesCount() + "页");
+		$('#autogetnextpage').text('自动获取' + getAutoNextPagesCount() + "页");
 	};
 	GM_registerMenuCommand('设置', config.setup);
 
@@ -400,18 +400,22 @@
 					modal: false,
 					buttons: {
 						"立即停止": function() {
+							sessionStorage.setItem('times', '');
 							GM_setValue('autonextpage', 0);
 							$(this).dialog("close");
 						},
 						[`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+							sessionStorage.setItem('times', '');
 							GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
 							$(this).dialog("close");
 						},
 						[`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+							sessionStorage.setItem('times', '');
 							GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
 							$(this).dialog("close");
 						},
 						[`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+							sessionStorage.setItem('times', '');
 							GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
 							$(this).dialog("close");
 						}
@@ -542,15 +546,38 @@
 				GM_setValue('autonextpage', autonextpage - 1);
 				if ($('.s-t-page>.next-page').length == 0) {
 					GM_setValue('autonextpage', 0);
+					if (isStopAndAutoGetNextTimeTeachers())
+						return;
 				} else {
 					$('.s-t-page .next-page')[0].click();
 					return false;
 				}
+			} else {
+				if (isStopAndAutoGetNextTimeTeachers())
+					return;
 			}
 			next();
 		});
+
+
 	}
 
+	function isStopAndAutoGetNextTimeTeachers() {
+		var str = sessionStorage.getItem('times');
+		if (!str) return false;
+		var times = JSON.parse(str);
+		console.log(times);
+		var cur = times.shift();
+		if (cur) {
+			GM_setValue('autonextpage', 500);
+			sessionStorage.setItem('times', JSON.stringify(times));
+			$('form[name="searchform"]>input[name="selectTime"]').val(cur);
+			$('form[name="searchform"]>input[name="pageID"]').val(1);
+			$('.go-search').click();
+			return true;
+		}
+		return false;
+	}
 	if (settings.isDetailPage) {
 
 		function processTeacherDetailPage(jqr) {
@@ -625,8 +652,10 @@
 								<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
 								<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
 								<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
-								<a>去提建议和BUG</a>&nbsp;<a>?</a>&nbsp;
-								<button id='auotonextpage'>自动获取${getAutoNextPagesCount()}页</button>&nbsp;
+								<a>去提建议和BUG</a>&nbsp;
+								<a>?</a>&nbsp;
+								<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;
+								<button id='autogettodaysteachers'>自动获取今天老师</button>&nbsp;
 							</div>
 						</div>
 						<div id="tabs-1">
@@ -783,6 +812,18 @@
 						} else {
 							$('.s-t-page .next-page')[0].click();
 						}
+					}).end().eq(7).button({
+						icon: 'ui-icon-seek-next',
+						showLabel: true
+					}) //submit suggestion
+					.click(function() {
+						var times = [];
+						$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
+							return times.push($(item).attr('data-val'));
+						});
+						sessionStorage.setItem('times', JSON.stringify(times));
+						isStopAndAutoGetNextTimeTeachers();
+						console.log(times);
 					});
 
 				function getCatchedTeachers() {
