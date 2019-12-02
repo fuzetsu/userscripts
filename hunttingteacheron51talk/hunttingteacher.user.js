@@ -777,7 +777,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				    times = [];
 				if (timesstr) {
 					times = JSON.parse(timesstr);
-					var i = times.length - 1;
+					var i = times.length;
 					while (i--) {
 						$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
 					}
