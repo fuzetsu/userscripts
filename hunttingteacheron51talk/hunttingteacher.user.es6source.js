@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.10
+// @version      1.1.11
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -387,9 +387,10 @@
 			var autonextpage = GM_getValue('autonextpage', 1);
 			if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
 				let dialog = $(
-					`<div id="dialog-confirm" title="是否停止自动寻找老师?">
+					`<div id="dialog-confirm" title="是否停止自动搜索老师?">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-			即将停止自动获取后边<b>${autonextpage-1}</b>页的数据，约${(autonextpage-1) * 28 }个教师?</p>
+			点击立即停止， 将停止获取后续教师
+			<!--即将停止自动获取后边<b>${autonextpage-1}</b>页的数据，约${(autonextpage-1) * 28 }个教师?--></p>
 			</div>`
 				);
 				dialog.appendTo('body');
@@ -626,6 +627,22 @@
 		});
 	}
 
+	function addCheckbox(val, lbl, group) {
+		var container = $('#timesmutipulecheck');
+		var inputs = container.find('input');
+		var id = inputs.length + 1;
+
+		$('<input />', {
+			type: 'checkbox',
+			id: 'cb' + id,
+			value: val,
+			name: group
+		}).appendTo(container);
+		$('<label />', {
+			'for': 'cb' + id,
+			text: lbl ? lbl : val
+		}).appendTo(container);
+	}
 	if (settings.isListPage || settings.isDetailPage) {
 		//构建插件信息
 		submit(function(next) {
@@ -653,9 +670,15 @@
 								<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
 								<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
 								<a>去提建议和BUG</a>&nbsp;
-								<a>?</a>&nbsp;
-								<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;
-								<button id='autogettodaysteachers'>自动获取今天老师</button>&nbsp;
+								<a>?</a>&nbsp;								
+							</div>
+							<div  id='buttons1' style='text-align: left;'>							
+								<fieldset>
+									<legend>选择时间段</legend>
+									<div id='timesmutipulecheck'></div>
+									<!--<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;-->
+									<button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
+								</fieldset>								
 							</div>
 						</div>
 						<div id="tabs-1">
@@ -749,7 +772,7 @@
 					executeFilters(uifilters);
 				});
 
-				$('#buttons button,#buttons input,#buttons a').eq(0).button({
+				$('#buttons>button,#buttons>input,#buttons>a').eq(0).button({
 						icon: 'ui-icon-arrowthick-1-n',
 						showLabel: false
 					}) //升序
@@ -801,30 +824,45 @@
 					.prop('href',
 						'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk')
 					.prop('target', '_blank')
-					.end().eq(6).button({
-						icon: 'ui-icon-seek-next',
-						showLabel: true
-					}) //submit suggestion
-					.click(function() {
-						GM_setValue('autonextpage', getAutoNextPagesCount());
-						if ($('.s-t-page .next-page').length == 0) {
-							GM_setValue('autonextpage', 0);
-						} else {
-							$('.s-t-page .next-page')[0].click();
-						}
-					}).end().eq(7).button({
+					.end();
+
+				$('#buttons1 button').eq(0).button({
 						icon: 'ui-icon-seek-next',
 						showLabel: true
 					}) //submit suggestion
 					.click(function() {
 						var times = [];
-						$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
-							return times.push($(item).attr('data-val'));
+						$('#timesmutipulecheck>input').each(function(i, item) {
+							if ($(item).is(":checked")) {
+								times.push($(item).val());
+							}
 						});
 						sessionStorage.setItem('times', JSON.stringify(times));
 						isStopAndAutoGetNextTimeTeachers();
-						console.log(times);
-					});
+						//console.log(times);
+					}).end();
+
+				$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
+					addCheckbox($(item).attr('data-val'), $(item).text());
+				});
+				$('#timesmutipulecheck').find("input").checkboxradio({
+					icon: false
+				});
+				var timesstr = sessionStorage.getItem("times"),
+					times = [];
+				if (timesstr) {
+					times = JSON.parse(timesstr);
+					var i = times.length - 1;
+					while (i--) {
+						$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+					}
+				} else {
+					$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
+				}
+
+				$('#timesmutipulecheck').find("input").checkboxradio({
+					refresh: true
+				});
 
 				function getCatchedTeachers() {
 					var teachers = [];
