@@ -664,21 +664,18 @@
 								<li><a href="#tabs-2">Sorted Teachers</a></li>
 							</ul>
 							<br />
-							<div id='buttons' style='text-align: center;'>
+							<div id='buttons' style='text-align: center'>
 								<button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
 								<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
 								<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
 								<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
 								<a>去提建议和BUG</a>&nbsp;
-								<a>?</a>&nbsp;								
+								<a>?</a>&nbsp;
 							</div>
-							<div  id='buttons1' style='text-align: left;'>							
-								<fieldset>
-									<legend>选择时间段</legend>
-									<div id='timesmutipulecheck'></div>
-									<!--<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;-->
-									<button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
-								</fieldset>								
+							<div id='buttons1' style='text-align: center;'>
+								<div id='timesmutipulecheck'></div>
+								<!--<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;-->
+								<button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
 							</div>
 						</div>
 						<div id="tabs-1">
@@ -795,7 +792,7 @@
 						}
 					}) // 缓存过期时间（小时）
 					.css({
-						width: '40px'
+						width: '45px'
 					})
 					.val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000))
 					.end().eq(3).button({
@@ -826,7 +823,7 @@
 					.prop('target', '_blank')
 					.end();
 
-				$('#buttons1 button').eq(0).button({
+				$('#buttons1>button').eq(0).button({
 						icon: 'ui-icon-seek-next',
 						showLabel: true
 					}) //submit suggestion
@@ -845,19 +842,19 @@
 				$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
 					addCheckbox($(item).attr('data-val'), $(item).text());
 				});
-				
+
 				var timesstr = sessionStorage.getItem("times"),
 					times = [];
 				if (timesstr) {
 					times = JSON.parse(timesstr);
-					if(times.length>0){
+					if (times.length > 0) {
 						var i = times.length;
 						while (i--) {
 							$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
 						}
-					}else{
+					} else {
 						$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
-					}					
+					}
 				} else {
 					$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
 				}
@@ -901,21 +898,19 @@
 							data: teachers,
 							datatype: "local",
 							height: 240,
-							colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄',
-								'更新'
-							],
+							colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
 							colModel: [
 								//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
 								{
 									name: 'effectivetime',
 									index: 'effectivetime',
-									width: 50,
+									width: 45,
 									sorttype: "float",
 									align: 'right',
 									searchoptions: {
 										sopt: ['cn']
 									},
-									formatter: function(value, options, rData) {
+									formatter: function formatter(value, options, rData) {
 										var date = new Date(Number(value));
 										if (date instanceof Date && !isNaN(date.valueOf())) {
 											return date.toString('HHmmss');
@@ -931,9 +926,8 @@
 									searchoptions: {
 										sopt: ['cn']
 									},
-									formatter: function(value, options, rData) {
-										if (value)
-											return value;
+									formatter: function formatter(value, options, rData) {
+										if (value) return value;
 										else return 'na';
 									}
 								}, {
@@ -945,52 +939,46 @@
 									searchoptions: {
 										sopt: ['le']
 									}
-								},
-								{
+								}, {
 									name: 'name',
 									index: 'name',
-									width: 95,
+									width: 125,
 									sorttype: "string",
-									formatter: function(value, options, rData) {
+									formatter: function formatter(value, options, rData) {
 										return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] +
-											"' target='_blank' style='color:blue'>" + (!rData[
-												'name'] ? value : rData['name']) + "</a>";
+											"' target='_blank' style='color:blue'>" + (!rData['name'] ? value : rData['name']) + "</a>";
 									}
 								}, {
 									name: 'isfavorite',
 									index: 'isfavorite',
-									width: 49,
+									width: 39,
 									sorttype: "string",
 									align: 'left',
 									searchoptions: {
 										sopt: ['cn']
 									},
-									formatter: function(value, options, rData) {
-										if (value)
-											return '收藏';
+									formatter: function formatter(value, options, rData) {
+										if (value) return '收藏';
 										else return '';
 									}
-								},
-								{
+								}, {
 									name: 'indicator',
 									index: 'indicator',
-									width: 45,
+									width: 50,
 									sorttype: "float",
 									align: 'right',
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'label',
 									index: 'label',
-									width: 50,
+									width: 45,
 									align: 'right',
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'thumbupRate',
 									index: 'thumbupRate',
 									width: 35,
@@ -998,9 +986,8 @@
 									sorttype: "float",
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'favoritesCount',
 									index: 'favoritesCount',
 									width: 35,
@@ -1008,20 +995,18 @@
 									sorttype: "float",
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'slevel',
 									index: 'slevel',
-									width: 65,
+									width: 85,
 									sorttype: "string",
 									align: 'left',
 									searchoptions: {
 										//defaultValue: '中级',
 										sopt: ['cn', 'nc']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'tage',
 									index: 'tage',
 									width: 25,
@@ -1029,9 +1014,8 @@
 									align: 'right',
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'thumbup',
 									index: 'thumbup',
 									width: 45,
@@ -1039,26 +1023,23 @@
 									sorttype: "float",
 									searchoptions: {
 										sopt: ['ge']
-									},
-								},
-								{
+									}
+								}, {
 									name: 'thumbdown',
 									index: 'thumbdown',
 									width: 30,
 									sorttype: "float",
 									align: 'right'
-								},
-								{
+								}, {
 									name: 'age',
 									index: 'age',
 									width: 30,
 									sorttype: "float",
 									align: 'right',
 									searchoptions: {
-										sopt: ['le', 'ge', 'eq', ]
-									},
-								},
-								{
+										sopt: ['le', 'ge', 'eq']
+									}
+								}, {
 									name: 'expire',
 									index: 'expire',
 									width: 35,
@@ -1067,7 +1048,7 @@
 									searchoptions: {
 										sopt: ['cn']
 									},
-									formatter: function(value, options, rData) {
+									formatter: function formatter(value, options, rData) {
 										if (value) {
 											var d = new Date().getTime() - value;
 											if (d < 1000 * 60) {
@@ -1082,8 +1063,7 @@
 											return d;
 										} else return 'na';
 									}
-								},
-
+								}
 							],
 							multiselect: false,
 							rowNum: 10,
@@ -1094,8 +1074,11 @@
 							multiSort: true,
 							sortorder: "desc",
 							grouping: false,
+
+							shrinkToFit: false,
 							//autowidth: true,
-							caption: ""
+							width: 732,
+							//caption: ""
 						}).jqGrid('filterToolbar', {
 							searchOperators: true
 						});
@@ -1103,9 +1086,11 @@
 				});
 				var uifilters = getUiFilters();
 				executeFilters(uifilters);
-				$('#_tAge').html(uifilters.age1 + " - " + uifilters.age2);
+				$('#_tAge').html(uifilters.age1 + " - " + uifilters
+					.age2);
 				$('#_tLabelCount').html(uifilters.l1 + " - " + uifilters.l2);
-				$('#_thumbupRate').html(uifilters.rate1 + "% - " + uifilters.rate2 + '%');
+				$('#_thumbupRate').html(uifilters.rate1 +
+					"% - " + uifilters.rate2 + '%');
 				$('#_tfc').html(uifilters.fc1 + " - " + uifilters.fc2 + '');
 			} catch (ex) {
 				console.log(ex + "");
@@ -1126,7 +1111,7 @@
 			}
 
 			$('#filterdialog').dialog({
-				'width': '700'
+				'width': '750'
 			});
 			$('#filterdialog').parent().scrollFix();
 			$('#filterdialog').dialog("open");
