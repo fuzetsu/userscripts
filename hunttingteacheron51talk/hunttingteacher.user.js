@@ -390,8 +390,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		submit(function (next) {
 			var autonextpage = GM_getValue('autonextpage', 1);
 			if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
-				var _buttons;
-
 				var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpage - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpage - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
 				dialog.appendTo('body');
 				dialog.dialog({
@@ -399,25 +397,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 					height: "auto",
 					width: 400,
 					modal: false,
-					buttons: (_buttons = {
+					buttons: {
 						"立即停止": function _() {
 							sessionStorage.setItem('times', '');
 							GM_setValue('autonextpage', 0);
 							$(this).dialog("close");
 						}
-					}, _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.25).toFixed(0) + '\u9875', function undefined() {
-						sessionStorage.setItem('times', '');
-						GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
-						$(this).dialog("close");
-					}), _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.5).toFixed(0) + '\u9875', function undefined() {
-						sessionStorage.setItem('times', '');
-						GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
-						$(this).dialog("close");
-					}), _defineProperty(_buttons, '\u53D6\u540E' + (autonextpage * 0.75).toFixed(0) + '\u9875', function undefined() {
-						sessionStorage.setItem('times', '');
-						GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
-						$(this).dialog("close");
-					}), _buttons)
+						// [`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
+						// 	$(this).dialog("close");
+						// },
+						// [`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+						// 	$(this).dialog("close");
+						// },
+						// [`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+						// 	$(this).dialog("close");
+						// }
+					}
 				});
 			}
 			next();
@@ -770,23 +771,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function (i, item) {
 					addCheckbox($(item).attr('data-val'), $(item).text());
 				});
-				$('#timesmutipulecheck').find("input").checkboxradio({
-					icon: false
-				});
+
 				var timesstr = sessionStorage.getItem("times"),
 				    times = [];
 				if (timesstr) {
 					times = JSON.parse(timesstr);
-					var i = times.length;
-					while (i--) {
-						$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+					if (times.length > 0) {
+						var i = times.length;
+						while (i--) {
+							$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+						}
+					} else {
+						$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
 					}
 				} else {
 					$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
 				}
 
 				$('#timesmutipulecheck').find("input").checkboxradio({
-					refresh: true
+					icon: false
 				});
 
 				$("#tabs").tabs({

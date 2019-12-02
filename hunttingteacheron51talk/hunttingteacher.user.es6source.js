@@ -405,21 +405,21 @@
 							GM_setValue('autonextpage', 0);
 							$(this).dialog("close");
 						},
-						[`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
-							sessionStorage.setItem('times', '');
-							GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
-							$(this).dialog("close");
-						},
-						[`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
-							sessionStorage.setItem('times', '');
-							GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
-							$(this).dialog("close");
-						},
-						[`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
-							sessionStorage.setItem('times', '');
-							GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
-							$(this).dialog("close");
-						}
+						// [`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
+						// 	$(this).dialog("close");
+						// },
+						// [`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+						// 	$(this).dialog("close");
+						// },
+						// [`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+						// 	sessionStorage.setItem('times', '');
+						// 	GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+						// 	$(this).dialog("close");
+						// }
 					}
 				});
 			}
@@ -845,23 +845,25 @@
 				$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
 					addCheckbox($(item).attr('data-val'), $(item).text());
 				});
-				$('#timesmutipulecheck').find("input").checkboxradio({
-					icon: false
-				});
+				
 				var timesstr = sessionStorage.getItem("times"),
 					times = [];
 				if (timesstr) {
 					times = JSON.parse(timesstr);
-					var i = times.length;
-					while (i--) {
-						$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
-					}
+					if(times.length>0){
+						var i = times.length;
+						while (i--) {
+							$("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+						}
+					}else{
+						$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
+					}					
 				} else {
 					$("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
 				}
 
 				$('#timesmutipulecheck').find("input").checkboxradio({
-					refresh: true
+					icon: false
 				});
 
 				function getCatchedTeachers() {
