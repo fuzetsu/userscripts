@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      1.1.12
+// @version      2019.12.31
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -612,11 +612,11 @@
 			GM_setValue(getinfokey(), tinfo);
 
 			jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
-				return `${val} 
+				return `${val}
 			<span class="age age-line">指标${tinfo.indicator }</span>
 			<span class="age age-line">率${tinfo.thumbupRate}%</span>
 			<span class="age age-line">赞${tinfo.thumbup}</span>
-			<span class="age age-line">踩${tinfo.thumbdown}</span>			
+			<span class="age age-line">踩${tinfo.thumbdown}</span>
 			<span class="age age-line">标签数${tinfo.label}</span>
 			`;
 			});
@@ -658,7 +658,7 @@
 				$('body').append(
 					`<div id='filterdialog' title='Teacher Filter'>
 					<div id='tabs'>
-						<div>	
+						<div>
 							<ul>
 								<li><a href="#tabs-1">Search Teachers</a></li>
 								<li><a href="#tabs-2">Sorted Teachers</a></li>
