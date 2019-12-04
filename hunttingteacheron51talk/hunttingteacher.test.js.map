@@ -1,0 +1,14 @@
+{
+ "version": 3,
+ "sources": [
+  "hunttingteacher.test.js"
+ ],
+ "file": "hunttingteacher.test.js",
+ "names": [
+  "a",
+  "b",
+  "console",
+  "log"
+ ],
+ "mappings": ";;AAAA,IAAIA,IAAI,EAAR;AACA,IAAIC,IAAI,SAAJA,CAAI;AAAA,SAAMD,IAAI,CAAV;AAAA,CAAR;AACAE,QAAQC,GAAR,CAAYF,GAAZ"
+}
