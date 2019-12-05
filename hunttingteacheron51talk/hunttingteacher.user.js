@@ -8,7 +8,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
-// @license      OSL-3.0 
+// @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
 // @match        *://www.51talk.com/ReserveNew/index*
 // @match        *://www.51talk.com/TeacherNew/*
