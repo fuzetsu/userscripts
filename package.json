@@ -6,9 +6,8 @@
   "devDependencies": {
     "babel-core": "^6.0.20",
     "babel-plugin-syntax-flow": "^6.0.0",
-    "babel-preset-es2015": "^6.0.0",
-    "babel-preset-minify": "^0.5.1",
-    "babel-preset-react": "^6.0.0",
-    "babel-preset-minify":""
+    "babel-preset-es2015": "*",
+    "babel-preset-minify": "",
+    "babel-preset-react": "^6.0.0"
   }
 }

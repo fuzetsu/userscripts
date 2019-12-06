@@ -2,11 +2,13 @@
   "only": [
     "*.babel",
     "*.jsx",
-    "*.es6"
+    "*.es6",
+    "*.es8",
+    "*.es7"
   ],
   "presets": [
     "es2015",
     "react",
-  //  ["minify",{      "removeDebugger": true,    }]
+    //  ["minify",{      "removeDebugger": true,    }]
   ]
 }
