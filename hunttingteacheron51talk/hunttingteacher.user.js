@@ -1,4 +1,8 @@
-'use strict';function _defineProperty(a,b,c){return b in a?Object.defineProperty(a,b,{value:c,enumerable:!0,configurable:!0,writable:!0}):a[b]=c,a}// ==UserScript==
+'use strict';
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
 // @version      2019.12.31
 // @namespace    https://github.com/niubilityfrontend
@@ -23,67 +27,971 @@
 // @require      https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
-(function(){'use strict';//重载类型方法
-var m=Math.ceil;function a(){return q.tid}/**
+(function () {
+  'use strict';
+  //重载类型方法
+
+  (function () {
+    var _o;
+
+    var getPaddedComp = function getPaddedComp(comp) {
+      return parseInt(comp) < 10 ? '0' + comp : comp;
+    },
+        o = (_o = {
+      "[y|Y]{4}": function yY4(date) {
+        return date.getFullYear();
+      }, // year
+      "[y|Y]{2}": function yY2(date) {
+        return date.getFullYear().toString().slice(2);
+      }, // year
+      "MM": function MM(date) {
+        return getPaddedComp(date.getMonth() + 1);
+      }, //month
+      "M": function M(date) {
+        return date.getMonth() + 1;
+      }, //month
+      "[d|D]{2}": function dD2(date) {
+        return getPaddedComp(date.getDate());
+      }, //day
+      "[d|D]{1}": function dD1(date) {
+        return date.getDate();
+      }, //day
+      "h{2}": function h2(date) {
+        return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+      }, //hour
+      "h{1}": function h1(date) {
+        return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+      }, //hour
+      "H{2}": function H2(date) {
+        return getPaddedComp(date.getHours());
+      } }, _defineProperty(_o, 'h{1}', function h1(date) {
+      return date.getHours();
+    }), _defineProperty(_o, "m{2}", function m2(date) {
+      return getPaddedComp(date.getMinutes());
+    }), _defineProperty(_o, "m{1}", function m1(date) {
+      return date.getMinutes();
+    }), _defineProperty(_o, "s+", function s(date) {
+      return getPaddedComp(date.getSeconds());
+    }), _defineProperty(_o, "f+", function f(date) {
+      return getPaddedComp(date.getMilliseconds());
+    }), _defineProperty(_o, "b+", function b(date) {
+      return date.getHours() >= 12 ? 'PM' : 'AM';
+    }), _o);
+    Date.prototype.toString = function (format) {
+      var formattedDate = format;
+      for (var k in o) {
+        if (new RegExp("(" + k + ")").test(format)) {
+          formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+        }
+      }
+      return formattedDate;
+    };
+    //删除数组中的空元素
+    Array.prototype.clean = function () {
+      var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+
+      for (var i = 0; i < this.length; i++) {
+        if (this[i] == deleteValue) {
+          this.splice(i, 1);
+          i--;
+        }
+      }
+      return this;
+    };
+    Number.prototype.toString = function () {
+      return this.toFixed(2);
+    };
+    String.prototype.toFloat = function () {
+      return parseFloat(this);
+    };
+    String.prototype.toInt = function () {
+      return parseInt(this);
+    };
+    String.prototype.startsWith = function (str) {
+      return this.slice(0, str.length) == str;
+    };
+    String.prototype.endsWith = function (str) {
+      return this.slice(-str.length) == str;
+    };
+    String.prototype.contains = function (str) {
+      return this.indexOf(str) > -1;
+    };
+    String.prototype.replaceAll = function (search, replacement) {
+      var target = this;
+      return target.replace(new RegExp(search, 'g'), replacement);
+    };
+  })();
+  var config = GM_config([{
+    key: 'pagecount',
+    label: '最大页数 (自动获取时)',
+    default: 20,
+    type: 'dropdown',
+    values: [0, 5, 10, 20, 50, 1000]
+  }, {
+    key: 'batchtimezoneMinutes',
+    label: '预定耗费时间（分钟）',
+    default: 60,
+    type: 'dropdown',
+    values: [5, 10, 20, 30, 50, 60, 90, 120, 300, 600, 1440, 10080]
+  }, {
+    key: 'version',
+    type: 'hidden',
+    default: 1
+  }]);
+  var conf = config.load();
+  config.onsave = function (cfg) {
+    conf = cfg;
+    $('#autogetnextpage').text('自动获取' + getAutoNextPagesCount() + "页");
+  };
+  GM_registerMenuCommand('设置', config.setup);
+  //*://www.51talk.com/ReserveNew/index*
+  //https://www.51talk.com/TeacherNew/info/t26501111
+  //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=all&has_msg=1
+  //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=good&has_msg=1
+  //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=bad&has_msg=1
+  //https://www.51talk.com/user/study_center_zx
+  //https://www.51talk.com/user/study_center_zy
+  //https://www.51talk.com/user/study_center_xx
+  var url = window.location.href.toLocaleLowerCase();
+  var settings = {
+    'url': url,
+    'tid': url.match(/(t\d+)/g),
+    'pagecount': conf.pagecount,
+    'isDetailPage': url.contains("teachernew"),
+    'isListPage': url.contains('reservenew'),
+    'isCoursePage': url.contains('study_center')
+  };
+
+  function gettid() {
+    return settings.tid;
+  }
+  /**
    * 提交运算函数到 document 的 fx 队列
-   */function b(a,b){if(!(a in sessionStorage)){var c='function'==typeof b?b(a):b;return sessionStorage.setItem(a,c),c}return sessionStorage.getItem(a)}function c(){var a=$('input[name=\'Date\']').val()+$('input[name=\'selectTime\']').val();return b(a,function(){return new Date().getTime()})}function d(){var a=+$('.s-t-page>.next-page:first').prev().text(),b=+$('.s-t-page>.active:first').text();return a?a-b:0}function e(){var a=d();return q.pagecount>a?a:q.pagecount}function f(a,b){b.label>x&&(x=b.label),b.label<y&&(y=b.label),b.favoritesCount>z&&(z=b.favoritesCount),b.favoritesCount<A&&(A=b.favoritesCount),b.thumbupRate>v&&(v=b.thumbupRate),b.thumbupRate<w&&(w=b.thumbupRate),b.age>B&&(B=b.age),b.age<C&&(C=b.age),a.attr('teacherinfo',JSON.stringify(b)),a.find('.teacher-name').html(a.find('.teacher-name').text()+'<br />['+b.label+'|'+b.thumbupRate+'%|'+b.favoritesCount+']'),a.find('.teacher-age').html(a.find('.teacher-age').text()+' | <label title=\'\u6392\u5E8F\u6307\u6807\'>'+b.indicator+'</label>'),a//.attr('thumbup', tinfo.thumbup)
-//.attr('thumbdown', tinfo.thumbdown)
-//.attr('thumbupRate', tinfo.thumbupRate)
-//.attr('age', tinfo.age)
-//.attr('label', tinfo.label)
-.attr('indicator',b.indicator)}function g(a){var b=0,c=0;$.each($('.item'),function(d,e){var f=$(e),g=f.attr('teacherinfo');if(!g)return!0;var h=JSON.parse(g);h.thumbupRate>=a.rate1&&h.thumbupRate<=a.rate2&&h.label>=a.l1&&h.label<=a.l2&&h.age>=a.age1&&h.age<=a.age2&&h.favoritesCount>=a.fc1&&h.favoritesCount<=a.fc2?(f.is(':hidden')&&(f.show(),f.animate({left:'+=50'},3500).animate({left:'-=50'},3500)),b++):(f.css('color','white').hide(),c++)}),$('#tcount').text(b),$('#thidecount').text(c)}function h(){var a=$('#tlabelslider').slider('values',0),b=$('#tlabelslider').slider('values',1),c=$('#thumbupRateslider').slider('values',0),d=$('#thumbupRateslider').slider('values',1),e=$('#tAgeSlider').slider('values',0),f=$('#tAgeSlider').slider('values',1),g=$('#fcSlider').slider('values',0),h=$('#fcSlider').slider('values',1);return{l1:a,l2:b,rate1:c,rate2:d,age1:e,age2:f,fc1:g,fc2:h}}function i(){return'tinfo-'+a()}function j(){var a=sessionStorage.getItem('times');if(!a)return!1;var b=JSON.parse(a);console.log(b);var c=b.shift();return!!c&&(GM_setValue('autonextpage',500),sessionStorage.setItem('times',JSON.stringify(b)),$('form[name="searchform"]>input[name="selectTime"]').val(c),$('form[name="searchform"]>input[name="pageID"]').val(1),$('.go-search').click(),!0)}function k(a,b,c){var d=$('#timesmutipulecheck'),e=d.find('input'),f=e.length+1;$('<input />',{type:'checkbox',id:'cb'+f,value:a,name:c}).appendTo(d),$('<label />',{for:'cb'+f,text:b?b:a}).appendTo(d)}(function(){var b,a=String.prototype,c=function(a){return 10>parseInt(a)?'0'+a:a},d=(b={"[y|Y]{4}":function b(a){return a.getFullYear()},// year
-"[y|Y]{2}":function b(a){return a.getFullYear().toString().slice(2)},// year
-MM:function b(a){return c(a.getMonth()+1)},//month
-M:function b(a){return a.getMonth()+1},//month
-"[d|D]{2}":function b(a){return c(a.getDate())},//day
-"[d|D]{1}":function b(a){return a.getDate()},//day
-"h{2}":function b(a){return c(12<a.getHours()?a.getHours()%12:a.getHours())},//hour
-"h{1}":function b(a){return 12<a.getHours()?a.getHours()%12:a.getHours()},//hour
-"H{2}":function b(a){return c(a.getHours())}},_defineProperty(b,'h{1}',function b(a){return a.getHours()}),_defineProperty(b,'m{2}',function b(a){return c(a.getMinutes())}),_defineProperty(b,'m{1}',function b(a){return a.getMinutes()}),_defineProperty(b,'s+',function b(a){return c(a.getSeconds())}),_defineProperty(b,'f+',function b(a){return c(a.getMilliseconds())}),_defineProperty(b,'b+',function c(a){return 12<=a.getHours()?'PM':'AM'}),b);//删除数组中的空元素
-Date.prototype.toString=function(a){var b=a;for(var c in d)new RegExp('('+c+')').test(a)&&(b=b.replace(RegExp.$1,d[c](this)));return b},Array.prototype.clean=function(){for(var a=0<arguments.length&&arguments[0]!==void 0?arguments[0]:'',b=0;b<this.length;b++)this[b]==a&&(this.splice(b,1),b--);return this},Number.prototype.toString=function(){return this.toFixed(2)},a.toFloat=function(){return parseFloat(this)},a.toInt=function(){return parseInt(this)},a.startsWith=function(a){return this.slice(0,a.length)==a},a.endsWith=function(a){return this.slice(-a.length)==a},a.contains=function(a){return-1<this.indexOf(a)},a.replaceAll=function(a,b){var c=this;return c.replace(new RegExp(a,'g'),b)}})();var n=GM_config([{key:'pagecount',label:'\u6700\u5927\u9875\u6570(\u81EA\u52A8\u83B7\u53D6\u65F6)',default:20,type:'dropdown',values:[0,5,10,20,50,1e3]},{key:'batchtimezoneMinutes',label:'\u9884\u5B9A\u8017\u8D39\u65F6\u95F4\uFF08\u5206\u949F\uFF09',default:60,type:'dropdown',values:[5,10,20,30,50,60,90,120,300,600,1440,10080]},{key:'version',type:'hidden',default:1}]),o=n.load();n.onsave=function(a){o=a,$('#autogetnextpage').text('\u81EA\u52A8\u83B7\u53D6'+e()+'\u9875')},GM_registerMenuCommand('\u8BBE\u7F6E',n.setup);//*://www.51talk.com/ReserveNew/index*
-//https://www.51talk.com/TeacherNew/info/t26501111
-//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=all&has_msg=1
-//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=good&has_msg=1
-//https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=bad&has_msg=1
-//https://www.51talk.com/user/study_center_zx
-//https://www.51talk.com/user/study_center_zy
-//https://www.51talk.com/user/study_center_xx
-var p=window.location.href.toLocaleLowerCase(),q={url:p,tid:p.match(/(t\d+)/g),pagecount:o.pagecount,isDetailPage:p.contains('teachernew'),isListPage:p.contains('reservenew'),isCoursePage:p.contains('study_center')},r=function(a){var b=$.queue(document,'fx',a);'inprogress'==b[0]||$.dequeue(document)};Pace.Options={ajax:!1,// disabled
-document:!1,// disabled
-eventLag:!1,// disabled
-elements:{selectors:['#filterdialog']}};var s=function(c,a){var b=$(c).attr('indicator'),d=$(a).attr('indicator');return b&&d?$(c).attr('indicator').toFloat()>$(a).attr('indicator').toFloat()?1:-1:0},t=function(c,a){var b=$(c).attr('indicator'),d=$(a).attr('indicator');return b&&d?$(c).attr('indicator').toFloat()>$(a).attr('indicator').toFloat()?-1:1:0},u=function(a){var b=$('.s-t-content.f-cb .item').sort(a);$('.s-t-content.f-cb').empty().append(b)};$('head').append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n\t\t<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">'),$('head').append('<style type="text/css">\n\t\t.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n\t\t.search-teachers .s-t-list .item {   height: 679px; }\n\t\t.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n\t\t.search-teachers { width: 100%; }\n\t\t.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n\t\t.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n\t\t.pace {\n\t\t  -webkit-pointer-events: none;\n\t\t  pointer-events: none;\n\t\t  -webkit-user-select: none;\n\t\t  -moz-user-select: none;\n\t\t  user-select: none;\n\t\t}\n\t\t.pace-inactive {\n\t\t  display: none;\n\t\t}\n\t\t.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n\t\t.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n\t\t.pace .pace-progress {\n\t\t  background: #29d;\n\t\t  position: fixed;\n\t\t  z-index: 2000;\n\t\t  top: 0;\n\t\t  right: 100%;\n\t\t  width: 100%;\n\t\t  height: 2px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n\t\t float: left;\n\t\t width: 118px;\n\t\t height: 34px;\n\t\t line-height: 34px;\n\t\t margin-right: 5px;\n\t\t margin-bottom: 5px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-details {\n\t\t padding: 2px 0 2px 30px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-right {\n\t\t height: auto;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-left .condition-item {\n\t\t margin-bottom: 2px;\n\t\t}\n\t\t.s-t-page {   padding-top: 2px;}\n\t\t</style>');var v=0,w=99999,x=0,y=9999999,z=0,A=999999,B=0,C=99999,D=36e5*GM_getValue('tinfoexprhours',168),E=/[0-9]*/g;//缓存7天小时
-if(q.isListPage){var F=function(a){var b=+a.find('.teacher-age').text().match(E).clean('')[0],d=function(){for(var b=a.find('.label').text().match(E).clean('').length,c=0,d=0;d<b;d++)c+=+a.find('.label').text().match(E).clean('')[d];return c=m(c/5),c}(),e=a.find('.teacher-name').text(),f=$('.s-t-top-list .li-active').text(),g=c();if('\u6536\u85CF\u5916\u6559'==f){return{age:b,label:d,name:e,effectivetime:g,isfavorite:!0}}return{age:b,label:d,name:e,effectivetime:g,type:f}};//获取列表中数据
-// 自动获取时,显示停止按钮
-$('.item-top-cont').prop('innerHTML',function(a,b){return b.replaceAll('<!--','').replaceAll('-->','')}),$('.s-t-days-list>li').click(function(){var a=$('input[name=\'Date\']').val()+$('input[name=\'selectTime\']').val();sessionStorage.setItem(a,new Date().getTime())}),$('.condition-type-time>li').click(function(){var a=$('input[name=\'Date\']').val()+$('input[name=\'selectTime\']').val();sessionStorage.setItem(a,new Date().getTime())}),$('.s-t-top-list>li>a').click(function(){var a=$('input[name=\'Date\']').val()+$('input[name=\'selectTime\']').val();sessionStorage.setItem(a,new Date().getTime())}),r(function(a){var b=GM_getValue('autonextpage',1);if(0<b&&0<$('.s-t-page>.next-page').length){var c=$('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>'+(b-1)+'</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6'+28*(b-1)+'\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');c.appendTo('body'),c.dialog({resizable:!1,height:'auto',width:400,modal:!1,buttons:{立即停止:function a(){sessionStorage.setItem('times',''),GM_setValue('autonextpage',0),$(this).dialog('close')}// [`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
-// 	sessionStorage.setItem('times', '');
-// 	GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
-// 	$(this).dialog("close");
-// },
-// [`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
-// 	sessionStorage.setItem('times', '');
-// 	GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
-// 	$(this).dialog("close");
-// },
-// [`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
-// 	sessionStorage.setItem('times', '');
-// 	GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
-// 	$(this).dialog("close");
-// }
-}})}a()}),$('.item').each(function(a,b){r(function(a){Pace.track(function(){var c=$(b),d=c.find('.teacher-details-link a').attr('href').replace('https://www.51talk.com/TeacherNew/info/','').replace('http://www.51talk.com/TeacherNew/info/',''),e='tinfo-'+d,g=F(c),h=GM_getValue(e);if(h){var i=new Date().getTime();if(h.expire||(h.expire=new Date(1970,1,1).getTime()),h=$.extend(h,g),GM_setValue(e,h),i-h.expire<D)return f(c,h),a(),!0}// ajax 请求一定要包含在一个函数中
-var j=new Date().getTime();$.ajax({url:window.location.protocol+'//www.51talk.com/TeacherNew/teacherComment?tid='+d+'&type=bad&has_msg=1',type:'GET',dateType:'html',success:function q(a){var b=$(a);if(0<b.find('.teacher-name-tit').length){var d=b.find('.teacher-name-tit')[0];d.innerHTML=d.innerHTML.replace('<!--','').replace('-->','')}if(3<=b.find('.evaluate-content-left span').length){var h=+b.find('.evaluate-content-left span:eq(1)').text().match(E).clean('')[0],i=+b.find('.evaluate-content-left span:eq(2)').text().match(E).clean('')[0],j=100*((h+1e-5)/(i+h)).toFixed(2),k=+b.find('.clear-search').text().match(E).clean('')[0],l=0<b.find('.go-search.cancel-collection').length,n=+b.find('.teacher-name-tit > .age.age-line').text().match(E).clean('')[0],o=b.find('.sui-students').text();b.remove();var p={slevel:o,tage:n,thumbup:h,thumbdown:i,thumbupRate:j,indicator:m(g.label*j/100)+k,favoritesCount:k,isfavorite:l,expire:new Date().getTime()};p=$.extend(p,g),GM_setValue(e,p),f(c,p)}else console.log('Teacher s detail info getting error:'+JSON.stringify(c)+',error info:'+a)},error:function b(a){console.log('xhr error when getting teacher '+JSON.stringify(c)+',error msg:'+JSON.stringify(a))}}).always(function(){for(;600>new Date().getTime()-j;)continue;a()})})})}),r(function(a){//翻页
-var b=GM_getValue('autonextpage',0);if(0<b){if(GM_setValue('autonextpage',b-1),0!=$('.s-t-page>.next-page').length)return $('.s-t-page .next-page')[0].click(),!1;if(GM_setValue('autonextpage',0),j())return}else if(j())return;a()})}if(q.isDetailPage){var G=function(a){a.find('.teacher-name-tit').prop('innerHTML',function(a,b){return b.replaceAll('<!--','').replaceAll('-->','')});var b=GM_getValue(i(),{});b.label=function(){var b=0;return $.each(a.find('.t-d-label').text().match(E).clean(''),function(a,c){b+=+c}),b=m(b/5),b}(),window.location.href.toLocaleLowerCase().contains('teachercomment')&&(b.thumbup=+a.find('.evaluate-content-left span:eq(1)').text().match(E).clean('')[0],b.thumbdown=+a.find('.evaluate-content-left span:eq(2)').text().match(E).clean('')[0],b.thumbupRate=100*((b.thumbup+1e-5)/(b.thumbdown+b.thumbup)).toFixed(2),b.indicator=m(b.label*b.thumbupRate/100)+b.favoritesCount,b.slevel=a.find('.sui-students').text(),b.expire=new Date().getTime()),b.favoritesCount=+a.find('.clear-search').text().match(E).clean('')[0],b.isfavorite=0<a.find('.go-search.cancel-collection').length,b.age=+a.find('.age.age-line:eq(0)').text().match(E).clean('')[0],b.name=a.find('.t-name').text().trim(),b.tage=+a.find('.teacher-name-tit > .age.age-line:eq(1)').text().match(E).clean('')[0],GM_setValue(i(),b),a.find('.teacher-name-tit').prop('innerHTML',function(a,c){return c+'\n\t\t\t<span class="age age-line">\u6307\u6807'+b.indicator+'</span>\n\t\t\t<span class="age age-line">\u7387'+b.thumbupRate+'%</span>\n\t\t\t<span class="age age-line">\u8D5E'+b.thumbup+'</span>\n\t\t\t<span class="age age-line">\u8E29'+b.thumbdown+'</span>\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570'+b.label+'</span>\n\t\t\t'})};r(function(a){G($(document)),a()})}(q.isListPage||q.isDetailPage)&&(r(function(a){try{var b=function(){var a=[];$.each(GM_listValues(),function(b,c){if(c.startsWith('tinfo-')){var d=GM_getValue(c);d.tid=c.slice(6,c.length),a.push(d)}});var b={};return a=a.sort(function(a,b){return a.indicator==b.indicator?a.favoritesCount>b.favoritesCount?-1:1:a.indicator>b.indicator?-1:1}).map(function(a){return isNaN(b[a.type])?b[a.type]=1:b[a.type]+=1,a.rank=b[a.type],a}),a},c=GM_getValue('filterconfig',{l1:300,l2:x,rate1:97,rate2:v,age1:C,age2:B});$('body').append('<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<br />\n\t\t\t\t\t\t\t<div id=\'buttons\' style=\'text-align: center\'>\n\t\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n\t\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n\t\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n\t\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n\t\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n\t\t\t\t\t\t\t\t<a>?</a>&nbsp;\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id=\'buttons1\' style=\'text-align: center;\'>\n\t\t\t\t\t\t\t\t<div id=\'timesmutipulecheck\'></div>\n\t\t\t\t\t\t\t\t<!--<button id=\'autogetnextpage\'>\u81EA\u52A8\u83B7\u53D6\u6B64\u65F6\u6BB5'+e()+'\u9875</button>&nbsp;-->\n\t\t\t\t\t\t\t\t<button id=\'autogettodaysteachers\'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>'),$('body').append('<div id=\'teachlistdialog\' style=\'display:none;\'></div>'),$('body').append('<div id=\'wwwww\'>\u5DF2\u52A0\u8F7D\u9009\u8BFE\u8F85\u52A9\u63D2\u4EF6\u3002</div>'),$('#tlabelslider').slider({range:!0,min:y-1,max:x,values:[c.l1<y-1?y-1:c.l1,x],slide:function c(a,b){$('#_tLabelCount').html(b.values[0]+' - '+b.values[1])}}).on('slidestop',function(){var a=$('#tlabelslider').slider('values',0),b=$('#tlabelslider').slider('values',1),c=h(),d=GM_getValue('filterconfig',c);d.l1=a,d.l2=b,GM_setValue('filterconfig',d),g(c)}),$('#fcSlider').slider({range:!0,min:A,max:z,values:[c.fc1<A?A:c.fc1,z],slide:function c(a,b){$('#_tfc').html(b.values[0]+' - '+b.values[1])}}).on('slidestop',function(){var a=$('#fcSlider').slider('values',0),b=$('#fcSlider').slider('values',1),c=h(),d=GM_getValue('filterconfig',c);d.fc1=a,d.fc2=b,GM_setValue('filterconfig',d),g(c)}),$('#thumbupRateslider').slider({range:!0,min:w,max:v,values:[c.rate1<w?w:c.rate1,v],slide:function c(a,b){$('#_thumbupRate').html(b.values[0]+'% - '+b.values[1]+'%')}}).on('slidestop',function(){var a=$('#thumbupRateslider').slider('values',0),b=$('#thumbupRateslider').slider('values',1),c=h(),d=GM_getValue('filterconfig',c);d.rate1=a,d.rate2=b,GM_setValue('filterconfig',d),g(c)}),$('#tAgeSlider').slider({range:!0,min:+C,// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-max:+B,// 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-values:[c.age1<C?C:c.age1,c.age2>B?B:c.age2],slide:function c(a,b){$('#_tAge').html(b.values[0]+' - '+b.values[1])}}).on('slidestop',function(){var a=$('#tAgeSlider').slider('values',0),b=$('#tAgeSlider').slider('values',1),c=h(),d=GM_getValue('filterconfig',c);d.age1=a,d.age2=b,GM_setValue('filterconfig',d),g(c)}),$('#buttons>button,#buttons>input,#buttons>a').eq(0).button({icon:'ui-icon-arrowthick-1-n',showLabel:!1}).//升序
-click(function(){$('#desc').show(),$(this).hide(),u(s)}).end().eq(1).button({icon:'ui-icon-arrowthick-1-s',showLabel:!1}).//降序
-click(function(){$('#asc').show(),$(this).hide(),u(t)}).end().eq(2).spinner({min:0,spin:function c(a,b){GM_setValue('tinfoexprhours',b.value)}}).// 缓存过期时间（小时）
-css({width:'45px'}).val(GM_getValue('tinfoexprhours',D/36e5)).end().eq(3).button({icon:'ui-icon-trash',showLabel:!1}).//清空缓存
-click(function(){$.each(GM_listValues(),function(a,b){b.startsWith('tinfo-')&&GM_deleteValue(b)}),$('.go-search').click()}).end().eq(4).button({icon:'ui-icon-comment',showLabel:!1}).//submit suggestion
-prop('href','https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target','_blank').end().eq(5).button({icon:'ui-icon-help',showLabel:!1}).//系统帮助
-prop('href','https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target','_blank').end(),$('#buttons1>button').eq(0).button({icon:'ui-icon-seek-next',showLabel:!0}).//submit suggestion
-click(function(){var a=[];$('#timesmutipulecheck>input').each(function(b,c){$(c).is(':checked')&&a.push($(c).val())}),sessionStorage.setItem('times',JSON.stringify(a)),j()}//console.log(times);
-).end(),$('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(a,b){k($(b).attr('data-val'),$(b).text())});var d=sessionStorage.getItem('times'),f=[];if(!d)$('#timesmutipulecheck>input[value=\''+$('input[name=\'selectTime\']').val()+'\']').attr('checked',!0);else if(f=JSON.parse(d),0<f.length)for(var l=f.length;l--;)$('#timesmutipulecheck>input[value=\''+f[l]+'\']').attr('checked',!0);else $('#timesmutipulecheck>input[value=\''+$('input[name=\'selectTime\']').val()+'\']').attr('checked',!0);$('#timesmutipulecheck').find('input').checkboxradio({icon:!1}),$('#tabs').tabs({active:'#tabs-2',activate:function f(a,c){if('tabs-2'==c.newPanel.attr('id')){var d=b(),e=$('#teachertab');e.jqGrid({data:d,datatype:'local',height:240,colNames:['\u67E5','\u7C7B\u578B','\u6392\u540D','Name','\u7231','\u5206','\u6807','\u7387%','\u6536\u85CF\u6570','\u5B66','\u6559\u9F84','\u597D','\u5DEE','\u9F84','\u66F4\u65B0'],colModel:[//searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
-{name:'effectivetime',index:'effectivetime',width:45,sorttype:'float',align:'right',searchoptions:{sopt:['cn']},formatter:function(a){var b=new Date(+a);return b instanceof Date&&!isNaN(b.valueOf())?b.toString('HHmmss'):a}},{name:'type',index:'type',width:55,sorttype:'string',align:'left',searchoptions:{sopt:['cn']},formatter:function(a){return a?a:'na'}},{name:'rank',index:'rank',width:40,sorttype:'float',align:'right',searchoptions:{sopt:['le']}},{name:'name',index:'name',width:125,sorttype:'string',formatter:function(a,b,c){return'<a href=\'http://www.51talk.com/TeacherNew/info/'+c.tid+'\' target=\'_blank\' style=\'color:blue\'>'+(c.name?c.name:a)+'</a>'}},{name:'isfavorite',index:'isfavorite',width:39,sorttype:'string',align:'left',searchoptions:{sopt:['cn']},formatter:function(a){return a?'\u6536\u85CF':''}},{name:'indicator',index:'indicator',width:50,sorttype:'float',align:'right',searchoptions:{sopt:['ge']}},{name:'label',index:'label',width:45,align:'right',searchoptions:{sopt:['ge']}},{name:'thumbupRate',index:'thumbupRate',width:35,align:'right',sorttype:'float',searchoptions:{sopt:['ge']}},{name:'favoritesCount',index:'favoritesCount',width:35,align:'right',sorttype:'float',searchoptions:{sopt:['ge']}},{name:'slevel',index:'slevel',width:85,sorttype:'string',align:'left',searchoptions:{//defaultValue: '中级',
-sopt:['cn','nc']}},{name:'tage',index:'tage',width:25,sorttype:'float',align:'right',searchoptions:{sopt:['ge']}},{name:'thumbup',index:'thumbup',width:45,align:'right',sorttype:'float',searchoptions:{sopt:['ge']}},{name:'thumbdown',index:'thumbdown',width:30,sorttype:'float',align:'right'},{name:'age',index:'age',width:30,sorttype:'float',align:'right',searchoptions:{sopt:['le','ge','eq']}},{name:'expire',index:'expire',width:35,sorttype:'Date',align:'right',searchoptions:{sopt:['cn']},formatter:function(a){if(a){var b=new Date().getTime()-a;return 60000>b?'\u521A\u521A':3600000>b?(b/6e4).toFixed(0)+'\u5206':86400000>b?(b/36e5).toFixed(0)+'\u65F6':(b/864e5).toFixed(0)+'\u5929'}return'na'}}],multiselect:!1,rowNum:10,rowList:[5,10,20,30],pager:'#pager5',sortname:'effectivetime desc,indicator desc',viewrecords:!0,multiSort:!0,sortorder:'desc',grouping:!1,shrinkToFit:!1,//autowidth: true,
-width:732//caption: ""
-}).jqGrid('filterToolbar',{searchOperators:!0})}}});var m=h();g(m),$('#_tAge').html(m.age1+' - '+m.age2),$('#_tLabelCount').html(m.l1+' - '+m.l2),$('#_thumbupRate').html(m.rate1+'% - '+m.rate2+'%'),$('#_tfc').html(m.fc1+' - '+m.fc2+'')}catch(a){console.log(a+'')}finally{a()}}),r(function(a){$('.s-t-list').before($('.s-t-page').prop('outerHTML')),$('#tabs>div:first').append($('.s-t-page').prop('outerHTML')),u(t),$('#tabs').tabs('option','active',1),q.isDetailPage&&$('#tabs').tabs('option','disabled',[0]),$('#filterdialog').dialog({width:'750'}),$('#filterdialog').parent().scrollFix(),$('#filterdialog').dialog('open'),a()})),q.isCoursePage&&r(function(a){$('.course_lock').removeClass('course_lock').addClass('course_unlock'),$('img.course_mask').removeClass('course_mask').attr('src',''),a()})})();
+   */
+  var submit = function submit(fun) {
+    var queue = $.queue(document, "fx", fun);
+    if (queue[0] == 'inprogress') {
+      return;
+    }
+    $.dequeue(document);
+  };
+
+  function getorAdd(key, func) {
+    if (!(key in sessionStorage)) {
+      var data = typeof func == 'function' ? func(key) : func;
+      sessionStorage.setItem(key, data);
+      return data;
+    }
+    return sessionStorage.getItem(key);
+  }
+  Pace.Options = {
+    ajax: false, // disabled
+    document: false, // disabled
+    eventLag: false, // disabled
+    elements: {
+      selectors: ['#filterdialog']
+    }
+  };
+
+  function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() - start < delay) {
+      continue;
+    }
+  }
+  var asc = function asc(a, b) {
+    var av = $(a).attr('indicator');
+    var bv = $(b).attr('indicator');
+    if (!av || !bv) return 0;
+    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? 1 : -1;
+  };
+  var desc = function desc(a, b) {
+    var av = $(a).attr('indicator');
+    var bv = $(b).attr('indicator');
+    if (!av || !bv) return 0;
+    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? -1 : 1;
+  };
+  var sortByIndicator = function sortByIndicator(sortBy) {
+    var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
+    $('.s-t-content.f-cb').empty().append(sortEle);
+  };
+
+  function getBatchNumber() {
+    var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+    return getorAdd(batchnumber, function (key) {
+      return new Date().getTime();
+    });
+  }
+
+  function getLeftPageCount() {
+    var pages = Number($('.s-t-page>.next-page:first').prev().text());
+    var curr = Number($('.s-t-page>.active:first').text());
+    if (pages) return pages - curr;else return 0;
+  }
+
+  function getAutoNextPagesCount() {
+    var pages = getLeftPageCount();
+    if (settings.pagecount > pages) return pages;else return settings.pagecount;
+  }
+  $("head").append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n\t\t<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">');
+  $("head").append('<style type="text/css">\n\t\t.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n\t\t.search-teachers .s-t-list .item {   height: 679px; }\n\t\t.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n\t\t.search-teachers { width: 100%; }\n\t\t.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n\t\t.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n\t\t.pace {\n\t\t  -webkit-pointer-events: none;\n\t\t  pointer-events: none;\n\t\t  -webkit-user-select: none;\n\t\t  -moz-user-select: none;\n\t\t  user-select: none;\n\t\t}\n\t\t.pace-inactive {\n\t\t  display: none;\n\t\t}\n\t\t.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n\t\t.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n\t\t.pace .pace-progress {\n\t\t  background: #29d;\n\t\t  position: fixed;\n\t\t  z-index: 2000;\n\t\t  top: 0;\n\t\t  right: 100%;\n\t\t  width: 100%;\n\t\t  height: 2px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n\t\t float: left;\n\t\t width: 118px;\n\t\t height: 34px;\n\t\t line-height: 34px;\n\t\t margin-right: 5px;\n\t\t margin-bottom: 5px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-details {\n\t\t padding: 2px 0 2px 30px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-right {\n\t\t height: auto;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-left .condition-item {\n\t\t margin-bottom: 2px;\n\t\t}\n\t\t.s-t-page {   padding-top: 2px;}\n\t\t</style>');
+  var maxrate = 0,
+      minrate = 99999,
+      maxlabel = 0,
+      minlabel = 9999999,
+      maxfc = 0,
+      minfc = 999999,
+      maxage = 0,
+      minage = 99999;
+  var configExprMilliseconds = 3600000 * GM_getValue('tinfoexprhours', 168); //缓存7天小时
+  var num = /[0-9]*/g;
+
+  function updateTeacherinfoToUI(jqel, tinfo) {
+    if (tinfo.label > maxlabel) maxlabel = tinfo.label;
+    if (tinfo.label < minlabel) minlabel = tinfo.label;
+    if (tinfo.favoritesCount > maxfc) maxfc = tinfo.favoritesCount;
+    if (tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
+    if (tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
+    if (tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
+    if (tinfo.age > maxage) maxage = tinfo.age;
+    if (tinfo.age < minage) minage = tinfo.age;
+    jqel.attr("teacherinfo", JSON.stringify(tinfo));
+    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
+    jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
+    jqel //.attr('thumbup', tinfo.thumbup)
+    //.attr('thumbdown', tinfo.thumbdown)
+    //.attr('thumbupRate', tinfo.thumbupRate)
+    //.attr('age', tinfo.age)
+    //.attr('label', tinfo.label)
+    .attr('indicator', tinfo.indicator);
+  }
+
+  function executeFilters(uifilters) {
+    var tcount = 0,
+        hidecount = 0;
+    $.each($('.item'), function (i, item) {
+      var node = $(item);
+      var tinfojson = node.attr("teacherinfo");
+      if (!tinfojson) {
+        return true;
+      }
+      var tinfo = JSON.parse(tinfojson);
+      if (tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2 && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
+        if (node.is(':hidden')) {
+          //如果node是隐藏的则显示node元素，否则隐藏
+          node.show();
+          node.animate({
+            left: "+=50"
+          }, 3500).animate({
+            left: "-=50"
+          }, 3500);
+        } else {
+          //nothing todo
+        }
+        tcount++;
+      } else {
+        node.css('color', 'white').hide();
+        hidecount++;
+      }
+    });
+    $('#tcount').text(tcount);
+    $('#thidecount').text(hidecount);
+  }
+
+  function getUiFilters() {
+    var l1 = $("#tlabelslider").slider('values', 0);
+    var l2 = $("#tlabelslider").slider('values', 1);
+    var rate1 = $("#thumbupRateslider").slider('values', 0);
+    var rate2 = $("#thumbupRateslider").slider('values', 1);
+    var age1 = $("#tAgeSlider").slider('values', 0);
+    var age2 = $("#tAgeSlider").slider('values', 1);
+    var fc1 = $("#fcSlider").slider('values', 0);
+    var fc2 = $("#fcSlider").slider('values', 1);
+    return {
+      l1: l1,
+      l2: l2,
+      rate1: rate1,
+      rate2: rate2,
+      age1: age1,
+      age2: age2,
+      fc1: fc1,
+      fc2: fc2
+    };
+  }
+
+  function getinfokey() {
+    return 'tinfo-' + gettid();
+  };
+  if (settings.isListPage) {
+    var getTeacherInfoInList = function getTeacherInfoInList(jqel) {
+      var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
+      var label = function () {
+        var j_len = jqel.find(".label").text().match(num).clean("").length;
+        var l = 0;
+        for (var j = 0; j < j_len; j++) {
+          l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+        }
+        l = Math.ceil(l / 5);
+        return l;
+      }();
+      var name = jqel.find(".teacher-name").text();
+      var type = $('.s-t-top-list .li-active').text();
+      var effectivetime = getBatchNumber();
+      if (type == '收藏外教') {
+        var isfavorite = true;
+        return {
+          age: age,
+          label: label,
+          name: name,
+          effectivetime: effectivetime,
+          isfavorite: isfavorite
+        };
+      } else return {
+        age: age,
+        label: label,
+        name: name,
+        effectivetime: effectivetime,
+        type: type
+      };
+    };
+    //获取列表中数据
+
+
+    $(".item-top-cont").prop('innerHTML', function (i, val) {
+      return val.replaceAll('<!--', '').replaceAll('-->', '');
+    });
+    $(".s-t-days-list>li").click(function () {
+      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      sessionStorage.setItem(batchnumber, new Date().getTime());
+    });
+    $(".condition-type-time>li").click(function () {
+      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      sessionStorage.setItem(batchnumber, new Date().getTime());
+    });
+    $(".s-t-top-list>li>a").click(function () {
+      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      sessionStorage.setItem(batchnumber, new Date().getTime());
+    });
+    // 自动获取时,显示停止按钮
+    submit(function (next) {
+      var autonextpage = GM_getValue('autonextpage', 1);
+      if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
+        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpage - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpage - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
+        dialog.appendTo('body');
+        dialog.dialog({
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: false,
+          buttons: {
+            "立即停止": function _() {
+              sessionStorage.setItem('times', '');
+              GM_setValue('autonextpage', 0);
+              $(this).dialog("close");
+            }
+            // [`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+            // 	sessionStorage.setItem('times', '');
+            // 	GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
+            // 	$(this).dialog("close");
+            // },
+            // [`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+            // 	sessionStorage.setItem('times', '');
+            // 	GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+            // 	$(this).dialog("close");
+            // },
+            // [`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+            // 	sessionStorage.setItem('times', '');
+            // 	GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+            // 	$(this).dialog("close");
+            // }
+          }
+        });
+      }
+      next();
+    });
+
+    $(".item").each(function (index, el) {
+      submit(function (next) {
+        Pace.track(function () {
+          var jqel = $(el);
+          var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+          var tinfokey = 'tinfo-' + tid;
+          var teacherlistinfo = getTeacherInfoInList(jqel);
+          var tinfo = GM_getValue(tinfokey);
+          if (tinfo) {
+            var now = new Date().getTime();
+            if (!tinfo.expire) {
+              tinfo.expire = new Date(1970, 1, 1).getTime();
+            }
+            tinfo = $.extend(tinfo, teacherlistinfo);
+            GM_setValue(tinfokey, tinfo);
+            if (now - tinfo.expire < configExprMilliseconds) {
+              updateTeacherinfoToUI(jqel, tinfo);
+              next();
+              return true;
+            }
+          }
+          // ajax 请求一定要包含在一个函数中
+          var start = new Date().getTime();
+          $.ajax({
+            url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
+            type: 'GET',
+            dateType: 'html',
+            success: function success(r) {
+              var jqr = $(r);
+              if (jqr.find('.teacher-name-tit').length > 0) {
+                var tempitem = jqr.find('.teacher-name-tit')[0];
+                tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
+              }
+              if (jqr.find(".evaluate-content-left span").length >= 3) {
+                var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+                var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+                var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+                var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+                var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+                var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
+                var slevel = jqr.find('.sui-students').text();
+                jqr.remove();
+                var tinfo = {
+                  'slevel': slevel,
+                  'tage': tage,
+                  'thumbup': thumbup,
+                  'thumbdown': thumbdown,
+                  'thumbupRate': thumbupRate,
+                  'indicator': Math.ceil(teacherlistinfo.label * thumbupRate / 100) + favoritesCount,
+                  'favoritesCount': favoritesCount,
+                  'isfavorite': isfavorite,
+                  'expire': new Date().getTime()
+                };
+                tinfo = $.extend(tinfo, teacherlistinfo);
+                GM_setValue(tinfokey, tinfo);
+                updateTeacherinfoToUI(jqel, tinfo);
+              } else {
+                console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
+              }
+            },
+            error: function error(data) {
+              console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(data));
+            }
+          }).always(function () {
+            while (new Date().getTime() - start < 600) {
+              continue;
+            }
+            next();
+          });
+        });
+      });
+    });
+    submit(function (next) {
+      //翻页
+      var autonextpage = GM_getValue('autonextpage', 0);
+      if (autonextpage > 0) {
+        GM_setValue('autonextpage', autonextpage - 1);
+        if ($('.s-t-page>.next-page').length == 0) {
+          GM_setValue('autonextpage', 0);
+          if (isStopAndAutoGetNextTimeTeachers()) return;
+        } else {
+          $('.s-t-page .next-page')[0].click();
+          return false;
+        }
+      } else {
+        if (isStopAndAutoGetNextTimeTeachers()) return;
+      }
+      next();
+    });
+  }
+
+  function isStopAndAutoGetNextTimeTeachers() {
+    var str = sessionStorage.getItem('times');
+    if (!str) return false;
+    var times = JSON.parse(str);
+    console.log(times);
+    var cur = times.shift();
+    if (cur) {
+      GM_setValue('autonextpage', 500);
+      sessionStorage.setItem('times', JSON.stringify(times));
+      $('form[name="searchform"]>input[name="selectTime"]').val(cur);
+      $('form[name="searchform"]>input[name="pageID"]').val(1);
+      $('.go-search').click();
+      return true;
+    }
+    return false;
+  }
+  if (settings.isDetailPage) {
+    var processTeacherDetailPage = function processTeacherDetailPage(jqr) {
+      jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
+        return val.replaceAll('<!--', '').replaceAll('-->', '');
+      });
+      var tinfo = GM_getValue(getinfokey(), {});
+      tinfo.label = function () {
+        var l = 0;
+        $.each(jqr.find(".t-d-label").text().match(num).clean(""), function (i, val) {
+          l += Number(val);
+        });
+        l = Math.ceil(l / 5);
+        return l;
+      }();
+      if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+        tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+        tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+        tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+        tinfo.indicator = Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
+        tinfo.slevel = jqr.find('.sui-students').text();
+        tinfo.expire = new Date().getTime();
+      }
+      tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+      tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+      tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
+      tinfo.name = jqr.find(".t-name").text().trim();
+      //无法获取type
+      //tinfo.type = $('.s-t-top-list .li-active').text().trim();
+      tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+      GM_setValue(getinfokey(), tinfo);
+      jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
+        return val + '\n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">\u8D5E' + tinfo.thumbup + '</span>\n\t\t\t<span class="age age-line">\u8E29' + tinfo.thumbdown + '</span>\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570' + tinfo.label + '</span>\n\t\t\t';
+      });
+    };
+
+    submit(function (next) {
+      processTeacherDetailPage($(document));
+      next();
+    });
+  }
+
+  function addCheckbox(val, lbl, group) {
+    var container = $('#timesmutipulecheck');
+    var inputs = container.find('input');
+    var id = inputs.length + 1;
+    $('<input />', {
+      type: 'checkbox',
+      id: 'cb' + id,
+      value: val,
+      name: group
+    }).appendTo(container);
+    $('<label />', {
+      'for': 'cb' + id,
+      text: lbl ? lbl : val
+    }).appendTo(container);
+  }
+  if (settings.isListPage || settings.isDetailPage) {
+    //构建插件信息
+    submit(function (next) {
+      try {
+        var getCatchedTeachers = function getCatchedTeachers() {
+          var teachers = [];
+          $.each(GM_listValues(), function (i, item) {
+            if (item.startsWith('tinfo-')) {
+              var t = GM_getValue(item);
+              t.tid = item.slice(6, item.length);
+              teachers.push(t);
+            }
+          });
+          var indexs = {};
+          teachers = teachers.sort(function (t1, t2) {
+            if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
+            return t1.indicator > t2.indicator ? -1 : 1;
+          }).map(function (val, idx) {
+            if (isNaN(indexs[val.type])) {
+              indexs[val.type] = 1;
+            } else {
+              indexs[val.type] += 1;
+            }
+            val.rank = indexs[val.type];
+            return val;
+          });
+          return teachers;
+        };
+
+        var config = GM_getValue('filterconfig', {
+          l1: 300,
+          l2: maxlabel,
+          rate1: 97,
+          rate2: maxrate,
+          age1: minage,
+          age2: maxage
+        });
+        $('body').append('<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<br />\n\t\t\t\t\t\t\t<div id=\'buttons\' style=\'text-align: center\'>\n\t\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n\t\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n\t\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n\t\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n\t\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n\t\t\t\t\t\t\t\t<a>?</a>&nbsp;\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div id=\'buttons1\' style=\'text-align: center;\'>\n\t\t\t\t\t\t\t\t<div id=\'timesmutipulecheck\'></div>\n\t\t\t\t\t\t\t\t<!--<button id=\'autogetnextpage\'>\u81EA\u52A8\u83B7\u53D6\u6B64\u65F6\u6BB5' + getAutoNextPagesCount() + '\u9875</button>&nbsp;-->\n\t\t\t\t\t\t\t\t<button id=\'autogettodaysteachers\'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>');
+        $('body').append("<div id='teachlistdialog' style='display:none;'></div>");
+        $('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
+        $("#tlabelslider").slider({
+          range: true,
+          min: minlabel - 1,
+          max: maxlabel,
+          values: [config.l1 < minlabel - 1 ? minlabel - 1 : config.l1, maxlabel],
+          slide: function slide(event, ui) {
+            $('#_tLabelCount').html(ui.values[0] + " - " + ui.values[1]);
+          }
+        }).on('slidestop', function (event, ui) {
+          var l1 = $("#tlabelslider").slider('values', 0);
+          var l2 = $("#tlabelslider").slider('values', 1);
+          var uifilters = getUiFilters();
+          var filterconfig = GM_getValue('filterconfig', uifilters);
+          filterconfig.l1 = l1;
+          filterconfig.l2 = l2;
+          GM_setValue('filterconfig', filterconfig);
+          executeFilters(uifilters);
+        });
+        $("#fcSlider").slider({
+          range: true,
+          min: minfc,
+          max: maxfc,
+          values: [config.fc1 < minfc ? minfc : config.fc1, maxfc],
+          slide: function slide(event, ui) {
+            $('#_tfc').html(ui.values[0] + " - " + ui.values[1]);
+          }
+        }).on('slidestop', function (event, ui) {
+          var fc1 = $("#fcSlider").slider('values', 0);
+          var fc2 = $("#fcSlider").slider('values', 1);
+          var uifilters = getUiFilters();
+          var filterconfig = GM_getValue('filterconfig', uifilters);
+          filterconfig.fc1 = fc1;
+          filterconfig.fc2 = fc2;
+          GM_setValue('filterconfig', filterconfig);
+          executeFilters(uifilters);
+        });
+        $("#thumbupRateslider").slider({
+          range: true,
+          min: minrate,
+          max: maxrate,
+          values: [config.rate1 < minrate ? minrate : config.rate1, maxrate],
+          slide: function slide(event, ui) {
+            $('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
+          }
+        }).on('slidestop', function (event, ui) {
+          var rate1 = $("#thumbupRateslider").slider('values', 0);
+          var rate2 = $("#thumbupRateslider").slider('values', 1);
+          var uifilters = getUiFilters();
+          var filterconfig = GM_getValue('filterconfig', uifilters);
+          filterconfig.rate1 = rate1;
+          filterconfig.rate2 = rate2;
+          GM_setValue('filterconfig', filterconfig);
+          executeFilters(uifilters);
+        });
+        $("#tAgeSlider").slider({
+          range: true,
+          min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+          max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+          values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
+          slide: function slide(event, ui) {
+            $('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
+          }
+        }).on("slidestop", function (event, ui) {
+          var age1 = $("#tAgeSlider").slider('values', 0);
+          var age2 = $("#tAgeSlider").slider('values', 1);
+          var uifilters = getUiFilters();
+          var filterconfig = GM_getValue('filterconfig', uifilters);
+          filterconfig.age1 = age1;
+          filterconfig.age2 = age2;
+          GM_setValue('filterconfig', filterconfig);
+          executeFilters(uifilters);
+        });
+        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({
+          icon: 'ui-icon-arrowthick-1-n',
+          showLabel: false
+        }). //升序
+        click(function () {
+          $('#desc').show();
+          $(this).hide();
+          sortByIndicator(asc);
+        }).end().eq(1).button({
+          icon: 'ui-icon-arrowthick-1-s',
+          showLabel: false
+        }). //降序
+        click(function () {
+          $('#asc').show();
+          $(this).hide();
+          sortByIndicator(desc);
+        }).end().eq(2).spinner({
+          min: 0,
+          spin: function spin(event, ui) {
+            GM_setValue('tinfoexprhours', ui.value);
+          }
+        }). // 缓存过期时间（小时）
+        css({
+          width: '45px'
+        }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({
+          icon: 'ui-icon-trash',
+          showLabel: false
+        }). //清空缓存
+        click(function () {
+          $.each(GM_listValues(), function (i, item) {
+            if (item.startsWith('tinfo-')) {
+              GM_deleteValue(item);
+            }
+          });
+          $('.go-search').click();
+        }).end().eq(4).button({
+          icon: 'ui-icon-comment',
+          showLabel: false
+        }). //submit suggestion
+        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({
+          icon: 'ui-icon-help',
+          showLabel: false
+        }). //系统帮助
+        prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
+        $('#buttons1>button').eq(0).button({
+          icon: 'ui-icon-seek-next',
+          showLabel: true
+        }). //submit suggestion
+        click(function () {
+          var times = [];
+          $('#timesmutipulecheck>input').each(function (i, item) {
+            if ($(item).is(":checked")) {
+              times.push($(item).val());
+            }
+          });
+          sessionStorage.setItem('times', JSON.stringify(times));
+          isStopAndAutoGetNextTimeTeachers();
+          //console.log(times);
+        }).end();
+        $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function (i, item) {
+          addCheckbox($(item).attr('data-val'), $(item).text());
+        });
+        var timesstr = sessionStorage.getItem("times"),
+            times = [];
+        if (timesstr) {
+          times = JSON.parse(timesstr);
+          if (times.length > 0) {
+            var i = times.length;
+            while (i--) {
+              $("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+            }
+          } else {
+            $("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
+          }
+        } else {
+          $("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
+        }
+        $('#timesmutipulecheck').find("input").checkboxradio({
+          icon: false
+        });
+
+        $("#tabs").tabs({
+          active: '#tabs-2',
+          activate: function activate(event, ui) {
+            if (ui.newPanel.attr('id') != 'tabs-2') return;
+            var teachers = getCatchedTeachers();
+            var jqtable = $("#teachertab");
+            jqtable.jqGrid({
+              data: teachers,
+              datatype: "local",
+              height: 240,
+              colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
+              colModel: [
+              //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
+              {
+                name: 'effectivetime',
+                index: 'effectivetime',
+                width: 45,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  var date = new Date(Number(value));
+                  if (date instanceof Date && !isNaN(date.valueOf())) {
+                    return date.toString('HHmmss');
+                  }
+                  return value;
+                }
+              }, {
+                name: 'type',
+                index: 'type',
+                width: 55,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) return value;else return 'na';
+                }
+              }, {
+                name: 'rank',
+                index: 'rank',
+                width: 40,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le']
+                }
+              }, {
+                name: 'name',
+                index: 'name',
+                width: 125,
+                sorttype: "string",
+                formatter: function formatter(value, options, rData) {
+                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!rData['name'] ? value : rData['name']) + "</a>";
+                }
+              }, {
+                name: 'isfavorite',
+                index: 'isfavorite',
+                width: 39,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) return '收藏';else return '';
+                }
+              }, {
+                name: 'indicator',
+                index: 'indicator',
+                width: 50,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'label',
+                index: 'label',
+                width: 45,
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbupRate',
+                index: 'thumbupRate',
+                width: 35,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'favoritesCount',
+                index: 'favoritesCount',
+                width: 35,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'slevel',
+                index: 'slevel',
+                width: 85,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  //defaultValue: '中级',
+                  sopt: ['cn', 'nc']
+                }
+              }, {
+                name: 'tage',
+                index: 'tage',
+                width: 25,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbup',
+                index: 'thumbup',
+                width: 45,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbdown',
+                index: 'thumbdown',
+                width: 30,
+                sorttype: "float",
+                align: 'right'
+              }, {
+                name: 'age',
+                index: 'age',
+                width: 30,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le', 'ge', 'eq']
+                }
+              }, {
+                name: 'expire',
+                index: 'expire',
+                width: 35,
+                sorttype: "Date",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) {
+                    var d = new Date().getTime() - value;
+                    if (d < 1000 * 60) {
+                      return "刚刚";
+                    } else if (d < 1000 * 60 * 60) {
+                      return (d / 60000).toFixed(0) + "分";
+                    } else if (d < 1000 * 60 * 60 * 24) {
+                      return (d / 3600000).toFixed(0) + "时";
+                    } else {
+                      return (d / 86400000).toFixed(0) + "天";
+                    }
+                    return d;
+                  } else return 'na';
+                }
+              }],
+              multiselect: false,
+              rowNum: 10,
+              rowList: [5, 10, 20, 30],
+              pager: '#pager5',
+              sortname: 'effectivetime desc,indicator desc',
+              viewrecords: true,
+              multiSort: true,
+              sortorder: "desc",
+              grouping: false,
+              shrinkToFit: false,
+              //autowidth: true,
+              width: 732
+              //caption: ""
+            }).jqGrid('filterToolbar', {
+              searchOperators: true
+            });
+          }
+        });
+        var uifilters = getUiFilters();
+        executeFilters(uifilters);
+        $('#_tAge').html(uifilters.age1 + " - " + uifilters.age2);
+        $('#_tLabelCount').html(uifilters.l1 + " - " + uifilters.l2);
+        $('#_thumbupRate').html(uifilters.rate1 + "% - " + uifilters.rate2 + '%');
+        $('#_tfc').html(uifilters.fc1 + " - " + uifilters.fc2 + '');
+      } catch (ex) {
+        console.log(ex + "");
+      } finally {
+        next();
+      }
+    });
+    //弹出信息框
+    submit(function (next) {
+      $('.s-t-list').before($(".s-t-page").prop('outerHTML'));
+      $('#tabs>div:first').append($(".s-t-page").prop('outerHTML'));
+      sortByIndicator(desc);
+      $("#tabs").tabs("option", "active", 1);
+      if (settings.isDetailPage) {
+        $("#tabs").tabs("option", "disabled", [0]);
+      }
+      $('#filterdialog').dialog({
+        'width': '750'
+      });
+      $('#filterdialog').parent().scrollFix();
+      $('#filterdialog').dialog("open");
+      next();
+    });
+  }
+  if (settings.isCoursePage) {
+    submit(function (next) {
+      $('.course_lock').removeClass('course_lock').addClass('course_unlock');
+      $('img.course_mask').removeClass('course_mask').attr('src', '');
+      next();
+    });
+  }
+})();
 //# sourceMappingURL=hunttingteacher.user.js.map
