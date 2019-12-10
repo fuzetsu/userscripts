@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name Crunchyroll Video Utilities
-// @version 1.0.4
+// @version 1.0.5
 // @namespace fuzetsu/csdvqn
 // @description seek video with hotkeys and set default quality
-// @match https://static.crunchyroll.com/vilos/player.html
+// @match https://static.crunchyroll.com/*/player.html
 // @match https://www.crunchyroll.com/*
 // @grant GM_registerMenuCommand
 // @grant GM_getValue
@@ -16,8 +16,8 @@ const sep = '~~@~~'
 const domain = 'https://www.crunchyroll.com'
 const CSS = {
   quality: '.qualityMenuItemSelector',
-  settings: '.settingsMenuButton',
-  playerBox: '#showmedia_video_box_wide'
+  settings: '.settingsMenuButton,#settingsControl',
+  playerBox: '#showmedia_video_player'
 }
 
 // use publicly exposed Player.js object to control video player
@@ -62,7 +62,6 @@ const player = {
       setTimeout(player.toggleSettings, 200, false)
     }
   },
-  fullscreen: () => q('.vjs-fullscreen-control').click(),
   fillTab: () => {
     const playerBox = q(CSS.playerBox)
     if (!playerBox) return p('playerbox not found')
@@ -121,7 +120,7 @@ const handleKey = key =>
     ? player.skip(seekKeys[key])
     : null
 
-const isPlayerFrame = location.href.includes('https://static.crunchyroll.com/vilos/player.html')
+const isPlayerFrame = location.href.includes('static.crunchyroll.com')
 
 /**
  * Keyboard events from within the player frame dont bubble up to main page where the player.js

@@ -2,75 +2,138 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.0.3
+// @version      0.1.1
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
+// @inject-into  content
 // @grant        GM_setClipboard
+// @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/b06cf8745c97944945b646fde8a44888a939110e/libs/gm_config.js
 // ==/UserScript==
-/* global prettier prettierPlugins GM_setClipboard */
+/* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
+
+'use strict'
 
 const deps = [
   'https://unpkg.com/prettier/standalone.js',
   'https://unpkg.com/prettier/parser-babylon.js'
 ]
 
-const config = {
-  parser: 'babel',
-  printWidth: 100,
-  semi: false,
-  singleQuote: true
-}
+const loadDep = url =>
+  new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url,
+      onload: res => resolve(res.responseText),
+      onerror: () => reject(new Error(`Failed to load ${url}`))
+    })
+  })
+
+const Config = GM_config([
+  {
+    key: 'prettierrc',
+    label: 'Prettier Config',
+    default: '{}',
+    type: 'text',
+    multiline: true,
+    resizable: true
+  },
+  {
+    key: 'binding',
+    label: 'Key Binding',
+    type: 'keybinding',
+    default: { altKey: true, shiftKey: true, key: 'I' },
+    requireModifier: true,
+    requireKey: true
+  },
+  {
+    key: 'copyBinding',
+    label: 'Copy Key Binding',
+    type: 'keybinding',
+    default: { ctrlKey: true, altKey: true, shiftKey: true, key: 'I' },
+    requireModifier: true,
+    requireKey: true
+  }
+])
+GM_registerMenuCommand('Prettier Anywhere Settings', Config.setup)
+let config = Config.load()
+Config.onsave = cfg => (config = cfg)
 
 const p = (...args) => (console.log(...args), args[0])
 
-const makeElem = (name, opts = {}) => Object.assign(document.createElement(name), opts)
-
 let loaded = false
-const load = async () => {
+const load = () => {
   if (loaded) return
   loaded = true
-  await Promise.all(
-    deps.map(
-      dep =>
-        new Promise(res =>
-          document.body.appendChild(
-            makeElem('script', {
-              async: true,
-              src: dep,
-              onload: () => res()
-            })
-          )
-        )
-    )
-  )
+  return Promise.all(deps.map(loadDep)).then(scripts => scripts.map(eval)) // eslint-disable-line no-eval
 }
 
+const getSelection = () => {
+  const elem = document.activeElement
+  if (['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
+    return elem.value.slice(elem.selectionStart, elem.selectionEnd)
+  } else if (elem.contentEditable) {
+    if (!document.getSelection().toString()) return
+    document.execCommand('copy')
+    return navigator.clipboard.readText()
+  } else {
+    return document.getSelection().toString()
+  }
+}
+
+const insertText = text => {
+  const elem = document.activeElement
+  if (typeof InstallTrigger !== 'undefined' && ['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
+    elem.value =
+      elem.value.slice(0, elem.selectionStart) + text + elem.value.slice(elem.selectionEnd)
+  } else {
+    document.execCommand('insertText', false, text)
+  }
+}
+
+const prettify = async clip => {
+  const code = getSelection()
+  p('key combo HIT, selection = ', code, '; clip = ', clip)
+  if (!code) return p('no selection, so nothing to do')
+  p('--- PRETTIER START ---')
+  p('Loading Prettier')
+  const loadStart = Date.now()
+  await load()
+  p('Loaded, delta = ', Date.now() - loadStart)
+  const conf = {
+    ...JSON.parse(config.prettierrc || '{}'),
+    parser: 'babel',
+    plugins: prettierPlugins
+  }
+  p('formatting using conf:', conf)
+  const formatted = prettier.format(code, conf)
+  if (clip) {
+    GM_setClipboard(formatted)
+    document.getSelection().empty()
+  } else {
+    insertText(formatted)
+  }
+  p('BEFORE:\n', code)
+  p('AFTER:\n', formatted)
+  p('--- PRETTIER END ---')
+}
+
+const keyBindingsMatch = (a, b) =>
+  !!a.ctrlKey === !!b.ctrlKey &&
+  !!a.altKey === !!b.altKey &&
+  !!a.shiftKey === !!b.shiftKey &&
+  !!a.metaKey === !!b.metaKey &&
+  a.key.toUpperCase() === b.key.toUpperCase()
+
 window.addEventListener('keydown', e => {
-  if (e.altKey && e.shiftKey && e.key.toUpperCase() === 'I') {
-    const code = document.getSelection().toString()
-    const clip = e.ctrlKey
-    p('key combo HIT, selection = ', code, '; clip = ', clip)
-    if (!code) return p('no selection, so nothing to do')
+  if (keyBindingsMatch(e, config.binding)) {
     e.preventDefault()
-    p('--- PRETTIER START ---')
-    p('Loading Prettier')
-    const loadStart = Date.now()
-    load().then(() => {
-      p('Loaded, delta = ', Date.now() - loadStart)
-      const formatted = prettier.format(code, {
-        ...config,
-        plugins: prettierPlugins
-      })
-      if (clip) {
-        GM_setClipboard(formatted)
-        document.getSelection().empty()
-      } else {
-        document.execCommand('insertText', false, formatted)
-      }
-      p('BEFORE:\n', code)
-      p('AFTER:\n', formatted)
-      p('--- PRETTIER END ---')
-    })
-    return false
+    prettify()
+  } else if (keyBindingsMatch(e, config.copyBinding)) {
+    e.preventDefault()
+    prettify(true)
   }
 })
