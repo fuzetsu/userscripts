@@ -1,4 +1,4 @@
-# 51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5
+# [51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5](https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0)
 ## 快速开始
 
 ![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/quickstart.png)
@@ -33,7 +33,7 @@
  - 建议 可转到github提出建议或者bug（需要Github登陆）
  - ？ 帮助按钮，打开Github的详细说明页面
  - 自动获取10页 点击后自动获取后边10页的教师信息并缓存，可以在Sorted Teachers页面看到
- - 四个滑动条可以调节不同的值来过滤老师 
+ - 四个滑动条可以调节不同的值来过滤老师
 
 ### 页面优化
 - 显示教师年龄
@@ -72,7 +72,7 @@
 -   [v1.0.11](https://greasyfork.org/zh-CN/scripts/388276-51talk选择最好最合适的老师-经验-好评率-年龄-收藏数?version=735823) 2019-09-25 - optimized the update time and link color
 - v1.0.2 2019-9-3 add system config for auto get next page's count
 - v1.0.1 2019-9-3 - Modified the up rate to permillage ‰
-- v1.0.0 2019-8-27 - released a first stable version 
+- v1.0.0 2019-8-27 - released a first stable version
 - v0.1.33 2019-8-26 - add searching function to teacher list grid
 - v0.1.28 2019-8-23 - list and sort all teachers your searched recently
 - v0.1.26 2019-8-19 -增加滑块，根据收藏人数过滤教师
