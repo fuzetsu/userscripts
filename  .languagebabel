@@ -1,5 +1,5 @@
 {
-  "babelMapsAddUrl": false,
+  "babelMapsAddUrl": true,
   "babelMapsPath": "",
   "babelSourcePath": "",
   "babelTranspilePath": "",

@@ -4,7 +4,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      2019.12.31
+// @version      2019.12.10001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -107,13 +107,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		String.prototype.toInt = function () {
 			return parseInt(this);
 		};
-		String.prototype.startsWith = function (str) {
+		if (!String.prototype.startsWith) String.prototype.startsWith = function (str) {
 			return this.slice(0, str.length) == str;
 		};
-		String.prototype.endsWith = function (str) {
+		if (!String.prototype.endsWith) String.prototype.endsWith = function (str) {
 			return this.slice(-str.length) == str;
 		};
-		String.prototype.contains = function (str) {
+		if (!String.prototype.includes) String.prototype.includes = function (str) {
 			return this.indexOf(str) > -1;
 		};
 		String.prototype.replaceAll = function (search, replacement) {
@@ -157,9 +157,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		'url': url,
 		'tid': url.match(/(t\d+)/g),
 		'pagecount': conf.pagecount,
-		'isDetailPage': url.contains("teachernew"),
-		'isListPage': url.contains('reservenew'),
-		'isCoursePage': url.contains('study_center')
+		'isDetailPage': url.includes("teachernew"),
+		'isListPage': url.includes('reservenew'),
+		'isCoursePage': url.includes('study_center')
 	};
 
 	function gettid() {
@@ -505,7 +505,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		var str = sessionStorage.getItem('times');
 		if (!str) return false;
 		var times = JSON.parse(str);
-		console.log(times);
 		var cur = times.shift();
 		if (cur) {
 			GM_setValue('autonextpage', 500);
@@ -531,7 +530,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 				l = Math.ceil(l / 5);
 				return l;
 			}();
-			if (window.location.href.toLocaleLowerCase().contains("teachercomment")) {
+			if (window.location.href.toLocaleLowerCase().includes("teachercomment")) {
 				tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
 				tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
 				tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
