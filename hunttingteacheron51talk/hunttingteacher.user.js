@@ -3,8 +3,8 @@
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // ==UserScript==
-// @name         51talk选择最好最合适的老师-经验|好评率|年龄|收藏数
-// @version      2019.12.10001
+// @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
+// @version      2019.12.10002
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo

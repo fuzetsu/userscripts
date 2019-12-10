@@ -1,4 +1,4 @@
-# [51Talk.辅助选老师-有效经验值|好评率|年龄|Top 5](https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0)
+# [51talk选择最好最合适的老师-经验-好评率-年龄-收藏数](https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0)
 ## 快速开始
 
 ![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/quickstart.png)
