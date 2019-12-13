@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2019.12.10002
+// @version      2019.12.13001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -45,47 +45,74 @@
 				"f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
 				"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
 			};
-		Date.prototype.toString = function(format) {
-			let formattedDate = format;
-			for(var k in o) {
-				if(new RegExp("(" + k + ")").test(format)) {
-					formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+		$.extend(Date.prototype, {
+			toString: function(format) {
+				let formattedDate = format;
+				for(var k in o) {
+					if(new RegExp("(" + k + ")").test(format)) {
+						formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+					}
 				}
+				return formattedDate;
 			}
-			return formattedDate;
-		};
+		});
 		//删除数组中的空元素
-		Array.prototype.clean = function(deleteValue = "") {
-			for(var i = 0; i < this.length; i++) {
-				if(this[i] == deleteValue) {
-					this.splice(i, 1);
-					i--;
+		$.extend(Array.prototype, {
+			clean: function(deleteValue = "") {
+				for(var i = 0; i < this.length; i++) {
+					if(this[i] == deleteValue) {
+						this.splice(i, 1);
+						i--;
+					}
 				}
+				return this;
 			}
-			return this;
-		};
-		Number.prototype.toString = function() {
-			return this.toFixed(2);
-		};
-		String.prototype.toFloat = function() {
-			return parseFloat(this);
-		};
-		String.prototype.toInt = function() {
-			return parseInt(this);
-		};
-		if(!String.prototype.startsWith) String.prototype.startsWith = function(str) {
-			return this.slice(0, str.length) == str;
-		};
-		if(!String.prototype.endsWith) String.prototype.endsWith = function(str) {
-			return this.slice(-str.length) == str;
-		};
-		if(!String.prototype.includes) String.prototype.includes = function(str) {
-			return this.indexOf(str) > -1;
-		};
-		String.prototype.replaceAll = function(search, replacement) {
-			var target = this;
-			return target.replace(new RegExp(search, 'g'), replacement);
-		};
+		});
+		$.extend(Number.prototype, {
+			toString: function() {
+				return this.toFixed(2);
+			}
+		});
+		$.extend(String.prototype, {
+			toFloat: function() {
+				return parseFloat(this);
+			},
+			toInt: function() {
+				return parseInt(this);
+			},
+			startsWith: function(str) {
+				return this.slice(0, str.length) == str;
+			},
+			endsWith: function(str) {
+				return this.slice(-str.length) == str;
+			},
+			includes: function(str) {
+				return this.indexOf(str) > -1;
+			},
+			replaceAll: function(search, replacement) {
+				var target = this;
+				return target.replace(new RegExp(search, 'g'), replacement);
+			}
+		});
+		// String.prototype.toFloat = function() {
+		// 	return parseFloat(this);
+		// };
+		// String.prototype.toInt = function() {
+		// 	return parseInt(this);
+		// };
+		// if(!String.prototype.startsWith) String.prototype.startsWith = function(str) {
+		// 	return this.slice(0, str.length) == str;
+		// };
+		// if(!String.prototype.endsWith) String.prototype.endsWith = function(str) {
+		// 	return this.slice(-str.length) == str;
+		// };
+		// if(!String.prototype.includes) String.prototype.includes = function(str) {
+		// 	return this.indexOf(str) > -1;
+		// };
+		// String.prototype.replaceAll = function(search, replacement) {
+		// 	var target = this;
+		// 	return target.replace(new RegExp(search, 'g'), replacement);
+		// };
 	})();
 	const config = GM_config([{
 		key: 'pagecount',
