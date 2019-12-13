@@ -1,4 +1,5 @@
 {
+  "minified": false,
   "only": [
     "*.babel",
     "*.jsx",
@@ -9,6 +10,10 @@
   "presets": [
     "es2015",
     "react"
-
+    //,
+    //["minify", {
+    //  "evaluate": false,
+    //  "mangle": true
+    //  }]
   ]
 }
