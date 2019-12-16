@@ -94,25 +94,6 @@
 				return target.replace(new RegExp(search, 'g'), replacement);
 			}
 		});
-		// String.prototype.toFloat = function() {
-		// 	return parseFloat(this);
-		// };
-		// String.prototype.toInt = function() {
-		// 	return parseInt(this);
-		// };
-		// if(!String.prototype.startsWith) String.prototype.startsWith = function(str) {
-		// 	return this.slice(0, str.length) == str;
-		// };
-		// if(!String.prototype.endsWith) String.prototype.endsWith = function(str) {
-		// 	return this.slice(-str.length) == str;
-		// };
-		// if(!String.prototype.includes) String.prototype.includes = function(str) {
-		// 	return this.indexOf(str) > -1;
-		// };
-		// String.prototype.replaceAll = function(search, replacement) {
-		// 	var target = this;
-		// 	return target.replace(new RegExp(search, 'g'), replacement);
-		// };
 	})();
 	const config = GM_config([{
 		key: 'pagecount',
@@ -300,12 +281,7 @@
 		jqel.attr("teacherinfo", JSON.stringify(tinfo));
 		jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
 		jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
-		jqel //.attr('thumbup', tinfo.thumbup)
-			//.attr('thumbdown', tinfo.thumbdown)
-			//.attr('thumbupRate', tinfo.thumbupRate)
-			//.attr('age', tinfo.age)
-			//.attr('label', tinfo.label)
-			.attr('indicator', tinfo.indicator);
+		jqel.attr('indicator', tinfo.indicator);
 	}
 
 	function executeFilters(uifilters) {
