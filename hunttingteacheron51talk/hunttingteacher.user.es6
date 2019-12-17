@@ -46,7 +46,7 @@
 		// 		"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
 		// 	};
 		$.extend(Date.prototype, {
-			  getPaddedComp : comp => parseInt(comp) < 10 ? '0' + comp : comp,
+						  getPaddedComp : comp => parseInt(comp) < 10 ? '0' + comp : comp,
 				o: {
 					"[y|Y]{4}": date => date.getFullYear(), // year
 					"[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
@@ -63,7 +63,7 @@
 					"s+": date => getPaddedComp(date.getSeconds()), //second
 					"f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
 					"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
-				}, 
+			             	},
 			toString: function(format) {
 				let formattedDate = format;
 				for(var k in o) {
