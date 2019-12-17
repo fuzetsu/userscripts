@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2019.12.13001
+// @version      2019.12.17001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -295,8 +295,7 @@
         return true;
       }
       var tinfo = JSON.parse(tinfojson);
-      if((tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2) && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >=
-        uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
+      if((tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2) && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
         if(node.is(':hidden')) { //如果node是隐藏的则显示node元素，否则隐藏
           node.show();
           node.animate({
@@ -435,8 +434,7 @@
       submit(function(next) {
         Pace.track(function() {
           let jqel = $(el);
-          let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace(
-            'http://www.51talk.com/TeacherNew/info/', '');
+          let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
           var tinfokey = 'tinfo-' + tid;
           var teacherlistinfo = getTeacherInfoInList(jqel);
           var tinfo = GM_getValue(tinfokey);
@@ -776,11 +774,10 @@
           showLabel: false
         }).
         //submit suggestion
-        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5)
-          .button({
-            icon: 'ui-icon-help',
-            showLabel: false
-          }).
+        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({
+          icon: 'ui-icon-help',
+          showLabel: false
+        }).
         //系统帮助
         prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
         $('#buttons1>button').eq(0).button({
@@ -911,8 +908,7 @@
                 width: 125,
                 sorttype: "string",
                 formatter: function formatter(value, options, rData) {
-                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!rData['name'] ?
-                    value : rData['name']) + "</a>";
+                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!value ? value : rData['tid']) + "</a>";
                 }
               }, {
                 name: 'isfavorite',
