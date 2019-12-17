@@ -96,6 +96,7 @@
         return this;
       }
     });
+
     $.extend(Number.prototype, {
       toString: function() {
         return this.toFixed(2);
