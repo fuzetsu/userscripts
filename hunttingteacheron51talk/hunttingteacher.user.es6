@@ -42,8 +42,7 @@
           date.getHours() % 12 :
           date.getHours()), //hour
         "h{1}": date => (date.getHours() > 12) ?
-          date.getHours() % 12 :
-          date.getHours(), //hour
+          date.getHours() % 12 : date.getHours(), //hour
         "H{2}": date => getPaddedComp(date.getHours()), //hour
         "h{1}": date => date.getHours(), //hour
         "m{2}": date => getPaddedComp(date.getMinutes()), //minute
@@ -51,8 +50,7 @@
         "s+": date => getPaddedComp(date.getSeconds()), //second
         "f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
         "b+": date => (date.getHours() >= 12) ?
-          'PM' :
-          'AM'
+          'PM' : 'AM'
       };
     $.extend(Date.prototype, {
       toString: function(format) {
@@ -109,33 +107,13 @@
     label: '最大页数 (自动获取时)',
     default: 20,
     type: 'dropdown',
-    values: [
-      0,
-      5,
-      10,
-      20,
-      50,
-      1000
-    ]
+    values: [0, 5, 10, 20, 50, 1000]
   }, {
     key: 'batchtimezoneMinutes',
     label: '预定时间（分钟）',
     default: 60,
     type: 'dropdown',
-    values: [
-      5,
-      10,
-      20,
-      30,
-      50,
-      60,
-      90,
-      120,
-      300,
-      600,
-      1440,
-      10080
-    ]
+    values: [5, 10, 20, 30, 50, 60, 90, 120, 300, 600, 1440, 10080]
   }, {
     key: 'version',
     type: 'hidden',
@@ -647,8 +625,7 @@
     $('<label />', {
       'for': 'cb' + id,
       text: lbl ?
-        lbl :
-        val
+        lbl : val
     }).appendTo(container);
   }
   if (settings.isListPage || settings.isDetailPage) {
