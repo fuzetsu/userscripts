@@ -121,6 +121,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return this;
       }
     });
+
     $.extend(Number.prototype, {
       toString: function toString() {
         return this.toFixed(2);
