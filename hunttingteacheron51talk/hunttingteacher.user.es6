@@ -120,7 +120,7 @@
       ]
     }, {
       key: 'batchtimezoneMinutes',
-      label: '预定耗费时间（分钟）',
+      label: '预定时间（分钟）',
       default: 60,
       type: 'dropdown',
       values: [
