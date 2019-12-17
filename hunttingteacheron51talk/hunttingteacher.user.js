@@ -137,7 +137,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     values: [0, 5, 10, 20, 50, 1000]
   }, {
     key: 'batchtimezoneMinutes',
-    label: '预定耗费时间（分钟）',
+    label: '预定时间（分钟）',
     default: 60,
     type: 'dropdown',
     values: [5, 10, 20, 30, 50, 60, 90, 120, 300, 600, 1440, 10080]
@@ -174,8 +174,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return settings.tid;
   }
   /**
-  * 提交运算函数到 document 的 fx 队列
-  */
+   * 提交运算函数到 document 的 fx 队列
+   */
   var submit = function submit(fun) {
     var queue = $.queue(document, "fx", fun);
     if (queue[0] == 'inprogress') {
@@ -342,8 +342,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var effectivetime = getBatchNumber();
       if (type == '收藏外教') {
         var isfavorite = true;
-        return { age: age, label: label, name: name, effectivetime: effectivetime, isfavorite: isfavorite };
-      } else return { age: age, label: label, name: name, effectivetime: effectivetime, type: type };
+        return {
+          age: age,
+          label: label,
+          name: name,
+          effectivetime: effectivetime,
+          isfavorite: isfavorite
+        };
+      } else return {
+        age: age,
+        label: label,
+        name: name,
+        effectivetime: effectivetime,
+        type: type
+      };
     };
     //获取列表中数据
 
@@ -668,7 +680,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           executeFilters(uifilters);
         });
         $("#tAgeSlider").slider({
-          range: true, min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+          range: true,
+          min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
           slide: function slide(event, ui) {
@@ -684,13 +697,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           GM_setValue('filterconfig', filterconfig);
           executeFilters(uifilters);
         });
-        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({ icon: 'ui-icon-arrowthick-1-n', showLabel: false }).
+        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({
+          icon: 'ui-icon-arrowthick-1-n',
+          showLabel: false
+        }).
         //升序
         click(function () {
           $('#desc').show();
           $(this).hide();
           sortByIndicator(asc);
-        }).end().eq(1).button({ icon: 'ui-icon-arrowthick-1-s', showLabel: false }).
+        }).end().eq(1).button({
+          icon: 'ui-icon-arrowthick-1-s',
+          showLabel: false
+        }).
         //降序
         click(function () {
           $('#asc').show();
@@ -703,7 +722,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
         }).
         // 缓存过期时间（小时）
-        css({ width: '45px' }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({ icon: 'ui-icon-trash', showLabel: false }).
+        css({
+          width: '45px'
+        }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({
+          icon: 'ui-icon-trash',
+          showLabel: false
+        }).
         //清空缓存
         click(function () {
           $.each(GM_listValues(), function (i, item) {
@@ -712,12 +736,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
           });
           $('.go-search').click();
-        }).end().eq(4).button({ icon: 'ui-icon-comment', showLabel: false }).
+        }).end().eq(4).button({
+          icon: 'ui-icon-comment',
+          showLabel: false
+        }).
         //submit suggestion
-        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({ icon: 'ui-icon-help', showLabel: false }).
+        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({
+          icon: 'ui-icon-help',
+          showLabel: false
+        }).
         //系统帮助
         prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
-        $('#buttons1>button').eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).
+        $('#buttons1>button').eq(0).button({
+          icon: 'ui-icon-seek-next',
+          showLabel: true
+        }).
         //submit suggestion
         click(function () {
           var times = [];
@@ -748,7 +781,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         } else {
           $("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
         }
-        $('#timesmutipulecheck').find("input").checkboxradio({ icon: false });
+        $('#timesmutipulecheck').find("input").checkboxradio({
+          icon: false
+        });
 
         $("#tabs").tabs({
           active: '#tabs-2',
@@ -935,7 +970,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               //autowidth: true,
               width: 732
               //caption: "",,
-            }).jqGrid('filterToolbar', { searchOperators: true });
+            }).jqGrid('filterToolbar', {
+              searchOperators: true
+            });
           }
         });
         var uifilters = getUiFilters();
@@ -959,7 +996,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (settings.isDetailPage) {
         $("#tabs").tabs("option", "disabled", [0]);
       }
-      $('#filterdialog').dialog({ 'width': '750' });
+      $('#filterdialog').dialog({
+        'width': '750'
+      });
       $('#filterdialog').parent().scrollFix();
       $('#filterdialog').dialog("open");
       next();

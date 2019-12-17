@@ -27,9 +27,9 @@
   'use strict';
   //重载类型方法
   (function() {
-    let getPaddedComp = comp => parseInt(comp) < 10
-        ? '0' + comp
-        : comp,
+    let getPaddedComp = comp => parseInt(comp) < 10 ?
+      '0' + comp :
+      comp,
       o = {
         "[y|Y]{4}": date => date.getFullYear(), // year
         "[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
@@ -38,21 +38,21 @@
         "[d|D]{2}": date => getPaddedComp(date.getDate()), //day
         "[d|D]{1}": date => date.getDate(), //day
         "h{2}": date => getPaddedComp(
-          (date.getHours() > 12)
-          ? date.getHours() % 12
-          : date.getHours()), //hour
-        "h{1}": date => (date.getHours() > 12)
-          ? date.getHours() % 12
-          : date.getHours(), //hour
+          (date.getHours() > 12) ?
+          date.getHours() % 12 :
+          date.getHours()), //hour
+        "h{1}": date => (date.getHours() > 12) ?
+          date.getHours() % 12 :
+          date.getHours(), //hour
         "H{2}": date => getPaddedComp(date.getHours()), //hour
         "h{1}": date => date.getHours(), //hour
         "m{2}": date => getPaddedComp(date.getMinutes()), //minute
         "m{1}": date => date.getMinutes(), //minute
         "s+": date => getPaddedComp(date.getSeconds()), //second
         "f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
-        "b+": date => (date.getHours() >= 12)
-          ? 'PM'
-          : 'AM'
+        "b+": date => (date.getHours() >= 12) ?
+          'PM' :
+          'AM'
       };
     $.extend(Date.prototype, {
       toString: function(format) {
@@ -104,45 +104,43 @@
       }
     });
   })();
-  const config = GM_config([
-    {
-      key: 'pagecount',
-      label: '最大页数 (自动获取时)',
-      default: 20,
-      type: 'dropdown',
-      values: [
-        0,
-        5,
-        10,
-        20,
-        50,
-        1000
-      ]
-    }, {
-      key: 'batchtimezoneMinutes',
-      label: '预定时间（分钟）',
-      default: 60,
-      type: 'dropdown',
-      values: [
-        5,
-        10,
-        20,
-        30,
-        50,
-        60,
-        90,
-        120,
-        300,
-        600,
-        1440,
-        10080
-      ]
-    }, {
-      key: 'version',
-      type: 'hidden',
-      default: 1
-    }
-  ]);
+  const config = GM_config([{
+    key: 'pagecount',
+    label: '最大页数 (自动获取时)',
+    default: 20,
+    type: 'dropdown',
+    values: [
+      0,
+      5,
+      10,
+      20,
+      50,
+      1000
+    ]
+  }, {
+    key: 'batchtimezoneMinutes',
+    label: '预定时间（分钟）',
+    default: 60,
+    type: 'dropdown',
+    values: [
+      5,
+      10,
+      20,
+      30,
+      50,
+      60,
+      90,
+      120,
+      300,
+      600,
+      1440,
+      10080
+    ]
+  }, {
+    key: 'version',
+    type: 'hidden',
+    default: 1
+  }]);
   let conf = config.load();
   config.onsave = cfg => {
     conf = cfg;
@@ -171,8 +169,8 @@
     return settings.tid;
   }
   /**
-	 * 提交运算函数到 document 的 fx 队列
-	 */
+   * 提交运算函数到 document 的 fx 队列
+   */
   var submit = function(fun) {
     var queue = $.queue(document, "fx", fun);
     if (queue[0] == 'inprogress') {
@@ -183,9 +181,9 @@
 
   function getorAdd(key, func) {
     if (!(key in sessionStorage)) {
-      var data = (typeof(func) == 'function')
-        ? func(key)
-        : func;
+      var data = (typeof(func) == 'function') ?
+        func(key) :
+        func;
       sessionStorage.setItem(key, data);
       return data;
     }
@@ -209,20 +207,20 @@
   var asc = function(a, b) {
     var av = $(a).attr('indicator');
     var bv = $(b).attr('indicator');
-    if (!av || !bv) 
+    if (!av || !bv)
       return 0;
-    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat()
-      ? 1
-      : -1;
+    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ?
+      1 :
+      -1;
   };
   var desc = function(a, b) {
     var av = $(a).attr('indicator');
     var bv = $(b).attr('indicator');
-    if (!av || !bv) 
+    if (!av || !bv)
       return 0;
-    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat()
-      ? -1
-      : 1;
+    return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ?
+      -1 :
+      1;
   };
   var sortByIndicator = function(sortBy) {
     var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
@@ -239,19 +237,19 @@
   function getLeftPageCount() {
     var pages = Number($('.s-t-page>.next-page:first').prev().text());
     var curr = Number($('.s-t-page>.active:first').text());
-    if (pages) 
+    if (pages)
       return pages - curr;
-    else 
+    else
       return 0;
-    }
-  
+  }
+
   function getAutoNextPagesCount() {
     var pages = getLeftPageCount();
-    if (settings.pagecount > pages) 
+    if (settings.pagecount > pages)
       return pages;
-    else 
+    else
       return settings.pagecount;
-    }
+  }
   $("head").append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`);
   $("head").append(`<style type="text/css">
@@ -313,21 +311,21 @@
   let num = /[0-9]*/g;
 
   function updateTeacherinfoToUI(jqel, tinfo) {
-    if (tinfo.label > maxlabel) 
+    if (tinfo.label > maxlabel)
       maxlabel = tinfo.label;
-    if (tinfo.label < minlabel) 
+    if (tinfo.label < minlabel)
       minlabel = tinfo.label;
-    if (tinfo.favoritesCount > maxfc) 
+    if (tinfo.favoritesCount > maxfc)
       maxfc = tinfo.favoritesCount;
-    if (tinfo.favoritesCount < minfc) 
+    if (tinfo.favoritesCount < minfc)
       minfc = tinfo.favoritesCount;
-    if (tinfo.thumbupRate > maxrate) 
+    if (tinfo.thumbupRate > maxrate)
       maxrate = tinfo.thumbupRate;
-    if (tinfo.thumbupRate < minrate) 
+    if (tinfo.thumbupRate < minrate)
       minrate = tinfo.thumbupRate;
-    if (tinfo.age > maxage) 
+    if (tinfo.age > maxage)
       maxage = tinfo.age;
-    if (tinfo.age < minage) 
+    if (tinfo.age < minage)
       minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
     jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
@@ -464,9 +462,21 @@
       var effectivetime = getBatchNumber();
       if (type == '收藏外教') {
         var isfavorite = true;
-        return {age, label, name, effectivetime, isfavorite};
-      } else 
-        return {age, label, name, effectivetime, type};
+        return {
+          age,
+          label,
+          name,
+          effectivetime,
+          isfavorite
+        };
+      } else
+        return {
+          age,
+          label,
+          name,
+          effectivetime,
+          type
+        };
     }
     //获取列表中数据
     $(".item").each(function(index, el) {
@@ -548,24 +558,23 @@
         GM_setValue('autonextpage', autonextpage - 1);
         if ($('.s-t-page>.next-page').length == 0) {
           GM_setValue('autonextpage', 0);
-          if (isStopAndAutoGetNextTimeTeachers()) 
+          if (isStopAndAutoGetNextTimeTeachers())
             return;
-          }
-        else {
+        } else {
           $('.s-t-page .next-page')[0].click();
           return false;
         }
       } else {
-        if (isStopAndAutoGetNextTimeTeachers()) 
+        if (isStopAndAutoGetNextTimeTeachers())
           return;
-        }
+      }
       next();
     });
   }
 
   function isStopAndAutoGetNextTimeTeachers() {
     var str = sessionStorage.getItem('times');
-    if (!str) 
+    if (!str)
       return false;
     var times = JSON.parse(str);
     var cur = times.shift();
@@ -637,9 +646,9 @@
     }).appendTo(container);
     $('<label />', {
       'for': 'cb' + id,
-      text: lbl
-        ? lbl
-        : val
+      text: lbl ?
+        lbl :
+        val
     }).appendTo(container);
   }
   if (settings.isListPage || settings.isDetailPage) {
@@ -696,9 +705,9 @@
           min: minlabel - 1,
           max: maxlabel,
           values: [
-            config.l1 < minlabel - 1
-              ? minlabel - 1
-              : config.l1,
+            config.l1 < minlabel - 1 ?
+            minlabel - 1 :
+            config.l1,
             maxlabel
           ],
           slide: function(event, ui) {
@@ -719,9 +728,9 @@
           min: minfc,
           max: maxfc,
           values: [
-            config.fc1 < minfc
-              ? minfc
-              : config.fc1,
+            config.fc1 < minfc ?
+            minfc :
+            config.fc1,
             maxfc
           ],
           slide: function(event, ui) {
@@ -742,9 +751,9 @@
           min: minrate,
           max: maxrate,
           values: [
-            config.rate1 < minrate
-              ? minrate
-              : config.rate1,
+            config.rate1 < minrate ?
+            minrate :
+            config.rate1,
             maxrate
           ],
           slide: function(event, ui) {
@@ -761,15 +770,16 @@
           executeFilters(uifilters);
         });
         $("#tAgeSlider").slider({
-          range: true, min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+          range: true,
+          min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           values: [
-            config.age1 < minage
-              ? minage
-              : config.age1,
-            config.age2 > maxage
-              ? maxage
-              : config.age2
+            config.age1 < minage ?
+            minage :
+            config.age1,
+            config.age2 > maxage ?
+            maxage :
+            config.age2
           ],
           slide: function(event, ui) {
             $('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
@@ -784,13 +794,19 @@
           GM_setValue('filterconfig', filterconfig);
           executeFilters(uifilters);
         });
-        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({icon: 'ui-icon-arrowthick-1-n', showLabel: false}).
+        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({
+          icon: 'ui-icon-arrowthick-1-n',
+          showLabel: false
+        }).
         //升序
         click(function() {
           $('#desc').show();
           $(this).hide();
           sortByIndicator(asc);
-        }).end().eq(1).button({icon: 'ui-icon-arrowthick-1-s', showLabel: false}).
+        }).end().eq(1).button({
+          icon: 'ui-icon-arrowthick-1-s',
+          showLabel: false
+        }).
         //降序
         click(function() {
           $('#asc').show();
@@ -803,7 +819,12 @@
           }
         }).
         // 缓存过期时间（小时）
-        css({width: '45px'}).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({icon: 'ui-icon-trash', showLabel: false}).
+        css({
+          width: '45px'
+        }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({
+          icon: 'ui-icon-trash',
+          showLabel: false
+        }).
         //清空缓存
         click(function() {
           $.each(GM_listValues(), function(i, item) {
@@ -812,12 +833,21 @@
             }
           });
           $('.go-search').click();
-        }).end().eq(4).button({icon: 'ui-icon-comment', showLabel: false}).
+        }).end().eq(4).button({
+          icon: 'ui-icon-comment',
+          showLabel: false
+        }).
         //submit suggestion
-        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({icon: 'ui-icon-help', showLabel: false}).
+        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({
+          icon: 'ui-icon-help',
+          showLabel: false
+        }).
         //系统帮助
         prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
-        $('#buttons1>button').eq(0).button({icon: 'ui-icon-seek-next', showLabel: true}).
+        $('#buttons1>button').eq(0).button({
+          icon: 'ui-icon-seek-next',
+          showLabel: true
+        }).
         //submit suggestion
         click(function() {
           var times = [];
@@ -848,7 +878,9 @@
         } else {
           $("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
         }
-        $('#timesmutipulecheck').find("input").checkboxradio({icon: false});
+        $('#timesmutipulecheck').find("input").checkboxradio({
+          icon: false
+        });
 
         function getCatchedTeachers() {
           var teachers = [];
@@ -861,13 +893,13 @@
           });
           var indexs = {};
           teachers = teachers.sort(function(t1, t2) {
-            if (t1.indicator == t2.indicator) 
-              return t1.favoritesCount > t2.favoritesCount
-                ? -1
-                : 1;
-            return t1.indicator > t2.indicator
-              ? -1
-              : 1;
+            if (t1.indicator == t2.indicator)
+              return t1.favoritesCount > t2.favoritesCount ?
+                -1 :
+                1;
+            return t1.indicator > t2.indicator ?
+              -1 :
+              1;
           }).map((val, idx) => {
             if (isNaN(indexs[val.type])) {
               indexs[val.type] = 1;
@@ -892,7 +924,7 @@
         $("#tabs").tabs({
           active: '#tabs-2',
           activate: function(event, ui) {
-            if (ui.newPanel.attr('id') != 'tabs-2') 
+            if (ui.newPanel.attr('id') != 'tabs-2')
               return;
             var teachers = getCatchedTeachers();
             var jqtable = $("#teachertab");
@@ -918,178 +950,176 @@
                 '龄',
                 '更新'
               ],
-              colModel: [
-                {
-                  name: 'effectivetime',
-                  index: 'effectivetime',
-                  width: 45,
-                  sorttype: "float",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    var date = new Date(Number(value));
-                    if (date instanceof Date && !isNaN(date.valueOf())) {
-                      return date.toString('HHmmss');
-                    }
+              colModel: [{
+                name: 'effectivetime',
+                index: 'effectivetime',
+                width: 45,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  var date = new Date(Number(value));
+                  if (date instanceof Date && !isNaN(date.valueOf())) {
+                    return date.toString('HHmmss');
+                  }
+                  return value;
+                }
+              }, {
+                name: 'type',
+                index: 'type',
+                width: 55,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value)
                     return value;
-                  }
-                }, {
-                  name: 'type',
-                  index: 'type',
-                  width: 55,
-                  sorttype: "string",
-                  align: 'left',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) 
-                      return value;
-                    else 
-                      return 'na';
+                  else
+                    return 'na';
+                }
+              }, {
+                name: 'rank',
+                index: 'rank',
+                width: 40,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le']
+                }
+              }, {
+                name: 'name',
+                index: 'name',
+                width: 125,
+                sorttype: "string",
+                formatter: function formatter(value, options, rData) {
+                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (
+                    !rData['name'] ?
+                    value :
+                    rData['name']) + "</a>";
+                }
+              }, {
+                name: 'isfavorite',
+                index: 'isfavorite',
+                width: 39,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value)
+                    return '收藏';
+                  else
+                    return '';
+                }
+              }, {
+                name: 'indicator',
+                index: 'indicator',
+                width: 50,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'label',
+                index: 'label',
+                width: 45,
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbupRate',
+                index: 'thumbupRate',
+                width: 35,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'favoritesCount',
+                index: 'favoritesCount',
+                width: 35,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'slevel',
+                index: 'slevel',
+                width: 85,
+                sorttype: "string",
+                align: 'left',
+                searchoptions: {
+                  //defaultValue: '中级',
+                  sopt: ['cn', 'nc']
+                }
+              }, {
+                name: 'tage',
+                index: 'tage',
+                width: 25,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbup',
+                index: 'thumbup',
+                width: 45,
+                align: "right",
+                sorttype: "float",
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, {
+                name: 'thumbdown',
+                index: 'thumbdown',
+                width: 30,
+                sorttype: "float",
+                align: 'right'
+              }, {
+                name: 'age',
+                index: 'age',
+                width: 30,
+                sorttype: "float",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le', 'ge', 'eq']
+                }
+              }, {
+                name: 'expire',
+                index: 'expire',
+                width: 35,
+                sorttype: "Date",
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) {
+                    var d = new Date().getTime() - value;
+                    if (d < 1000 * 60) {
+                      return "刚刚";
+                    } else if (d < 1000 * 60 * 60) {
+                      return (d / 60000).toFixed(0) + "分";
+                    } else if (d < 1000 * 60 * 60 * 24) {
+                      return (d / 3600000).toFixed(0) + "时";
+                    } else {
+                      return (d / 86400000).toFixed(0) + "天";
                     }
-                  }, {
-                  name: 'rank',
-                  index: 'rank',
-                  width: 40,
-                  sorttype: "float",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['le']
-                  }
-                }, {
-                  name: 'name',
-                  index: 'name',
-                  width: 125,
-                  sorttype: "string",
-                  formatter: function formatter(value, options, rData) {
-                    return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (
-                      !rData['name']
-                      ? value
-                      : rData['name']) + "</a>";
-                  }
-                }, {
-                  name: 'isfavorite',
-                  index: 'isfavorite',
-                  width: 39,
-                  sorttype: "string",
-                  align: 'left',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) 
-                      return '收藏';
-                    else 
-                      return '';
-                    }
-                  }, {
-                  name: 'indicator',
-                  index: 'indicator',
-                  width: 50,
-                  sorttype: "float",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'label',
-                  index: 'label',
-                  width: 45,
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'thumbupRate',
-                  index: 'thumbupRate',
-                  width: 35,
-                  align: "right",
-                  sorttype: "float",
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'favoritesCount',
-                  index: 'favoritesCount',
-                  width: 35,
-                  align: "right",
-                  sorttype: "float",
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'slevel',
-                  index: 'slevel',
-                  width: 85,
-                  sorttype: "string",
-                  align: 'left',
-                  searchoptions: {
-                    //defaultValue: '中级',
-                    sopt: ['cn', 'nc']
-                  }
-                }, {
-                  name: 'tage',
-                  index: 'tage',
-                  width: 25,
-                  sorttype: "float",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'thumbup',
-                  index: 'thumbup',
-                  width: 45,
-                  align: "right",
-                  sorttype: "float",
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, {
-                  name: 'thumbdown',
-                  index: 'thumbdown',
-                  width: 30,
-                  sorttype: "float",
-                  align: 'right'
-                }, {
-                  name: 'age',
-                  index: 'age',
-                  width: 30,
-                  sorttype: "float",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['le', 'ge', 'eq']
-                  }
-                }, {
-                  name: 'expire',
-                  index: 'expire',
-                  width: 35,
-                  sorttype: "Date",
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) {
-                      var d = new Date().getTime() - value;
-                      if (d < 1000 * 60) {
-                        return "刚刚";
-                      } else if (d < 1000 * 60 * 60) {
-                        return (d / 60000).toFixed(0) + "分";
-                      } else if (d < 1000 * 60 * 60 * 24) {
-                        return (d / 3600000).toFixed(0) + "时";
-                      } else {
-                        return (d / 86400000).toFixed(0) + "天";
-                      }
-                      return d;
-                    } else 
-                      return 'na';
-                    }
-                  }
-              ],
+                    return d;
+                  } else
+                    return 'na';
+                }
+              }],
               multiselect: false,
               rowNum: 10,
               rowList: [
@@ -1105,7 +1135,9 @@
               //autowidth: true,
               width: 732,
               //caption: "",,
-            }).jqGrid('filterToolbar', {searchOperators: true});
+            }).jqGrid('filterToolbar', {
+              searchOperators: true
+            });
           }
         });
         var uifilters = getUiFilters();
@@ -1129,7 +1161,9 @@
       if (settings.isDetailPage) {
         $("#tabs").tabs("option", "disabled", [0]);
       }
-      $('#filterdialog').dialog({'width': '750'});
+      $('#filterdialog').dialog({
+        'width': '750'
+      });
       $('#filterdialog').parent().scrollFix();
       $('#filterdialog').dialog("open");
       next();
