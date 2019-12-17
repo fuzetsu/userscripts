@@ -31,32 +31,30 @@
         ? '0' + comp
         : comp,
       o = {
-        "[y|Y]{4}": date => date.getFullYear(),
-        year "[y|Y]{2}": date => date.getFullYear().toString().slice(2),
-        year "MM": date => getPaddedComp(date.getMonth() + 1),
-        month "M": date => date.getMonth() + 1,
-        month "[d|D]{2}": date => getPaddedComp(date.getDate()),
-        day "[d|D]{1}": date => date.getDate(),
-        day "h{2}": date => getPaddedComp(
+        "[y|Y]{4}": date => date.getFullYear(), // year
+        "[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
+        "MM": date => getPaddedComp(date.getMonth() + 1), //month
+        "M": date => date.getMonth() + 1, //month
+        "[d|D]{2}": date => getPaddedComp(date.getDate()), //day
+        "[d|D]{1}": date => date.getDate(), //day
+        "h{2}": date => getPaddedComp(
           (date.getHours() > 12)
           ? date.getHours() % 12
-          : date.getHours()),
-        hour "h{1}": date => (date.getHours() > 12)
+          : date.getHours()), //hour
+        "h{1}": date => (date.getHours() > 12)
           ? date.getHours() % 12
-          : date.getHours(),
-        hour "H{2}": date => getPaddedComp(date.getHours()),
-        hour "h{1}": date => date.getHours(),
-        hour "m{2}": date => getPaddedComp(date.getMinutes()),
-        minute "m{1}": date => date.getMinutes(),
-        minute "s+": date => getPaddedComp(date.getSeconds()),
-        second "f+": date => getPaddedComp(date.getMilliseconds()),
-        millisecond,
+          : date.getHours(), //hour
+        "H{2}": date => getPaddedComp(date.getHours()), //hour
+        "h{1}": date => date.getHours(), //hour
+        "m{2}": date => getPaddedComp(date.getMinutes()), //minute
+        "m{1}": date => date.getMinutes(), //minute
+        "s+": date => getPaddedComp(date.getSeconds()), //second
+        "f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
         "b+": date => (date.getHours() >= 12)
           ? 'PM'
           : 'AM'
       };
     $.extend(Date.prototype, {
-
       toString: function(format) {
         let formattedDate = format;
         for (var k in o) {
@@ -67,7 +65,6 @@
         return formattedDate;
       }
     });
-
     //删除数组中的空元素
     $.extend(Array.prototype, {
       clean: function(deleteValue = "") {
@@ -80,7 +77,6 @@
         return this;
       }
     });
-
     $.extend(Number.prototype, {
       toString: function() {
         return this.toFixed(2);
