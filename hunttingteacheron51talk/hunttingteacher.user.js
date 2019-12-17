@@ -53,10 +53,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 		// 		"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
 		// 	};
 		$.extend(Date.prototype, {
-			getPaddedComp: function getPaddedComp(comp) {
+			'getPaddedComp': function getPaddedComp(comp) {
 				return parseInt(comp) < 10 ? '0' + comp : comp;
 			},
-			o: (_o = {
+			'o': (_o = {
 				"[y|Y]{4}": function yY4(date) {
 					return date.getFullYear();
 				}, // year
