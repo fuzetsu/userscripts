@@ -45,9 +45,10 @@
 		// 		"f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
 		// 		"b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
 		// 	};
-		$.extend(Date.prototype, {
-						  getPaddedComp : comp => parseInt(comp) < 10 ? '0' + comp : comp,
-				o: {
+		$.extend(Date.prototype,
+			{
+						  'getPaddedComp' : comp => parseInt(comp) < 10 ? '0' + comp : comp,
+				'o': {
 					"[y|Y]{4}": date => date.getFullYear(), // year
 					"[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
 					"MM": date => getPaddedComp(date.getMonth() + 1), //month
