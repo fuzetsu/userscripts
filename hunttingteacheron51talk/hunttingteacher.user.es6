@@ -84,7 +84,6 @@
       }
     });
 
-		
     //删除数组中的空元素
     $.extend(Array.prototype, {
       clean: function(deleteValue = "") {
@@ -229,7 +228,7 @@
   var asc = function(a, b) {
     var av = $(a).attr('indicator');
     var bv = $(b).attr('indicator');
-    if (!av || !bv)
+    if (!av || !bv) 
       return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat()
       ? 1
@@ -238,7 +237,7 @@
   var desc = function(a, b) {
     var av = $(a).attr('indicator');
     var bv = $(b).attr('indicator');
-    if (!av || !bv)
+    if (!av || !bv) 
       return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat()
       ? -1
@@ -259,17 +258,17 @@
   function getLeftPageCount() {
     var pages = Number($('.s-t-page>.next-page:first').prev().text());
     var curr = Number($('.s-t-page>.active:first').text());
-    if (pages)
+    if (pages) 
       return pages - curr;
-    else
+    else 
       return 0;
     }
-
+  
   function getAutoNextPagesCount() {
     var pages = getLeftPageCount();
-    if (settings.pagecount > pages)
+    if (settings.pagecount > pages) 
       return pages;
-    else
+    else 
       return settings.pagecount;
     }
   $("head").append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
@@ -333,21 +332,21 @@
   let num = /[0-9]*/g;
 
   function updateTeacherinfoToUI(jqel, tinfo) {
-    if (tinfo.label > maxlabel)
+    if (tinfo.label > maxlabel) 
       maxlabel = tinfo.label;
-    if (tinfo.label < minlabel)
+    if (tinfo.label < minlabel) 
       minlabel = tinfo.label;
-    if (tinfo.favoritesCount > maxfc)
+    if (tinfo.favoritesCount > maxfc) 
       maxfc = tinfo.favoritesCount;
-    if (tinfo.favoritesCount < minfc)
+    if (tinfo.favoritesCount < minfc) 
       minfc = tinfo.favoritesCount;
-    if (tinfo.thumbupRate > maxrate)
+    if (tinfo.thumbupRate > maxrate) 
       maxrate = tinfo.thumbupRate;
-    if (tinfo.thumbupRate < minrate)
+    if (tinfo.thumbupRate < minrate) 
       minrate = tinfo.thumbupRate;
-    if (tinfo.age > maxage)
+    if (tinfo.age > maxage) 
       maxage = tinfo.age;
-    if (tinfo.age < minage)
+    if (tinfo.age < minage) 
       minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
     jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
@@ -485,7 +484,7 @@
       if (type == '收藏外教') {
         var isfavorite = true;
         return {age, label, name, effectivetime, isfavorite};
-      } else
+      } else 
         return {age, label, name, effectivetime, type};
     }
     //获取列表中数据
@@ -568,7 +567,7 @@
         GM_setValue('autonextpage', autonextpage - 1);
         if ($('.s-t-page>.next-page').length == 0) {
           GM_setValue('autonextpage', 0);
-          if (isStopAndAutoGetNextTimeTeachers())
+          if (isStopAndAutoGetNextTimeTeachers()) 
             return;
           }
         else {
@@ -576,7 +575,7 @@
           return false;
         }
       } else {
-        if (isStopAndAutoGetNextTimeTeachers())
+        if (isStopAndAutoGetNextTimeTeachers()) 
           return;
         }
       next();
@@ -585,7 +584,7 @@
 
   function isStopAndAutoGetNextTimeTeachers() {
     var str = sessionStorage.getItem('times');
-    if (!str)
+    if (!str) 
       return false;
     var times = JSON.parse(str);
     var cur = times.shift();
@@ -881,7 +880,7 @@
           });
           var indexs = {};
           teachers = teachers.sort(function(t1, t2) {
-            if (t1.indicator == t2.indicator)
+            if (t1.indicator == t2.indicator) 
               return t1.favoritesCount > t2.favoritesCount
                 ? -1
                 : 1;
@@ -912,7 +911,7 @@
         $("#tabs").tabs({
           active: '#tabs-2',
           activate: function(event, ui) {
-            if (ui.newPanel.attr('id') != 'tabs-2')
+            if (ui.newPanel.attr('id') != 'tabs-2') 
               return;
             var teachers = getCatchedTeachers();
             var jqtable = $("#teachertab");
@@ -965,9 +964,9 @@
                     sopt: ['cn']
                   },
                   formatter: function formatter(value, options, rData) {
-                    if (value)
+                    if (value) 
                       return value;
-                    else
+                    else 
                       return 'na';
                     }
                   }, {
@@ -1000,9 +999,9 @@
                     sopt: ['cn']
                   },
                   formatter: function formatter(value, options, rData) {
-                    if (value)
+                    if (value) 
                       return '收藏';
-                    else
+                    else 
                       return '';
                     }
                   }, {
@@ -1105,7 +1104,7 @@
                         return (d / 86400000).toFixed(0) + "天";
                       }
                       return d;
-                    } else
+                    } else 
                       return 'na';
                     }
                   }
