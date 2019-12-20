@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // ==UserScript==
@@ -34,6 +36,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   (function () {
     var _o;
 
+    var PropertiesCaseInsensitive = {
+      has: function has(target, prop) {
+        if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
+          return prop in target; // pass through; or 'return;' if you want to block pass through
+        }
+        prop = prop.toLowerCase();
+        if (prop in target) return true;
+        var keys = Object.keys(target);
+        var i = keys.length;
+        while (i--) {
+          if (keys[i] && keys[i].toLowerCase() == prop) return true;
+        }
+        return false;
+      },
+      get: function get(target, prop, receiver) {
+        if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
+          return target[prop];
+        }
+        prop = prop.toLowerCase();
+        if (prop in target) return target[prop];
+        var keys = Object.keys(target);
+        var i = keys.length;
+        while (i--) {
+          if (keys[i] && keys[i].toLowerCase() == prop) return target[keys[i]];
+        }
+        return undefined;
+      },
+      set: function set(target, prop, value) {
+        if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
+          target[prop] = value;
+        }
+        target[prop.toLowerCase()] = value;
+        return true;
+      }
+    };
     var getPaddedComp = function getPaddedComp(comp) {
       return parseInt(comp) < 10 ? '0' + comp : comp;
     },
@@ -126,6 +163,59 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       replaceAll: function replaceAll(search, replacement) {
         var target = this;
         return target.replace(new RegExp(search, 'g'), replacement);
+      }
+    });
+    $.extend(window, {
+      parameters: function parameters(url) {
+        // get query string from url (optional) or window
+        var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+        var key = 'urlparameters' + queryString;
+        var obj = $(window).data(key);
+        if (obj == undefined) obj = new Proxy({}, PropertiesCaseInsensitive);else return obj;
+        // we'll store the parameters here
+        // if query string exists
+        if (queryString) {
+          // stuff after # is not part of query string, so get rid of it
+          queryString = queryString.split('#')[0];
+          // split our query string into its component parts
+          var arr = queryString.split('&');
+          for (var i = 0; i < arr.length; i++) {
+            // separate the keys and the values
+            var a = arr[i].split('=');
+            // set parameter name and value (use 'true' if empty)
+            var paramName = a[0];
+            var paramValue = typeof a[1] === 'undefined' ? true : a[1];
+            // if the paramName ends with square brackets, e.g. colors[] or colors[2]
+            if (paramName.match(/\[(\d+)?\]$/)) {
+              // create key if it doesn't exist
+              var key = paramName.replace(/\[(\d+)?\]/, '');
+              if (!obj[key]) obj[key] = [];
+              // if it's an indexed array e.g. colors[2]
+              if (paramName.match(/\[\d+\]$/)) {
+                // get the index value and add the entry at the appropriate position
+                var index = /\[(\d+)\]/.exec(paramName)[1];
+                obj[key][index] = paramValue;
+              } else {
+                // otherwise add the value to the end of the array
+                obj[key].push(paramValue);
+              }
+            } else {
+              // we're dealing with a string
+              if (!obj[paramName]) {
+                // if it doesn't exist, create property
+                obj[paramName] = paramValue;
+              } else if (obj[paramName] && typeof obj[paramName] === 'string') {
+                // if property does exist and it's a string, convert it to an array
+                obj[paramName] = [obj[paramName]];
+                obj[paramName].push(paramValue);
+              } else {
+                // otherwise add the property
+                obj[paramName].push(paramValue);
+              }
+            }
+          }
+        }
+        return obj;
       }
     });
   })();
@@ -377,9 +467,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     });
     // 自动获取时,显示停止按钮
     submit(function (next) {
-      var autonextpage = GM_getValue('autonextpage', 1);
-      if (autonextpage > 0 && $('.s-t-page>.next-page').length > 0) {
-        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpage - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpage - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
+      var autonextpagecount = GM_getValue('autonextpagecount', 1);
+      var curPageId = $('form[name="searchform"]>input[name="pageID"]').val();
+      if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
+        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08<br>\n      \u5F53\u524D\u7B2C' + (window.parameters().pageID ? window.parameters().pageID : 1) + '\u9875 <br>\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpagecount - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpagecount - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
         dialog.appendTo('body');
         dialog.dialog({
           resizable: false,
@@ -389,22 +480,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           buttons: {
             "立即停止": function _() {
               sessionStorage.setItem('times', '');
-              GM_setValue('autonextpage', 0);
+              GM_setValue('autonextpagecount', 0);
               $(this).dialog("close");
             }
-            // [`取后${(autonextpage*0.25).toFixed(0)}页`]: function() {
+            // [`取后${(autonextpagecount*0.25).toFixed(0)}页`]: function() {
             // 	sessionStorage.setItem('times', '');
-            // 	GM_setValue('autonextpage', (autonextpage * 0.25).toFixed(0));
+            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.25).toFixed(0));
             // 	$(this).dialog("close");
             // },
-            // [`取后${(autonextpage*0.5).toFixed(0)}页`]: function() {
+            // [`取后${(autonextpagecount*0.5).toFixed(0)}页`]: function() {
             // 	sessionStorage.setItem('times', '');
-            // 	GM_setValue('autonextpage', (autonextpage * 0.5).toFixed(0));
+            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.5).toFixed(0));
             // 	$(this).dialog("close");
             // },
-            // [`取后${(autonextpage*0.75).toFixed(0)}页`]: function() {
+            // [`取后${(autonextpagecount*0.75).toFixed(0)}页`]: function() {
             // 	sessionStorage.setItem('times', '');
-            // 	GM_setValue('autonextpage', (autonextpage * 0.75).toFixed(0));
+            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.75).toFixed(0));
             // 	$(this).dialog("close");
             // },,
           }
@@ -487,30 +578,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     });
     submit(function (next) {
       //翻页
-      var autonextpage = GM_getValue('autonextpage', 0);
-      if (autonextpage > 0) {
-        GM_setValue('autonextpage', autonextpage - 1);
+      var autonextpagecount = GM_getValue('autonextpagecount', 0);
+      if (autonextpagecount > 0) {
+        GM_setValue('autonextpagecount', autonextpagecount - 1);
         if ($('.s-t-page>.next-page').length == 0) {
-          GM_setValue('autonextpage', 0);
-          if (isStopAndAutoGetNextTimeTeachers()) return;
+          GM_setValue('autonextpagecount', 0);
+          if (isStopShowboxAndAutoGetNextTimeTeachers()) return;
         } else {
           $('.s-t-page .next-page')[0].click();
           return false;
         }
       } else {
-        if (isStopAndAutoGetNextTimeTeachers()) return;
+        if (isStopShowboxAndAutoGetNextTimeTeachers()) return;
       }
       next();
     });
   }
 
-  function isStopAndAutoGetNextTimeTeachers() {
+  function isStopShowboxAndAutoGetNextTimeTeachers() {
     var str = sessionStorage.getItem('times');
     if (!str) return false;
     var times = JSON.parse(str);
     var cur = times.shift();
     if (cur) {
-      GM_setValue('autonextpage', 500);
+      GM_setValue('autonextpagecount', 500);
       sessionStorage.setItem('times', JSON.stringify(times));
       $('form[name="searchform"]>input[name="selectTime"]').val(cur);
       $('form[name="searchform"]>input[name="pageID"]').val(1);
@@ -760,7 +851,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
           });
           sessionStorage.setItem('times', JSON.stringify(times));
-          isStopAndAutoGetNextTimeTeachers();
+          isStopShowboxAndAutoGetNextTimeTeachers();
           //console.log(times);
         }).end();
         $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function (i, item) {
