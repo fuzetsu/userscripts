@@ -997,7 +997,7 @@
                 width: 125,
                 sorttype: "string",
                 formatter: function formatter(value, options, rData) {
-                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!value ? value : rData['tid']) + "</a>";
+                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + "</a>";
                 }
               }, {
                 name: 'isfavorite',
