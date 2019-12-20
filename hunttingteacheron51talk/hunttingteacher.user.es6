@@ -451,7 +451,7 @@
         let dialog = $(`<div id="dialog-confirm" title="是否停止自动搜索老师?">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
 			点击立即停止， 将停止获取后续教师<br>
-      当前第${window.parameters().pageID?window.parameters().pageID:1}页 <br>
+      当前第${window.parameters().pageID?window.parameters().pageID:1}页，总计${$('.s-t-page>a:eq(-2)').text()}页<br>
 			<!--即将停止自动获取后边<b>${autonextpagecount - 1}</b>页的数据，约${ (autonextpagecount - 1) * 28}个教师?--></p>
 			</div>`);
         dialog.appendTo('body');

@@ -470,7 +470,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var autonextpagecount = GM_getValue('autonextpagecount', 1);
       var curPageId = $('form[name="searchform"]>input[name="pageID"]').val();
       if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
-        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08<br>\n      \u5F53\u524D\u7B2C' + (window.parameters().pageID ? window.parameters().pageID : 1) + '\u9875 <br>\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpagecount - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpagecount - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
+        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08<br>\n      \u5F53\u524D\u7B2C' + (window.parameters().pageID ? window.parameters().pageID : 1) + '\u9875\uFF0C\u603B\u8BA1' + $('.s-t-page>a:eq(-2)').text() + '\u9875<br>\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpagecount - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpagecount - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
         dialog.appendTo('body');
         dialog.dialog({
           resizable: false,
