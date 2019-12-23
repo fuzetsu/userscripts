@@ -72,7 +72,7 @@
           (date.getHours() > 12) ? date.getHours() % 12 : date.getHours()), //hour
         "h{1}": date => (date.getHours() > 12) ? date.getHours() % 12 : date.getHours(), //hour
         "H{2}": date => getPaddedComp(date.getHours()), //hour
-        "h{1}": date => date.getHours(), //hour
+        "H{1}": date => date.getHours(), //hour
         "m{2}": date => getPaddedComp(date.getMinutes()), //minute
         "m{1}": date => date.getMinutes(), //minute
         "s+": date => getPaddedComp(date.getSeconds()), //second
@@ -132,10 +132,12 @@
       parameters: function(url) {
         // get query string from url (optional) or window
         var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
-        var key = 'urlparameters' + queryString;
-        var obj = $(window).data(key);
-        if(obj == undefined) obj = new Proxy({}, PropertiesCaseInsensitive);
-        else return obj;
+        var cachedkey = 'urlparameters' + queryString;
+        var obj = $(window).data(cachedkey);
+        if(obj == undefined) {
+          obj = new Proxy({}, PropertiesCaseInsensitive);
+          $(window).data(cachedkey, obj);
+        } else return obj;
         // we'll store the parameters here
         // if query string exists
         if(queryString) {

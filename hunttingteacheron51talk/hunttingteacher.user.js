@@ -2,8 +2,6 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
 // @version      2019.12.20001
@@ -34,8 +32,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   //重载类型方法
 
   (function () {
-    var _o;
-
     var PropertiesCaseInsensitive = {
       has: function has(target, prop) {
         if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
@@ -74,7 +70,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var getPaddedComp = function getPaddedComp(comp) {
       return parseInt(comp) < 10 ? '0' + comp : comp;
     },
-        o = (_o = {
+        o = {
       "[y|Y]{4}": function yY4(date) {
         return date.getFullYear();
       }, // year
@@ -101,19 +97,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, //hour
       "H{2}": function H2(date) {
         return getPaddedComp(date.getHours());
-      } }, _defineProperty(_o, 'h{1}', function h1(date) {
-      return date.getHours();
-    }), _defineProperty(_o, "m{2}", function m2(date) {
-      return getPaddedComp(date.getMinutes());
-    }), _defineProperty(_o, "m{1}", function m1(date) {
-      return date.getMinutes();
-    }), _defineProperty(_o, "s+", function s(date) {
-      return getPaddedComp(date.getSeconds());
-    }), _defineProperty(_o, "f+", function f(date) {
-      return getPaddedComp(date.getMilliseconds());
-    }), _defineProperty(_o, "b+", function b(date) {
-      return date.getHours() >= 12 ? 'PM' : 'AM';
-    }), _o);
+      }, //hour
+      "H{1}": function H1(date) {
+        return date.getHours();
+      }, //hour
+      "m{2}": function m2(date) {
+        return getPaddedComp(date.getMinutes());
+      }, //minute
+      "m{1}": function m1(date) {
+        return date.getMinutes();
+      }, //minute
+      "s+": function s(date) {
+        return getPaddedComp(date.getSeconds());
+      }, //second
+      "f+": function f(date) {
+        return getPaddedComp(date.getMilliseconds());
+      }, //millisecond,
+      "b+": function b(date) {
+        return date.getHours() >= 12 ? 'PM' : 'AM';
+      }
+    };
     $.extend(Date.prototype, {
       toString: function toString(format) {
         var formattedDate = format;
@@ -169,9 +172,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       parameters: function parameters(url) {
         // get query string from url (optional) or window
         var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
-        var key = 'urlparameters' + queryString;
-        var obj = $(window).data(key);
-        if (obj == undefined) obj = new Proxy({}, PropertiesCaseInsensitive);else return obj;
+        var cachedkey = 'urlparameters' + queryString;
+        var obj = $(window).data(cachedkey);
+        if (obj == undefined) {
+          obj = new Proxy({}, PropertiesCaseInsensitive);
+          $(window).data(cachedkey, obj);
+        } else return obj;
         // we'll store the parameters here
         // if query string exists
         if (queryString) {
