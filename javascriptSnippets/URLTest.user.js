@@ -38,4 +38,12 @@ function myFunction() {
   });
 }
 myFunction();
+$('#timesmutipulecheck').find("input").checkboxradio({
+  icon: false
+});
+$("#btns").eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function () {
+  $('#timesmutipulecheck>input').each(function (i, item) {
+    $(item).prop("checked", !$(item).is(":checked")).change(); //checkboxradio 修改值后，必须调用change才会引发UI更新
+  });
+}).end();
 //# sourceMappingURL=URLTest.user.js.map

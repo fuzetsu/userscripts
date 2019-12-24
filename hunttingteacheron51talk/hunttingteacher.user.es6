@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2019.12.20001
+// @version      2019.12.24001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -34,8 +34,8 @@
         }
         prop = prop.toLowerCase();
         if(prop in target) return true;
-        var keys = Object.keys(target);
-        var i = keys.length;
+        let keys = Object.keys(target);
+        let i = keys.length;
         while(i--) {
           if(keys[i] && keys[i].toLowerCase() == prop) return true;
         }
@@ -45,8 +45,8 @@
         if(typeof prop === 'symbol') { return target[prop]; }
         prop = prop.toLowerCase();
         if(prop in target) return target[prop];
-        var keys = Object.keys(target);
-        var i = keys.length;
+        let keys = Object.keys(target);
+        let i = keys.length;
         while(i--) {
           if(keys[i] && keys[i].toLowerCase() == prop) return target[keys[i]];
         }
@@ -82,7 +82,7 @@
     $.extend(Date.prototype, {
       toString: function(format) {
         let formattedDate = format;
-        for(var k in o) {
+        for(let k in o) {
           if(new RegExp("(" + k + ")").test(format)) {
             formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
           }
@@ -93,7 +93,7 @@
     //删除数组中的空元素
     $.extend(Array.prototype, {
       clean: function(deleteValue = "") {
-        for(var i = 0; i < this.length; i++) {
+        for(let i = 0; i < this.length; i++) {
           if(this[i] == deleteValue) {
             this.splice(i, 1);
             i--;
@@ -125,16 +125,16 @@
         return this.indexOf(str) > -1;
       },
       replaceAll: function(search, replacement) {
-        var target = this;
+        let target = this;
         return target.replace(new RegExp(search, 'g'), replacement);
       }
     });
     $.extend(window, {
       parameters: function(url) {
         // get query string from url (optional) or window
-        var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
-        var cachedkey = 'urlparameters' + queryString;
-        var obj = $(window).data(cachedkey);
+        let queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+        let cachedkey = 'urlparameters' + queryString;
+        let obj = $(window).data(cachedkey);
         if(obj == undefined) {
           obj = new Proxy({}, PropertiesCaseInsensitive);
           $(window).data(cachedkey, obj);
@@ -145,22 +145,22 @@
           // stuff after # is not part of query string, so get rid of it
           queryString = queryString.split('#')[0];
           // split our query string into its component parts
-          var arr = queryString.split('&');
-          for(var i = 0; i < arr.length; i++) {
+          let arr = queryString.split('&');
+          for(let i = 0; i < arr.length; i++) {
             // separate the keys and the values
-            var a = arr[i].split('=');
+            let a = arr[i].split('=');
             // set parameter name and value (use 'true' if empty)
-            var paramName = a[0];
-            var paramValue = typeof(a[1]) === 'undefined' ? true : a[1];
+            let paramName = a[0];
+            let paramValue = typeof(a[1]) === 'undefined' ? true : a[1];
             // if the paramName ends with square brackets, e.g. colors[] or colors[2]
             if(paramName.match(/\[(\d+)?\]$/)) {
               // create key if it doesn't exist
-              var key = paramName.replace(/\[(\d+)?\]/, '');
+              let key = paramName.replace(/\[(\d+)?\]/, '');
               if(!obj[key]) obj[key] = [];
               // if it's an indexed array e.g. colors[2]
               if(paramName.match(/\[\d+\]$/)) {
                 // get the index value and add the entry at the appropriate position
-                var index = /\[(\d+)\]/.exec(paramName)[1];
+                let index = /\[(\d+)\]/.exec(paramName)[1];
                 obj[key][index] = paramValue;
               } else {
                 // otherwise add the value to the end of the array
@@ -217,8 +217,8 @@
   //https://www.51talk.com/user/study_center_zx
   //https://www.51talk.com/user/study_center_zy
   //https://www.51talk.com/user/study_center_xx
-  var url = window.location.href.toLocaleLowerCase();
-  var settings = {
+  let url = window.location.href.toLocaleLowerCase();
+  let settings = {
     'url': url,
     'tid': url.match(/(t\d+)/g),
     'pagecount': conf.pagecount,
@@ -233,8 +233,8 @@
   /**
    * 提交运算函数到 document 的 fx 队列
    */
-  var submit = function(fun) {
-    var queue = $.queue(document, "fx", fun);
+  let submit = function(fun) {
+    let queue = $.queue(document, "fx", fun);
     if(queue[0] == 'inprogress') {
       return;
     }
@@ -243,7 +243,7 @@
 
   function getorAdd(key, func) {
     if(!(key in sessionStorage)) {
-      var data = (typeof(func) == 'function') ? func(key) : func;
+      let data = (typeof(func) == 'function') ? func(key) : func;
       sessionStorage.setItem(key, data);
       return data;
     }
@@ -259,96 +259,96 @@
   };
 
   function sleep(delay) {
-    var start = (new Date()).getTime();
+    let start = (new Date()).getTime();
     while((new Date()).getTime() - start < delay) {
       continue;
     }
   }
-  var asc = function(a, b) {
-    var av = $(a).attr('indicator');
-    var bv = $(b).attr('indicator');
+  let asc = function(a, b) {
+    let av = $(a).attr('indicator');
+    let bv = $(b).attr('indicator');
     if(!av || !bv) return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? 1 : -1;
   };
-  var desc = function(a, b) {
-    var av = $(a).attr('indicator');
-    var bv = $(b).attr('indicator');
+  let desc = function(a, b) {
+    let av = $(a).attr('indicator');
+    let bv = $(b).attr('indicator');
     if(!av || !bv) return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? -1 : 1;
   };
-  var sortByIndicator = function(sortBy) {
-    var sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
+  let sortByIndicator = function(sortBy) {
+    let sortEle = $('.s-t-content.f-cb .item').sort(sortBy);
     $('.s-t-content.f-cb').empty().append(sortEle);
   };
 
   function getBatchNumber() {
-    var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+    let batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
     return getorAdd(batchnumber, function(key) {
       return new Date().getTime();
     });
   }
 
   function getLeftPageCount() {
-    var pages = Number($('.s-t-page>.next-page:first').prev().text());
-    var curr = Number($('.s-t-page>.active:first').text());
+    let pages = Number($('.s-t-page>.next-page:first').prev().text());
+    let curr = Number($('.s-t-page>.active:first').text());
     if(pages) return pages - curr;
     else return 0;
   }
 
   function getAutoNextPagesCount() {
-    var pages = getLeftPageCount();
+    let pages = getLeftPageCount();
     if(settings.pagecount > pages) return pages;
     else return settings.pagecount;
   }
   $("head").append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`);
   $("head").append(`<style type="text/css">
-		.search-teachers .s-t-list .item-time-list {margin-top:315px;}
-		.search-teachers .s-t-list .item {   height: 679px; }
-		.search-teachers .s-t-list .s-t-content { margin-right: 0px;}
-		.search-teachers { width: 100%; }
-		.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
-		.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }
-		.pace {
-		  -webkit-pointer-events: none;
-		  pointer-events: none;
-		  -webkit-user-select: none;
-		  -moz-user-select: none;
-		  user-select: none;
-		}
-		.pace-inactive {
-		  display: none;
-		}
-		.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}
-		.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}
-		.pace .pace-progress {
-		  background: #29d;
-		  position: fixed;
-		  z-index: 2000;
-		  top: 0;
-		  right: 100%;
-		  width: 100%;
-		  height: 2px;
-		}
-		.search-teachers .s-t-top .s-t-days .s-t-days-list li {
-		 float: left;
-		 width: 118px;
-		 height: 34px;
-		 line-height: 34px;
-		 margin-right: 5px;
-		 margin-bottom: 5px;
-		}
-		.search-teachers .s-t-top .s-t-top-details {
-		 padding: 2px 0 2px 30px;
-		}
-		.search-teachers .s-t-top .s-t-top-right {
-		 height: auto;
-		}
-		.search-teachers .s-t-top .s-t-top-left .condition-item {
-		 margin-bottom: 2px;
-		}
-		.s-t-page {   padding-top: 2px;}
-		</style>`);
+.search-teachers .s-t-list .item-time-list {margin-top:315px;}
+.search-teachers .s-t-list .item {   height: 679px; }
+.search-teachers .s-t-list .s-t-content { margin-right: 0px;}
+.search-teachers { width: 100%; }
+.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
+.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.pace-inactive {
+  display: none;
+}
+.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}
+.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}
+.pace .pace-progress {
+  background: #29d;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+}
+.search-teachers .s-t-top .s-t-days .s-t-days-list li {
+ float: left;
+ width: 118px;
+ height: 34px;
+ line-height: 34px;
+ margin-right: 5px;
+ margin-bottom: 5px;
+}
+.search-teachers .s-t-top .s-t-top-details {
+ padding: 2px 0 2px 30px;
+}
+.search-teachers .s-t-top .s-t-top-right {
+ height: auto;
+}
+.search-teachers .s-t-top .s-t-top-left .condition-item {
+ margin-bottom: 2px;
+}
+.s-t-page {   padding-top: 2px;}
+</style>`);
   let maxrate = 0,
     minrate = 99999,
     maxlabel = 0,
@@ -379,12 +379,12 @@
     let tcount = 0,
       hidecount = 0;
     $.each($('.item'), function(i, item) {
-      var node = $(item);
-      var tinfojson = node.attr("teacherinfo");
+      let node = $(item);
+      let tinfojson = node.attr("teacherinfo");
       if(!tinfojson) {
         return true;
       }
-      var tinfo = JSON.parse(tinfojson);
+      let tinfo = JSON.parse(tinfojson);
       if((tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2) && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
         if(node.is(':hidden')) { //如果node是隐藏的则显示node元素，否则隐藏
           node.show();
@@ -407,14 +407,14 @@
   }
 
   function getUiFilters() {
-    var l1 = $("#tlabelslider").slider('values', 0);
-    var l2 = $("#tlabelslider").slider('values', 1);
-    var rate1 = $("#thumbupRateslider").slider('values', 0);
-    var rate2 = $("#thumbupRateslider").slider('values', 1);
-    var age1 = $("#tAgeSlider").slider('values', 0);
-    var age2 = $("#tAgeSlider").slider('values', 1);
-    var fc1 = $("#fcSlider").slider('values', 0);
-    var fc2 = $("#fcSlider").slider('values', 1);
+    let l1 = $("#tlabelslider").slider('values', 0);
+    let l2 = $("#tlabelslider").slider('values', 1);
+    let rate1 = $("#thumbupRateslider").slider('values', 0);
+    let rate2 = $("#thumbupRateslider").slider('values', 1);
+    let age1 = $("#tAgeSlider").slider('values', 0);
+    let age2 = $("#tAgeSlider").slider('values', 1);
+    let fc1 = $("#fcSlider").slider('values', 0);
+    let fc2 = $("#fcSlider").slider('values', 1);
     return {
       l1,
       l2,
@@ -435,28 +435,31 @@
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
     $(".s-t-days-list>li").click(function() {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      let batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
       sessionStorage.setItem(batchnumber, new Date().getTime());
     });
     $(".condition-type-time>li").click(function() {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      let batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
       sessionStorage.setItem(batchnumber, new Date().getTime());
     });
     $(".s-t-top-list>li>a").click(function() {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
+      let batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
       sessionStorage.setItem(batchnumber, new Date().getTime());
     });
     // 自动获取时,显示停止按钮
     submit(function(next) {
-      var autonextpagecount = GM_getValue('autonextpagecount', 1);
-      var curPageId = $('form[name="searchform"]>input[name="pageID"]').val();
+      let totalPages = Number($('.s-t-page>a:eq(-2)').text()),
+        curPageId = window.parameters().pageID ? window.parameters().pageID : 1,
+        remainPages = totalPages - curPageId;
+      let autonextpagecount = GM_getValue('autonextpagecount', 1);
       if(autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
         let dialog = $(`<div id="dialog-confirm" title="是否停止自动搜索老师?">
-			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-			点击立即停止， 将停止获取后续教师<br>
-      当前第${window.parameters().pageID?window.parameters().pageID:1}页，总计${$('.s-t-page>a:eq(-2)').text()}页<br>
-			<!--即将停止自动获取后边<b>${autonextpagecount - 1}</b>页的数据，约${ (autonextpagecount - 1) * 28}个教师?--></p>
-			</div>`);
+<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+<b>正在根据您的选择自动获取教师信息</b><br><br>
+正在获取当前时段第${curPageId}页，剩余${remainPages}页总计${totalPages}页,约${ remainPages * 28}个教师<br>
+总计选择${sessionStorage.getItem("selectedTimeSlotsTotal")}个时段，未获取${sessionStorage.getItem("selectedTimeSlotsRemain")}个时段，
+</p>
+</div>`);
         dialog.appendTo('body');
         dialog.dialog({
           resizable: false,
@@ -469,21 +472,21 @@
               GM_setValue('autonextpagecount', 0);
               $(this).dialog("close");
             },
-            // [`取后${(autonextpagecount*0.25).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.25).toFixed(0));
-            // 	$(this).dialog("close");
+            // [`取后${(remainPages*0.25).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
+            //   $(this).dialog("close");
             // },
-            // [`取后${(autonextpagecount*0.5).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.5).toFixed(0));
-            // 	$(this).dialog("close");
+            // [`取后${(remainPages*0.5).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
+            //   $(this).dialog("close");
             // },
-            // [`取后${(autonextpagecount*0.75).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.75).toFixed(0));
-            // 	$(this).dialog("close");
-            // },,
+            // [`取后${(remainPages*0.75).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
+            //   $(this).dialog("close");
+            // },
           }
         });
       }
@@ -491,8 +494,8 @@
     });
 
     function getTeacherInfoInList(jqel) {
-      var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
-      var label = (function() {
+      let age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
+      let label = (function() {
         let j_len = jqel.find(".label").text().match(num).clean("").length;
         let l = 0;
         for(let j = 0; j < j_len; j++) {
@@ -501,11 +504,11 @@
         l = Math.ceil(l / 5);
         return l;
       })();
-      var name = jqel.find(".teacher-name").text();
-      var type = $('.s-t-top-list .li-active').text();
-      var effectivetime = getBatchNumber();
+      let name = jqel.find(".teacher-name").text();
+      let type = $('.s-t-top-list .li-active').text();
+      let effectivetime = getBatchNumber();
       if(type == '收藏外教') {
-        var isfavorite = true;
+        let isfavorite = true;
         return {
           age,
           label,
@@ -527,11 +530,11 @@
         Pace.track(function() {
           let jqel = $(el);
           let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
-          var tinfokey = 'tinfo-' + tid;
-          var teacherlistinfo = getTeacherInfoInList(jqel);
-          var tinfo = GM_getValue(tinfokey);
+          let tinfokey = 'tinfo-' + tid;
+          let teacherlistinfo = getTeacherInfoInList(jqel);
+          let tinfo = GM_getValue(tinfokey);
           if(tinfo) {
-            var now = new Date().getTime();
+            let now = new Date().getTime();
             if(!tinfo.expire) {
               tinfo.expire = new Date(1970, 1, 1).getTime();
             }
@@ -544,27 +547,27 @@
             }
           }
           // ajax 请求一定要包含在一个函数中
-          var start = (new Date()).getTime();
+          let start = (new Date()).getTime();
           $.ajax({
             url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
             type: 'GET',
             dateType: 'html',
             success: function(r) {
-              var jqr = $(r);
+              let jqr = $(r);
               if(jqr.find('.teacher-name-tit').length > 0) {
-                var tempitem = jqr.find('.teacher-name-tit')[0];
+                let tempitem = jqr.find('.teacher-name-tit')[0];
                 tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
               }
               if(jqr.find(".evaluate-content-left span").length >= 3) {
-                var thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
-                var thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
-                var thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
-                var favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
-                var isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-                var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
-                var slevel = jqr.find('.sui-students').text();
+                let thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
+                let thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
+                let thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
+                let favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
+                let isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
+                let tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
+                let slevel = jqr.find('.sui-students').text();
                 jqr.remove();
-                var tinfo = {
+                let tinfo = {
                   'slevel': slevel,
                   'tage': tage,
                   'thumbup': thumbup,
@@ -596,7 +599,7 @@
     });
     submit(function(next) {
       //翻页
-      var autonextpagecount = GM_getValue('autonextpagecount', 0);
+      let autonextpagecount = GM_getValue('autonextpagecount', 0);
       if(autonextpagecount > 0) {
         GM_setValue('autonextpagecount', autonextpagecount - 1);
         if($('.s-t-page>.next-page').length == 0) {
@@ -616,11 +619,12 @@
   function isStopShowboxAndAutoGetNextTimeTeachers() {
     let str = sessionStorage.getItem('selectedTimeSlots');
     if(!str) return false;
-    var selectedTimeSlots = JSON.parse(str);
-    var cur = selectedTimeSlots.shift();
+    let selectedTimeSlots = JSON.parse(str);
+    let cur = selectedTimeSlots.shift();
     if(cur) {
       GM_setValue('autonextpagecount', 500);
       sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+      sessionStorage.setItem('selectedTimeSlotsRemain', selectedTimeSlots.length);
       $('form[name="searchform"]>input[name="selectTime"]').val(cur);
       $('form[name="searchform"]>input[name="pageID"]').val(1);
       $('.go-search').click();
@@ -633,7 +637,7 @@
       jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
         return val.replaceAll('<!--', '').replaceAll('-->', '');
       });
-      var tinfo = GM_getValue(getinfokey(), {});
+      let tinfo = GM_getValue(getinfokey(), {});
       tinfo.label = (function() {
         let l = 0;
         $.each(jqr.find(".t-d-label").text().match(num).clean(""), function(i, val) {
@@ -675,9 +679,9 @@
   }
 
   function addCheckbox(val, lbl, group) {
-    var container = $('#timesmutipulecheck');
-    var inputs = container.find('input');
-    var id = inputs.length + 1;
+    let container = $('#timesmutipulecheck');
+    let inputs = container.find('input');
+    let id = inputs.length + 1;
     $('<input />', {
       type: 'checkbox',
       id: 'cb' + id,
@@ -693,7 +697,7 @@
     //构建插件信息
     submit(function(next) {
       try {
-        var config = GM_getValue('filterconfig', {
+        let config = GM_getValue('filterconfig', {
           l1: 300,
           l2: maxlabel,
           rate1: 97,
@@ -750,10 +754,10 @@
             $('#_tLabelCount').html(ui.values[0] + " - " + ui.values[1]);
           }
         }).on('slidestop', function(event, ui) {
-          var l1 = $("#tlabelslider").slider('values', 0);
-          var l2 = $("#tlabelslider").slider('values', 1);
-          var uifilters = getUiFilters();
-          var filterconfig = GM_getValue('filterconfig', uifilters);
+          let l1 = $("#tlabelslider").slider('values', 0);
+          let l2 = $("#tlabelslider").slider('values', 1);
+          let uifilters = getUiFilters();
+          let filterconfig = GM_getValue('filterconfig', uifilters);
           filterconfig.l1 = l1;
           filterconfig.l2 = l2;
           GM_setValue('filterconfig', filterconfig);
@@ -768,10 +772,10 @@
             $('#_tfc').html(ui.values[0] + " - " + ui.values[1]);
           }
         }).on('slidestop', function(event, ui) {
-          var fc1 = $("#fcSlider").slider('values', 0);
-          var fc2 = $("#fcSlider").slider('values', 1);
-          var uifilters = getUiFilters();
-          var filterconfig = GM_getValue('filterconfig', uifilters);
+          let fc1 = $("#fcSlider").slider('values', 0);
+          let fc2 = $("#fcSlider").slider('values', 1);
+          let uifilters = getUiFilters();
+          let filterconfig = GM_getValue('filterconfig', uifilters);
           filterconfig.fc1 = fc1;
           filterconfig.fc2 = fc2;
           GM_setValue('filterconfig', filterconfig);
@@ -786,10 +790,10 @@
             $('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
           }
         }).on('slidestop', function(event, ui) {
-          var rate1 = $("#thumbupRateslider").slider('values', 0);
-          var rate2 = $("#thumbupRateslider").slider('values', 1);
-          var uifilters = getUiFilters();
-          var filterconfig = GM_getValue('filterconfig', uifilters);
+          let rate1 = $("#thumbupRateslider").slider('values', 0);
+          let rate2 = $("#thumbupRateslider").slider('values', 1);
+          let uifilters = getUiFilters();
+          let filterconfig = GM_getValue('filterconfig', uifilters);
           filterconfig.rate1 = rate1;
           filterconfig.rate2 = rate2;
           GM_setValue('filterconfig', filterconfig);
@@ -804,10 +808,10 @@
             $('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
           }
         }).on("slidestop", function(event, ui) {
-          var age1 = $("#tAgeSlider").slider('values', 0);
-          var age2 = $("#tAgeSlider").slider('values', 1);
-          var uifilters = getUiFilters();
-          var filterconfig = GM_getValue('filterconfig', uifilters);
+          let age1 = $("#tAgeSlider").slider('values', 0);
+          let age2 = $("#tAgeSlider").slider('values', 1);
+          let uifilters = getUiFilters();
+          let filterconfig = GM_getValue('filterconfig', uifilters);
           filterconfig.age1 = age1;
           filterconfig.age2 = age2;
           GM_setValue('filterconfig', filterconfig);
@@ -850,25 +854,26 @@
           }).end()
           // 获取选定时段老师
           .eq(1).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function() {
-            var selectedTimeSlots = [];
+            let selectedTimeSlots = [];
             $('#timesmutipulecheck>input').each(function(i, item) {
               if($(item).is(":checked")) {
                 selectedTimeSlots.push($(item).val());
               }
             });
             sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+            sessionStorage.setItem('selectedTimeSlotsTotal', selectedTimeSlots.length);
             isStopShowboxAndAutoGetNextTimeTeachers();
           }).end();
         //初始化时间选择按钮
         $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
           addCheckbox($(item).attr('data-val'), $(item).text());
         });
-        var timesstr = sessionStorage.getItem("selectedTimeSlots"),
+        let timesstr = sessionStorage.getItem("selectedTimeSlots"),
           selectedTimeSlots = [];
         if(timesstr) {
           selectedTimeSlots = JSON.parse(timesstr);
           if(selectedTimeSlots.length > 0) {
-            var i = selectedTimeSlots.length;
+            let i = selectedTimeSlots.length;
             while(i--) {
               $("#timesmutipulecheck>input[value='" + selectedTimeSlots[i] + "']").attr('checked', true);
             }
@@ -883,15 +888,15 @@
         });
 
         function getCatchedTeachers() {
-          var teachers = [];
+          let teachers = [];
           $.each(GM_listValues(), function(i, item) {
             if(item.startsWith('tinfo-')) {
-              var t = GM_getValue(item);
+              let t = GM_getValue(item);
               t.tid = item.slice(6, item.length);
               teachers.push(t);
             }
           });
-          var indexs = {};
+          let indexs = {};
           teachers = teachers.sort(function(t1, t2) {
             if(t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
             return t1.indicator > t2.indicator ? -1 : 1;
@@ -920,8 +925,8 @@
           active: '#tabs-2',
           activate: function(event, ui) {
             if(ui.newPanel.attr('id') != 'tabs-2') return;
-            var teachers = getCatchedTeachers();
-            var jqtable = $("#teachertab");
+            let teachers = getCatchedTeachers();
+            let jqtable = $("#teachertab");
             //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
             jqtable.jqGrid({
               data: teachers,
@@ -938,7 +943,7 @@
                   sopt: ['cn']
                 },
                 formatter: function formatter(value, options, rData) {
-                  var date = new Date(Number(value));
+                  let date = new Date(Number(value));
                   if(date instanceof Date && !isNaN(date.valueOf())) {
                     return date.toString('HHmmss');
                   }
@@ -1076,7 +1081,7 @@
                 },
                 formatter: function formatter(value, options, rData) {
                   if(value) {
-                    var d = new Date().getTime() - value;
+                    let d = new Date().getTime() - value;
                     if(d < 1000 * 60) {
                       return "刚刚";
                     } else if(d < 1000 * 60 * 60) {
@@ -1110,7 +1115,7 @@
             });
           }
         });
-        var uifilters = getUiFilters();
+        let uifilters = getUiFilters();
         executeFilters(uifilters);
         $('#_tAge').html(uifilters.age1 + " - " + uifilters.age2);
         $('#_tLabelCount').html(uifilters.l1 + " - " + uifilters.l2);

@@ -4,7 +4,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2019.12.20001
+// @version      2019.12.24001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -339,7 +339,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (settings.pagecount > pages) return pages;else return settings.pagecount;
   }
   $("head").append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n\t\t<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">');
-  $("head").append('<style type="text/css">\n\t\t.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n\t\t.search-teachers .s-t-list .item {   height: 679px; }\n\t\t.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n\t\t.search-teachers { width: 100%; }\n\t\t.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n\t\t.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n\t\t.pace {\n\t\t  -webkit-pointer-events: none;\n\t\t  pointer-events: none;\n\t\t  -webkit-user-select: none;\n\t\t  -moz-user-select: none;\n\t\t  user-select: none;\n\t\t}\n\t\t.pace-inactive {\n\t\t  display: none;\n\t\t}\n\t\t.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n\t\t.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n\t\t.pace .pace-progress {\n\t\t  background: #29d;\n\t\t  position: fixed;\n\t\t  z-index: 2000;\n\t\t  top: 0;\n\t\t  right: 100%;\n\t\t  width: 100%;\n\t\t  height: 2px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n\t\t float: left;\n\t\t width: 118px;\n\t\t height: 34px;\n\t\t line-height: 34px;\n\t\t margin-right: 5px;\n\t\t margin-bottom: 5px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-details {\n\t\t padding: 2px 0 2px 30px;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-right {\n\t\t height: auto;\n\t\t}\n\t\t.search-teachers .s-t-top .s-t-top-left .condition-item {\n\t\t margin-bottom: 2px;\n\t\t}\n\t\t.s-t-page {   padding-top: 2px;}\n\t\t</style>');
+  $("head").append('<style type="text/css">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item {   height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n float: left;\n width: 118px;\n height: 34px;\n line-height: 34px;\n margin-right: 5px;\n margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n margin-bottom: 2px;\n}\n.s-t-page {   padding-top: 2px;}\n</style>');
   var maxrate = 0,
       minrate = 99999,
       maxlabel = 0,
@@ -474,10 +474,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     });
     // 自动获取时,显示停止按钮
     submit(function (next) {
+      var totalPages = Number($('.s-t-page>a:eq(-2)').text()),
+          curPageId = window.parameters().pageID ? window.parameters().pageID : 1,
+          remainPages = totalPages - curPageId;
       var autonextpagecount = GM_getValue('autonextpagecount', 1);
-      var curPageId = $('form[name="searchform"]>input[name="pageID"]').val();
       if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
-        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n\t\t\t<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n\t\t\t\u70B9\u51FB\u7ACB\u5373\u505C\u6B62\uFF0C \u5C06\u505C\u6B62\u83B7\u53D6\u540E\u7EED\u6559\u5E08<br>\n      \u5F53\u524D\u7B2C' + (window.parameters().pageID ? window.parameters().pageID : 1) + '\u9875\uFF0C\u603B\u8BA1' + $('.s-t-page>a:eq(-2)').text() + '\u9875<br>\n\t\t\t<!--\u5373\u5C06\u505C\u6B62\u81EA\u52A8\u83B7\u53D6\u540E\u8FB9<b>' + (autonextpagecount - 1) + '</b>\u9875\u7684\u6570\u636E\uFF0C\u7EA6' + (autonextpagecount - 1) * 28 + '\u4E2A\u6559\u5E08?--></p>\n\t\t\t</div>');
+        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n<b>\u6B63\u5728\u6839\u636E\u60A8\u7684\u9009\u62E9\u81EA\u52A8\u83B7\u53D6\u6559\u5E08\u4FE1\u606F</b><br><br>\n\u6B63\u5728\u83B7\u53D6\u5F53\u524D\u65F6\u6BB5\u7B2C' + curPageId + '\u9875\uFF0C\u5269\u4F59' + remainPages + '\u9875\u603B\u8BA1' + totalPages + '\u9875,\u7EA6' + remainPages * 28 + '\u4E2A\u6559\u5E08<br>\n\u603B\u8BA1\u9009\u62E9' + sessionStorage.getItem("selectedTimeSlotsTotal") + '\u4E2A\u65F6\u6BB5\uFF0C\u672A\u83B7\u53D6' + sessionStorage.getItem("selectedTimeSlotsRemain") + '\u4E2A\u65F6\u6BB5\uFF0C\n</p>\n</div>');
         dialog.appendTo('body');
         dialog.dialog({
           resizable: false,
@@ -490,21 +492,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               GM_setValue('autonextpagecount', 0);
               $(this).dialog("close");
             }
-            // [`取后${(autonextpagecount*0.25).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.25).toFixed(0));
-            // 	$(this).dialog("close");
+            // [`取后${(remainPages*0.25).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
+            //   $(this).dialog("close");
             // },
-            // [`取后${(autonextpagecount*0.5).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.5).toFixed(0));
-            // 	$(this).dialog("close");
+            // [`取后${(remainPages*0.5).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
+            //   $(this).dialog("close");
             // },
-            // [`取后${(autonextpagecount*0.75).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('selectedTimeSlots', '');
-            // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.75).toFixed(0));
-            // 	$(this).dialog("close");
-            // },,
+            // [`取后${(remainPages*0.75).toFixed(0)}页`]: function() {
+            //   sessionStorage.setItem('selectedTimeSlots', '');
+            //   GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
+            //   $(this).dialog("close");
+            // },
           }
         });
       }
@@ -553,7 +555,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 var tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]);
                 var slevel = jqr.find('.sui-students').text();
                 jqr.remove();
-                var tinfo = {
+                var _tinfo = {
                   'slevel': slevel,
                   'tage': tage,
                   'thumbup': thumbup,
@@ -564,9 +566,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                   'isfavorite': isfavorite,
                   'expire': new Date().getTime()
                 };
-                tinfo = $.extend(tinfo, teacherlistinfo);
-                GM_setValue(tinfokey, tinfo);
-                updateTeacherinfoToUI(jqel, tinfo);
+                _tinfo = $.extend(_tinfo, teacherlistinfo);
+                GM_setValue(tinfokey, _tinfo);
+                updateTeacherinfoToUI(jqel, _tinfo);
               } else {
                 console.log('Teacher s detail info getting error:' + JSON.stringify(jqel) + ",error info:" + r);
               }
@@ -610,6 +612,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (cur) {
       GM_setValue('autonextpagecount', 500);
       sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+      sessionStorage.setItem('selectedTimeSlotsRemain', selectedTimeSlots.length);
       $('form[name="searchform"]>input[name="selectTime"]').val(cur);
       $('form[name="searchform"]>input[name="pageID"]').val(1);
       $('.go-search').click();
@@ -712,7 +715,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return teachers;
         };
 
-        var config = GM_getValue('filterconfig', {
+        var _config = GM_getValue('filterconfig', {
           l1: 300,
           l2: maxlabel,
           rate1: 97,
@@ -727,7 +730,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           range: true,
           min: minlabel - 1,
           max: maxlabel,
-          values: [config.l1 < minlabel - 1 ? minlabel - 1 : config.l1, maxlabel],
+          values: [_config.l1 < minlabel - 1 ? minlabel - 1 : _config.l1, maxlabel],
           slide: function slide(event, ui) {
             $('#_tLabelCount').html(ui.values[0] + " - " + ui.values[1]);
           }
@@ -745,7 +748,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           range: true,
           min: minfc,
           max: maxfc,
-          values: [config.fc1 < minfc ? minfc : config.fc1, maxfc],
+          values: [_config.fc1 < minfc ? minfc : _config.fc1, maxfc],
           slide: function slide(event, ui) {
             $('#_tfc').html(ui.values[0] + " - " + ui.values[1]);
           }
@@ -763,7 +766,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           range: true,
           min: minrate,
           max: maxrate,
-          values: [config.rate1 < minrate ? minrate : config.rate1, maxrate],
+          values: [_config.rate1 < minrate ? minrate : _config.rate1, maxrate],
           slide: function slide(event, ui) {
             $('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
           }
@@ -781,7 +784,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           range: true,
           min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-          values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
+          values: [_config.age1 < minage ? minage : _config.age1, _config.age2 > maxage ? maxage : _config.age2],
           slide: function slide(event, ui) {
             $('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
           }
@@ -841,6 +844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }
           });
           sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+          sessionStorage.setItem('selectedTimeSlotsTotal', selectedTimeSlots.length);
           isStopShowboxAndAutoGetNextTimeTeachers();
         }).end();
         //初始化时间选择按钮
