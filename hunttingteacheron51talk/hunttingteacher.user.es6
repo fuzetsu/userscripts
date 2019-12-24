@@ -465,22 +465,22 @@
           modal: false,
           buttons: {
             "立即停止": function() {
-              sessionStorage.setItem('times', '');
+              sessionStorage.setItem('selectedTimeSlots', '');
               GM_setValue('autonextpagecount', 0);
               $(this).dialog("close");
             },
             // [`取后${(autonextpagecount*0.25).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('times', '');
+            // 	sessionStorage.setItem('selectedTimeSlots', '');
             // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.25).toFixed(0));
             // 	$(this).dialog("close");
             // },
             // [`取后${(autonextpagecount*0.5).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('times', '');
+            // 	sessionStorage.setItem('selectedTimeSlots', '');
             // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.5).toFixed(0));
             // 	$(this).dialog("close");
             // },
             // [`取后${(autonextpagecount*0.75).toFixed(0)}页`]: function() {
-            // 	sessionStorage.setItem('times', '');
+            // 	sessionStorage.setItem('selectedTimeSlots', '');
             // 	GM_setValue('autonextpagecount', (autonextpagecount * 0.75).toFixed(0));
             // 	$(this).dialog("close");
             // },,
@@ -614,13 +614,13 @@
   }
 
   function isStopShowboxAndAutoGetNextTimeTeachers() {
-    var str = sessionStorage.getItem('times');
+    let str = sessionStorage.getItem('selectedTimeSlots');
     if(!str) return false;
-    var times = JSON.parse(str);
-    var cur = times.shift();
+    var selectedTimeSlots = JSON.parse(str);
+    var cur = selectedTimeSlots.shift();
     if(cur) {
       GM_setValue('autonextpagecount', 500);
-      sessionStorage.setItem('times', JSON.stringify(times));
+      sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
       $('form[name="searchform"]>input[name="selectTime"]').val(cur);
       $('form[name="searchform"]>input[name="pageID"]').val(1);
       $('.go-search').click();
@@ -719,7 +719,7 @@
 							</div>
 							<div id='buttons1' style='text-align: center;'>
 								<div id='timesmutipulecheck'></div>
-								<!--<button id='autogetnextpage'>自动获取此时段${getAutoNextPagesCount()}页</button>&nbsp;-->
+                <button>反选时间段</button>&nbsp;
 								<button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
 							</div>
 						</div>
@@ -763,10 +763,7 @@
           range: true,
           min: minfc,
           max: maxfc,
-          values: [
-            config.fc1 < minfc ? minfc : config.fc1,
-            maxfc
-          ],
+          values: [config.fc1 < minfc ? minfc : config.fc1, maxfc],
           slide: function(event, ui) {
             $('#_tfc').html(ui.values[0] + " - " + ui.values[1]);
           }
@@ -784,10 +781,7 @@
           range: true,
           min: minrate,
           max: maxrate,
-          values: [
-            config.rate1 < minrate ? minrate : config.rate1,
-            maxrate
-          ],
+          values: [config.rate1 < minrate ? minrate : config.rate1, maxrate],
           slide: function(event, ui) {
             $('#_thumbupRate').html(ui.values[0] + "% - " + ui.values[1] + '%');
           }
@@ -805,10 +799,7 @@
           range: true,
           min: Number(minage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
           max: Number(maxage), // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-          values: [
-            config.age1 < minage ? minage : config.age1,
-            config.age2 > maxage ? maxage : config.age2
-          ],
+          values: [config.age1 < minage ? minage : config.age1, config.age2 > maxage ? maxage : config.age2],
           slide: function(event, ui) {
             $('#_tAge').html(ui.values[0] + " - " + ui.values[1]);
           }
@@ -822,83 +813,64 @@
           GM_setValue('filterconfig', filterconfig);
           executeFilters(uifilters);
         });
-        $('#buttons>button,#buttons>input,#buttons>a').eq(0).button({
-          icon: 'ui-icon-arrowthick-1-n',
-          showLabel: false
-        }).
-        //升序
-        click(function() {
-          $('#desc').show();
-          $(this).hide();
-          sortByIndicator(asc);
-        }).end().eq(1).button({
-          icon: 'ui-icon-arrowthick-1-s',
-          showLabel: false
-        }).
-        //降序
-        click(function() {
-          $('#asc').show();
-          $(this).hide();
-          sortByIndicator(desc);
-        }).end().eq(2).spinner({
-          min: 0,
-          spin: function(event, ui) {
-            GM_setValue('tinfoexprhours', ui.value)
-          }
-        }).
-        // 缓存过期时间（小时）
-        css({
-          width: '45px'
-        }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end().eq(3).button({
-          icon: 'ui-icon-trash',
-          showLabel: false
-        }).
-        //清空缓存
-        click(function() {
-          $.each(GM_listValues(), function(i, item) {
-            if(item.startsWith('tinfo-')) {
-              GM_deleteValue(item);
-            }
-          });
-          $('.go-search').click();
-        }).end().eq(4).button({
-          icon: 'ui-icon-comment',
-          showLabel: false
-        }).
-        //submit suggestion
-        prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end().eq(5).button({
-          icon: 'ui-icon-help',
-          showLabel: false
-        }).
-        //系统帮助
-        prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
-        $('#buttons1>button').eq(0).button({
-          icon: 'ui-icon-seek-next',
-          showLabel: true
-        }).
-        //submit suggestion
-        click(function() {
-          var times = [];
-          $('#timesmutipulecheck>input').each(function(i, item) {
-            if($(item).is(":checked")) {
-              times.push($(item).val());
-            }
-          });
-          sessionStorage.setItem('times', JSON.stringify(times));
-          isStopShowboxAndAutoGetNextTimeTeachers();
-          //console.log(times);
-        }).end();
+        $('#buttons>button,#buttons>input,#buttons>a')
+          //升序
+          .eq(0).button({ icon: 'ui-icon-arrowthick-1-n', showLabel: false }).click(function() {
+            $('#desc').show();
+            $(this).hide();
+            sortByIndicator(asc);
+          }).end()
+          //降序
+          .eq(1).button({ icon: 'ui-icon-arrowthick-1-s', showLabel: false }).click(function() {
+            $('#asc').show();
+            $(this).hide();
+            sortByIndicator(desc);
+          }).end()
+          // 缓存过期时间（小时）
+          .eq(2).spinner({ min: 0, spin: function(event, ui) { GM_setValue('tinfoexprhours', ui.value) } }).css({ width: '45px' }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end()
+          //清空缓存
+          .eq(3).button({ icon: 'uiicon-trash', showLabel: false }).click(function() {
+            $.each(GM_listValues(), function(i, item) {
+              if(item.startsWith('tinfo-')) {
+                GM_deleteValue(item);
+              }
+            });
+            $('.go-search').click();
+          }).end()
+          //submit suggestion
+          .eq(4).button({ icon: 'ui-icon-comment', showLabel: false }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end()
+          //系统帮助
+          .eq(5).button({ icon: 'ui-icon-help', showLabel: false }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
+        $('#buttons1>button')
+          //反选时间段
+          .eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function() {
+            $('#timesmutipulecheck>input').each(function(i, item) {
+              $(item).prop("checked", !$(item).is(":checked")).change();
+            });
+          }).end()
+          // 获取选定时段老师
+          .eq(1).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function() {
+            var selectedTimeSlots = [];
+            $('#timesmutipulecheck>input').each(function(i, item) {
+              if($(item).is(":checked")) {
+                selectedTimeSlots.push($(item).val());
+              }
+            });
+            sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+            isStopShowboxAndAutoGetNextTimeTeachers();
+          }).end();
+        //初始化时间选择按钮
         $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
           addCheckbox($(item).attr('data-val'), $(item).text());
         });
-        var timesstr = sessionStorage.getItem("times"),
-          times = [];
+        var timesstr = sessionStorage.getItem("selectedTimeSlots"),
+          selectedTimeSlots = [];
         if(timesstr) {
-          times = JSON.parse(timesstr);
-          if(times.length > 0) {
-            var i = times.length;
+          selectedTimeSlots = JSON.parse(timesstr);
+          if(selectedTimeSlots.length > 0) {
+            var i = selectedTimeSlots.length;
             while(i--) {
-              $("#timesmutipulecheck>input[value='" + times[i] + "']").attr('checked', true);
+              $("#timesmutipulecheck>input[value='" + selectedTimeSlots[i] + "']").attr('checked', true);
             }
           } else {
             $("#timesmutipulecheck>input[value='" + $("input[name='selectTime']").val() + "']").attr('checked', true);
