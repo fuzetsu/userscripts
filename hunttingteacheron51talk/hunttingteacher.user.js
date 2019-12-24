@@ -882,44 +882,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               datatype: "local",
               height: 240,
               colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
-              colModel: [{
+              colModel: [//
+              {
                 name: 'effectivetime',
                 index: 'effectivetime',
                 width: 45,
                 sorttype: "float",
                 align: 'right',
-                searchoptions: {
-                  sopt: ['cn']
-                },
+                searchoptions: { sopt: ['cn'] },
                 formatter: function formatter(value, options, rData) {
-                  var date = new Date(Number(value));
-                  if (date instanceof Date && !isNaN(date.valueOf())) {
+                  var date = new Date(Number(value));if (date instanceof Date && !isNaN(date.valueOf())) {
                     return date.toString('HHmmss');
-                  }
-                  return value;
+                  }return value;
                 }
-              }, {
+              }, //
+              {
                 name: 'type',
                 index: 'type',
                 width: 55,
                 sorttype: "string",
                 align: 'left',
-                searchoptions: {
-                  sopt: ['cn']
-                },
+                searchoptions: { sopt: ['cn'] },
                 formatter: function formatter(value, options, rData) {
                   if (value) return value;else return 'na';
                 }
-              }, {
-                name: 'rank',
-                index: 'rank',
-                width: 40,
-                sorttype: "float",
-                align: 'right',
-                searchoptions: {
-                  sopt: ['le']
-                }
-              }, {
+              }, //
+              { name: 'rank', index: 'rank', width: 40, sorttype: "float", align: 'right', searchoptions: { sopt: ['le'] } }, //
+              {
                 name: 'name',
                 index: 'name',
                 width: 125,
@@ -927,105 +916,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 formatter: function formatter(value, options, rData) {
                   return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + "</a>";
                 }
-              }, {
+              }, //
+              {
                 name: 'isfavorite',
                 index: 'isfavorite',
                 width: 39,
                 sorttype: "string",
                 align: 'left',
-                searchoptions: {
-                  sopt: ['cn']
-                },
+                searchoptions: { sopt: ['cn'] },
                 formatter: function formatter(value, options, rData) {
                   if (value) return '收藏';else return '';
                 }
-              }, {
-                name: 'indicator',
-                index: 'indicator',
-                width: 50,
-                sorttype: "float",
-                align: 'right',
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'label',
-                index: 'label',
-                width: 45,
-                align: 'right',
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'thumbupRate',
-                index: 'thumbupRate',
-                width: 35,
-                align: "right",
-                sorttype: "float",
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'favoritesCount',
-                index: 'favoritesCount',
-                width: 35,
-                align: "right",
-                sorttype: "float",
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'slevel',
-                index: 'slevel',
-                width: 85,
-                sorttype: "string",
-                align: 'left',
-                searchoptions: {
-                  //defaultValue: '中级',
-                  sopt: ['cn', 'nc']
-                }
-              }, {
-                name: 'tage',
-                index: 'tage',
-                width: 25,
-                sorttype: "float",
-                align: 'right',
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'thumbup',
-                index: 'thumbup',
-                width: 45,
-                align: "right",
-                sorttype: "float",
-                searchoptions: {
-                  sopt: ['ge']
-                }
-              }, {
-                name: 'thumbdown',
-                index: 'thumbdown',
-                width: 30,
-                sorttype: "float",
-                align: 'right'
-              }, {
-                name: 'age',
-                index: 'age',
-                width: 30,
-                sorttype: "float",
-                align: 'right',
-                searchoptions: {
-                  sopt: ['le', 'ge', 'eq']
-                }
-              }, {
+              }, //
+              { name: 'indicator', index: 'indicator', width: 50, sorttype: "float", align: 'right', searchoptions: { sopt: ['ge'] } }, //
+              { name: 'label', index: 'label', width: 45, align: 'right', searchoptions: { sopt: ['ge'] } }, //
+              { name: 'thumbupRate', index: 'thumbupRate', width: 35, align: "right", sorttype: "float", searchoptions: { sopt: ['ge'] } }, //
+              { name: 'favoritesCount', index: 'favoritesCount', width: 35, align: "right", sorttype: "float", searchoptions: { sopt: ['ge'] } }, //
+              { name: 'slevel', index: 'slevel', width: 85, sorttype: "string", align: 'left', searchoptions: { sopt: ['cn', 'nc'] } }, //
+              { name: 'tage', index: 'tage', width: 25, sorttype: "float", align: 'right', searchoptions: { sopt: ['ge'] } }, //
+              { name: 'thumbup', index: 'thumbup', width: 45, align: "right", sorttype: "float", searchoptions: { sopt: ['ge'] } }, //
+              { name: 'thumbdown', index: 'thumbdown', width: 30, sorttype: "float", align: 'right' }, //
+              { name: 'age', index: 'age', width: 30, sorttype: "float", align: 'right', searchoptions: { sopt: ['le', 'ge', 'eq'] } }, //
+              {
                 name: 'expire',
                 index: 'expire',
                 width: 35,
                 sorttype: "Date",
                 align: 'right',
-                searchoptions: {
-                  sopt: ['cn']
-                },
+                searchoptions: { sopt: ['cn'] },
                 formatter: function formatter(value, options, rData) {
                   if (value) {
                     var d = new Date().getTime() - value;
@@ -1055,17 +973,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               //autowidth: true,
               width: 732
               //caption: "",,
-            }).jqGrid('filterToolbar', {
-              searchOperators: true
-            });
+            }).jqGrid('filterToolbar', { searchOperators: true });
           }
         });
         var uifilters = getUiFilters();
         executeFilters(uifilters);
         $('#_tAge').html(uifilters.age1 + " - " + uifilters.age2);
         $('#_tLabelCount').html(uifilters.l1 + " - " + uifilters.l2);
-        $('#_thumbupRate').html(uifilters.rate1 + "% - " + uifilters.rate2 + '%');
         $('#_tfc').html(uifilters.fc1 + " - " + uifilters.fc2 + '');
+        $('#_thumbupRate').html(uifilters.rate1 + "% - " + uifilters.rate2 + '%');
       } catch (ex) {
         console.log(ex + "");
       } finally {
