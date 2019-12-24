@@ -25,11 +25,14 @@
 // ==/UserScript==
 //
 function myFunction() {
-  var uri = "https://www.w3schools.com/jsref/tryit.asp?Filename=tryjsref_decodeuri#testhashzhong中文";
+  var uri = "https://www.w3schools.com/jsref/tryit.asp?Filename=tryjsref_decodeuri&color[0]=red&color[1]=green&selection=1&selection=2&selection=3#testhashzhong中文";
   var enc = encodeURI(uri);
   var dec = decodeURI(enc);
-  var params = new URL(uri);
+  var params = new URL(uri).searchParams;
   var res = "Encoded URI: " + enc + "<br>" + "Decoded URI: " + dec + "<br> JSON" + JSON.stringify(params);
   $("<div></div>").appendTo('body').html(res);
+  params.forEach(function(val, k, arr) {
+    console.log(`${val} ${k} `);
+  });
 }
 myFunction();

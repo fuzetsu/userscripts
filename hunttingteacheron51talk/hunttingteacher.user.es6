@@ -103,8 +103,9 @@
       }
     });
     $.extend(Number.prototype, {
-      toString: function() {
-        return this.toFixed(2);
+      toString: function(num) {
+        if(isNaN(num)) num = 2;
+        return this.toFixed(num);
       }
     });
     $.extend(String.prototype, {

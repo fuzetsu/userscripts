@@ -143,8 +143,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     });
     $.extend(Number.prototype, {
-      toString: function toString() {
-        return this.toFixed(2);
+      toString: function toString(num) {
+        if (isNaN(num)) num = 2;
+        return this.toFixed(num);
       }
     });
     $.extend(String.prototype, {

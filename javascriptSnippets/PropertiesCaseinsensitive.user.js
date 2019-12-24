@@ -1,11 +1,15 @@
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 // ==UserScript==
-// @name         jsProxyTestPropertiesCaseinsensive
+// @name         jsProxyTestPropertiesCaseinsensitive
 // @version      2019.12.20
 // @namespace    https://github.com/niubilityfrontend
 // @description
 // @author       jimbo
 // @license      OSL-3.0
-// @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
+// @supportURL   https://github.com/niubilityfrontend/
 // @match        *:*/*
 // @match        *127.0.0.1*:*/*
 // @match        *localhost*:*/*
@@ -13,7 +17,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_listValues
-// @grant        GM_deleteValue
+// @grant        GM_deleteValue 
 // @grant        GM_registerMenuCommand
 // @require      http://code.jquery.com/jquery-3.4.1.min.js
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
@@ -24,33 +28,35 @@
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
 //'use strict';
-let PropertiesCaseInsensitive = {
+var PropertiesCaseInsensitiveProxyHandler = {
   has: function has(target, prop) {
-    if(typeof prop === 'symbol') {
+    if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
       return prop in target; // pass through; or 'return;' if you want to block pass through
     }
     prop = prop.toLowerCase();
-    if(prop in target) return true;
+    if (prop in target) return true;
     var keys = Object.keys(target);
     var i = keys.length - 1;
-    while(i--) {
-      if(keys[i].toLowerCase() == prop) return true;
+    while (i--) {
+      if (keys[i].toLowerCase() == prop) return true;
     }
     return false;
   },
   get: function get(target, prop, receiver) {
-    if(typeof prop === 'symbol') { return target[prop]; }
+    if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
+      return target[prop];
+    }
     prop = prop.toLowerCase();
-    if(prop in target) return target[prop];
+    if (prop in target) return target[prop];
     var keys = Object.keys(target);
     var i = keys.length - 1;
-    while(i--) {
-      if(keys[i].toLowerCase() == prop) return target[keys[i]];
+    while (i--) {
+      if (keys[i].toLowerCase() == prop) return target[keys[i]];
     }
     return undefined;
   },
   set: function set(target, prop, value) {
-    if(typeof prop === 'symbol') {
+    if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {
       target[prop] = value;
     }
     target[prop.toLowerCase()] = value;
@@ -61,19 +67,14 @@ let PropertiesCaseInsensitive = {
 function myFunction() {
   var Foo = '333';
   var wwww = 'wwww';
-  var obj1 = { Foo, wwww };
+  var obj1 = { Foo: Foo, wwww: wwww };
   obj1['sSs'] = 'sssss';
   // alert(Proxy);
-  var obj = new Proxy(obj1, PropertiesCaseInsensitive);
+  var obj = new Proxy(obj1, PropertiesCaseInsensitiveProxyHandler);
   obj1.vvv = 'vvvvv';
   obj.oooo = 'ooooo';
   //  alert(obj);
-  console.log(` ${new Date()}.<br> ${obj.foo} <br>
-   ${obj.VVV} <br>
-    ${obj.OooO} <br>
-     ${obj.OO} <br>
-
-
-  `);
+  console.log(' ' + new Date() + '.<br> ' + obj.foo + ' <br>\n   ' + obj.VVV + ' <br>\n    ' + obj.OooO + ' <br>\n     ' + obj.OO + ' <br>\n\n\n  ');
 }
 myFunction();
+//# sourceMappingURL=PropertiesCaseinsensitive.user.js.map
