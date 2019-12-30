@@ -6,12 +6,28 @@
   "devDependencies": {
     "babel-core": "^6.0.20",
     "babel-plugin-syntax-flow": "^6.0.0",
-    "babel-preset-es2015": "*",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-minify": "",
-    "babel-preset-react": "^6.0.0"
+    "babel-preset-react": "^6.0.0",
+    "babel-preset-stage-0": "^6.24.1"
   },
   "dependencies": {
     "fs": "0.0.1-security",
+    "jquery": "^3.4.1",
     "path": "^0.12.7"
-  }
+  },
+  "main": "build-readme.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niubilityfrontend/userscripts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/niubilityfrontend/userscripts/issues"
+  },
+  "homepage": "https://github.com/niubilityfrontend/userscripts#readme"
 }

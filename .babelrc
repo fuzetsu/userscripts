@@ -9,11 +9,7 @@
   ],
   "presets": [
     "es2015",
+    "stage-0",
     "react"
-    //,
-    //["minify", {
-    //  "evaluate": false,
-    //  "mangle": true
-    //  }]
   ]
 }

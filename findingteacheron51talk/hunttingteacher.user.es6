@@ -25,7 +25,7 @@
 // ==/UserScript==
 (function() {
   'use strict';
-  //重载类型方法
+  //重载类型方法    
   (function() {
     let PropertiesCaseInsensitive = {
       has: function has(target, prop) {

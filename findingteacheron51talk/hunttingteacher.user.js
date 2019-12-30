@@ -29,7 +29,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // ==/UserScript==
 (function () {
   'use strict';
-  //重载类型方法
+  //重载类型方法    
 
   (function () {
     var PropertiesCaseInsensitive = {
