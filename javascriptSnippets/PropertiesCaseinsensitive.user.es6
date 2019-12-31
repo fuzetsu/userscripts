@@ -24,6 +24,8 @@
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
 //'use strict';
+import { jquery } from "jquery";
+let $ = jquery;
 let PropertiesCaseInsensitiveProxyHandler = {
   has: function has(target, prop) {
     if(typeof prop === 'symbol') {
@@ -57,6 +59,36 @@ let PropertiesCaseInsensitiveProxyHandler = {
     return true;
   }
 };
+let getPaddedComp = comp => parseInt(comp) < 10 ? '0' + comp : comp,
+  o = {
+    "[y|Y]{4}": date => date.getFullYear(), // year
+    "[y|Y]{2}": date => date.getFullYear().toString().slice(2), // year
+    "MM": date => getPaddedComp(date.getMonth() + 1), //month
+    "M": date => date.getMonth() + 1, //month
+    "[d|D]{2}": date => getPaddedComp(date.getDate()), //day
+    "[d|D]{1}": date => date.getDate(), //day
+    "h{2}": date => getPaddedComp(
+      (date.getHours() > 12) ? date.getHours() % 12 : date.getHours()), //hour
+    "h{1}": date => (date.getHours() > 12) ? date.getHours() % 12 : date.getHours(), //hour
+    "H{2}": date => getPaddedComp(date.getHours()), //hour
+    "H{1}": date => date.getHours(), //hour
+    "m{2}": date => getPaddedComp(date.getMinutes()), //minute
+    "m{1}": date => date.getMinutes(), //minute
+    "s+": date => getPaddedComp(date.getSeconds()), //second
+    "f+": date => getPaddedComp(date.getMilliseconds()), //millisecond,
+    "b+": date => (date.getHours() >= 12) ? 'PM' : 'AM'
+  };
+$.extend(Date.prototype, {
+  toString: function(format) {
+    let formattedDate = format;
+    for(let k in o) {
+      if(new RegExp("(" + k + ")").test(format)) {
+        formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+      }
+    }
+    return formattedDate;
+  }
+});
 
 function myFunction() {
   var Foo = 'Fooo';
@@ -74,8 +106,16 @@ ${obj.foo}
 ${obj.VVV}
 ${obj.OooO}
 ${obj.OO}
-
-
   `);
+  console.log('-----------------------')
+  var formaters = [];
+  var i = formaters.length;
+  var dt = new Date();
+  while(i--) {
+    let f = formaters[i];
+    console.log(`----------
+      ${f}  =》 ${dt.toString(f)}
+    `);
+  }
 }
 myFunction();

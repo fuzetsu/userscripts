@@ -941,7 +941,11 @@
                   sorttype: "float",
                   align: 'right',
                   searchoptions: { sopt: ['cn'] },
-                  formatter: function formatter(value, options, rData) { let date = new Date(Number(value)); if(date instanceof Date && !isNaN(date.valueOf())) { return date.toString('HHmmss'); } return value; }
+                  formatter: function formatter(value, options, rData) {
+                    let date = new Date(Number(value));
+                    if(date instanceof Date && !isNaN(date.valueOf())) { return date.toString('HHmmss'); }
+                    return value;
+                  }
                 }, //
                 {
                   name: 'type',

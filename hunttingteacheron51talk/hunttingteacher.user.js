@@ -891,9 +891,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 align: 'right',
                 searchoptions: { sopt: ['cn'] },
                 formatter: function formatter(value, options, rData) {
-                  var date = new Date(Number(value));if (date instanceof Date && !isNaN(date.valueOf())) {
+                  var date = new Date(Number(value));
+                  if (date instanceof Date && !isNaN(date.valueOf())) {
                     return date.toString('HHmmss');
-                  }return value;
+                  }
+                  return value;
                 }
               }, //
               {
