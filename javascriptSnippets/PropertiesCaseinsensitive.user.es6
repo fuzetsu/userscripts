@@ -13,7 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_listValues
-// @grant        GM_deleteValue 
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @require      http://code.jquery.com/jquery-3.4.1.min.js
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
@@ -59,19 +59,21 @@ let PropertiesCaseInsensitiveProxyHandler = {
 };
 
 function myFunction() {
-  var Foo = '333';
+  var Foo = 'Fooo';
   var wwww = 'wwww';
   var obj1 = { Foo, wwww };
   obj1['sSs'] = 'sssss';
   // alert(Proxy);
   var obj = new Proxy(obj1, PropertiesCaseInsensitiveProxyHandler);
-  obj1.vvv = 'vvvvv';
+  obj1.vvv = 'vvvv';
   obj.oooo = 'ooooo';
   //  alert(obj);
-  console.log(` ${new Date()}.<br> ${obj.foo} <br>
-   ${obj.VVV} <br>
-    ${obj.OooO} <br>
-     ${obj.OO} <br>
+  console.log(`
+${new Date()}
+${obj.foo}
+${obj.VVV}
+${obj.OooO}
+${obj.OO}
 
 
   `);

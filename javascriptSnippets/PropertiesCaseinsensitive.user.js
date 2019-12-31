@@ -17,7 +17,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_listValues
-// @grant        GM_deleteValue 
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @require      http://code.jquery.com/jquery-3.4.1.min.js
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
@@ -65,16 +65,16 @@ var PropertiesCaseInsensitiveProxyHandler = {
 };
 
 function myFunction() {
-  var Foo = '333';
+  var Foo = 'Fooo';
   var wwww = 'wwww';
   var obj1 = { Foo: Foo, wwww: wwww };
   obj1['sSs'] = 'sssss';
   // alert(Proxy);
   var obj = new Proxy(obj1, PropertiesCaseInsensitiveProxyHandler);
-  obj1.vvv = 'vvvvv';
+  obj1.vvv = 'vvvv';
   obj.oooo = 'ooooo';
   //  alert(obj);
-  console.log(' ' + new Date() + '.<br> ' + obj.foo + ' <br>\n   ' + obj.VVV + ' <br>\n    ' + obj.OooO + ' <br>\n     ' + obj.OO + ' <br>\n\n\n  ');
+  console.log('\n' + new Date() + '\n' + obj.foo + '\n' + obj.VVV + '\n' + obj.OooO + '\n' + obj.OO + '\n\n\n  ');
 }
 myFunction();
 //# sourceMappingURL=PropertiesCaseinsensitive.user.js.map
