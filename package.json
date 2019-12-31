@@ -1,7 +1,7 @@
 {
-  "name": "example-language-babel",
-  "version": "1.0.0",
-  "description": "Language Babel Example",
+  "name": "userscripts",
+  "version": "0.0.1",
+  "description": "tampermonkey scripts",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.0.20",
