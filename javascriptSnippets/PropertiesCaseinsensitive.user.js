@@ -1,6 +1,8 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // ==UserScript==
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+// ==UserScript==
 // @name         jsProxyTestPropertiesCaseinsensitive
 // @version      2019.12.20
 // @namespace    https://github.com/niubilityfrontend
@@ -26,11 +28,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
 //'use strict';
-
-
-var _jquery = require('jquery');
-
-var $ = _jquery.jquery;
+var jquery = require('jquery');
+var $ = new jquery();
 var PropertiesCaseInsensitiveProxyHandler = {
   has: function has(target, prop) {
     if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'symbol') {

@@ -24,8 +24,8 @@
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
 //'use strict';
-import { jquery } from "jquery";
-let $ = jquery;
+let jquery = require('jquery');
+let $ = new jquery();
 let PropertiesCaseInsensitiveProxyHandler = {
   has: function has(target, prop) {
     if(typeof prop === 'symbol') {
