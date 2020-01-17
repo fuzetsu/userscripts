@@ -6,6 +6,9 @@
 // @author       jimbo
 // @license      OSL-3.0
 // @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
+// @updateURL https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0
+//  @installURL https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0
+//  @downloadURL https://greasyfork.org/zh-CN/scripts/388276-51talk%E9%80%89%E6%8B%A9%E6%9C%80%E5%A5%BD%E6%9C%80%E5%90%88%E9%80%82%E7%9A%84%E8%80%81%E5%B8%88-%E7%BB%8F%E9%AA%8C-%E5%A5%BD%E8%AF%84%E7%8E%87-%E5%B9%B4%E9%BE%84-%E6%94%B6%E8%97%8F%E6%95%B0
 // @match        *://www.51talk.com/ReserveNew/index*
 // @match        *://www.51talk.com/TeacherNew/*
 // @match		 *://www.51talk.com/user/*
