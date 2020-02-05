@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.1.1
+// @version      0.1.2
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @inject-into  content
@@ -11,7 +11,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/b06cf8745c97944945b646fde8a44888a939110e/libs/gm_config.js
+// @require      https://gitcdn.xyz/repo/kufii/My-UserScripts/f1ce7887e0bbd0de78f9ceff1ec556c7b9c6389c/libs/gm_config.js
 // ==/UserScript==
 /* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
 
