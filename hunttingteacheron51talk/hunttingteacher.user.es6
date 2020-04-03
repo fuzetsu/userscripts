@@ -709,9 +709,9 @@ function getBatchNumberKey(){
           age1: minage,
           age2: maxage
         });
-        let buttions="";
+        let buttons="";
         if(settings.isListPage){
-          buttions=`
+          buttons=`
           <div id='buttons' style='text-align: center'>
             <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
             <button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
