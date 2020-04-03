@@ -368,7 +368,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (tinfo.age < minage) minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
     jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
-    jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
+    //jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
     jqel.attr('indicator', tinfo.indicator);
   }
 
@@ -654,7 +654,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
       GM_setValue(getinfokey(), tinfo);
       jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
-        return val + '\n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">\u8D5E' + tinfo.thumbup + '</span>\n\t\t\t<span class="age age-line">\u8E29' + tinfo.thumbdown + '</span>\n\t\t\t<span class="age age-line">\u6807\u7B7E\u6570' + tinfo.label + '</span>\n\t\t\t';
+        return val + '\n      <span class="age age-line">\u6392\u540D<span id="teacherRank"></span></span>\n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">' + tinfo.thumbup + '\u8D5E</span>\n\t\t\t<span class="age age-line">' + tinfo.thumbdown + '\u8E29</span>\n\t\t\t<span class="age age-line">' + tinfo.label + '\u6807\u7B7E\u6570</span>\n\t\t\t';
       });
     };
 
@@ -703,7 +703,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             } else {
               indexs[val.type] += 1;
             }
-            return $.extend(val, {
+            var t = $.extend(val, {
               //  'slevel': slevel,
               'tage': Number(val.tage),
               'thumbup': Number(val.thumbup),
@@ -715,6 +715,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               //'expire': new Date().getTime(),
               'rank': indexs[val.type]
             });
+            GM_setValue("tinfo-" + t.tid, t);
+            return t;
           });
           return teachers;
         };
@@ -985,6 +987,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               width: 732
               //caption: "",,
             }).jqGrid('filterToolbar', { searchOperators: true });
+            if (settings.isListPage) {
+              $.each($('.item'), function (i, item) {
+                var jqel = $(el);
+                var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+                var tinfokey = 'tinfo-' + tid;
+                var tinfo = GM_getValue(tinfokey);
+
+                jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + tinfo.rank + "</label>");
+              });
+            }
+            if (settings.isDetailPage) {
+              var tinfo = GM_getValue(getinfokey());
+              $("#teacherRank").html("<label title='排名'>" + tinfo.rank + "</label>");
+            }
           }
         });
         var uifilters = getUiFilters();

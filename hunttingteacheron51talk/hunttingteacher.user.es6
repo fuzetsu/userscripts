@@ -377,7 +377,7 @@ function getBatchNumberKey(){
     if(tinfo.age < minage) minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
     jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
-    jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
+    //jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
     jqel.attr('indicator', tinfo.indicator);
   }
 
@@ -667,11 +667,12 @@ function getBatchNumberKey(){
       GM_setValue(getinfokey(), tinfo);
       jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
         return `${val}
+      <span class="age age-line">排名<span id="teacherRank"></span></span>
 			<span class="age age-line">指标${tinfo.indicator}</span>
 			<span class="age age-line">率${tinfo.thumbupRate}%</span>
-			<span class="age age-line">赞${tinfo.thumbup}</span>
-			<span class="age age-line">踩${tinfo.thumbdown}</span>
-			<span class="age age-line">标签数${tinfo.label}</span>
+			<span class="age age-line">${tinfo.thumbup}赞</span>
+			<span class="age age-line">${tinfo.thumbdown}踩</span>
+			<span class="age age-line">${tinfo.label}标签数</span>
 			`;
       });
     }
@@ -916,7 +917,7 @@ function getBatchNumberKey(){
             } else {
               indexs[val.type] += 1;
             }
-            return $.extend(val, {
+            let t= $.extend(val, {
               //  'slevel': slevel,
               'tage': Number(val.tage),
               'thumbup': Number(val.thumbup),
@@ -928,6 +929,8 @@ function getBatchNumberKey(){
               //'expire': new Date().getTime(),
               'rank': indexs[val.type]
             });
+            GM_setValue("tinfo-"+t.tid,t);
+            return t;
           });
           return teachers;
         }
@@ -1034,6 +1037,21 @@ function getBatchNumberKey(){
               width: 732,
               //caption: "",,
             }).jqGrid('filterToolbar', { searchOperators: true });
+            if(settings.isListPage){
+              $.each($('.item'), function(i, item) {
+                let jqel = $(el);
+                let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
+                let tinfokey = 'tinfo-' + tid;
+                let tinfo = GM_getValue(tinfokey);
+
+                jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + tinfo.rank + "</label>");
+
+              });
+            }
+            if(settings.isDetailPage){
+                let tinfo = GM_getValue(getinfokey());
+              $("#teacherRank").html("<label title='排名'>" + tinfo.rank + "</label>");
+            }
           }
         });
         let uifilters = getUiFilters();
