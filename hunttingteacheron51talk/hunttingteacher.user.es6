@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.3004
+// @version      2020.4.3005
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -697,22 +697,7 @@ function getBatchNumberKey(){
     }).appendTo(container);
   }
   if(settings.isListPage || settings.isDetailPage) {
-    let buttions="";
-    if(settings.isListPage){
-      buttions=`<div id='buttons' style='text-align: center'>
-      								<button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
-      								<button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
-      								<input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
-      								<button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
-      								<a>去提建议和BUG</a>&nbsp;
-      								<a>?</a>&nbsp;
-      							</div>
-      							<div id='buttons1' style='text-align: center;'>
-      								<div id='timesmutipulecheck'></div>
-                      <button>反选时间段</button>&nbsp;
-      								<button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
-      							</div>`;
-    }
+
     //构建插件信息
     submit(function(next) {
       try {
@@ -724,6 +709,23 @@ function getBatchNumberKey(){
           age1: minage,
           age2: maxage
         });
+        let buttions="";
+        if(settings.isListPage){
+          buttions=`
+          <div id='buttons' style='text-align: center'>
+            <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
+            <button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
+            <input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
+            <button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
+            <a>去提建议和BUG</a>&nbsp;
+            <a>?</a>&nbsp;
+          </div>
+          <div id='buttons1' style='text-align: center;'>
+            <div id='timesmutipulecheck'></div>
+            <button>反选时间段</button>&nbsp;
+            <button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
+          </div>`;
+        }
         $('body').append(`<div id='filterdialog' title='Teacher Filter'>
 					<div id='tabs'>
 						<div>
