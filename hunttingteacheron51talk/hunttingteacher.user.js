@@ -681,7 +681,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   }
   if (settings.isListPage || settings.isDetailPage) {
     var buttions = "";
-    if (setting.isListPage) {
+    if (settings.isListPage) {
       buttions = '<div id=\'buttons\' style=\'text-align: center\'>\n      \t\t\t\t\t\t\t\t<button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n      \t\t\t\t\t\t\t\t<button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n      \t\t\t\t\t\t\t\t<input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n      \t\t\t\t\t\t\t\t<button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n      \t\t\t\t\t\t\t\t<a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n      \t\t\t\t\t\t\t\t<a>?</a>&nbsp;\n      \t\t\t\t\t\t\t</div>\n      \t\t\t\t\t\t\t<div id=\'buttons1\' style=\'text-align: center;\'>\n      \t\t\t\t\t\t\t\t<div id=\'timesmutipulecheck\'></div>\n                      <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n      \t\t\t\t\t\t\t\t<button id=\'autogettodaysteachers\'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n      \t\t\t\t\t\t\t</div>';
     }
     //构建插件信息
