@@ -9,11 +9,16 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-minify": "",
     "babel-preset-react": "^6.0.0",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "fs": "0.0.1-security",
+    "jquery": "^3.4.1",
+    "js-beautify": "^1.10.3",
+    "path": "^0.12.7"
   },
   "dependencies": {
     "fs": "0.0.1-security",
     "jquery": "^3.4.1",
+    "js-beautify": "^1.10.3",
     "path": "^0.12.7"
   },
   "main": "build-readme.js",

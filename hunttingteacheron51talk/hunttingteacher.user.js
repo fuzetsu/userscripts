@@ -324,9 +324,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     $('.s-t-content.f-cb').empty().append(sortEle);
   };
 
+  function getBatchNumberKey() {
+    return $("input[name='Date']").val() + $("input[name='selectTime']").val();
+  }
   function getBatchNumber() {
-    var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
-    return getorAdd(batchnumber, function (key) {
+    return getorAdd(getBatchNumberKey(), function (key) {
       return new Date().getTime();
     });
   }
@@ -464,16 +466,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
     $(".s-t-days-list>li").click(function () {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
-      sessionStorage.setItem(batchnumber, new Date().getTime());
+      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     });
     $(".condition-type-time>li").click(function () {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
-      sessionStorage.setItem(batchnumber, new Date().getTime());
+      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     });
     $(".s-t-top-list>li>a").click(function () {
-      var batchnumber = $("input[name='Date']").val() + $("input[name='selectTime']").val();
-      sessionStorage.setItem(batchnumber, new Date().getTime());
+      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     });
     // 自动获取时,显示停止按钮
     submit(function (next) {
