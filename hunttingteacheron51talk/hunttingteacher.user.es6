@@ -285,7 +285,8 @@
   };
 
 function getBatchNumberKey(){
-  return $("input[name='Date']").val() + $("input[name='selectTime']").val();
+  //return $("input[name='Date']").val() + $("input[name='selectTime']").val();
+  return '__getBatchNumberKey';
 }
   function getBatchNumber() {
     return getorAdd(getBatchNumberKey(), function(key) {
@@ -858,6 +859,7 @@ function getBatchNumberKey(){
           .eq(1).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function() {
             let selectedTimeSlots = [];
             $('#timesmutipulecheck>input').each(function(i, item) {
+              sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
               if($(item).is(":checked")) {
                 selectedTimeSlots.push($(item).val());
               }
