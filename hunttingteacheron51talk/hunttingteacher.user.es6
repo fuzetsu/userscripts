@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.3008
+// @version      2020.4.30010
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -26,37 +26,38 @@
 // @require      https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
+//
 (function() {
   'use strict';
   //重载类型方法
   (function() {
     let PropertiesCaseInsensitive = {
       has: function has(target, prop) {
-        if(typeof prop === 'symbol') {
+        if (typeof prop === 'symbol') {
           return prop in target; // pass through; or 'return;' if you want to block pass through
         }
         prop = prop.toLowerCase();
-        if(prop in target) return true;
+        if (prop in target) return true;
         let keys = Object.keys(target);
         let i = keys.length;
-        while(i--) {
-          if(keys[i] && keys[i].toLowerCase() == prop) return true;
+        while (i--) {
+          if (keys[i] && keys[i].toLowerCase() == prop) return true;
         }
         return false;
       },
       get: function get(target, prop, receiver) {
-        if(typeof prop === 'symbol') { return target[prop]; }
+        if (typeof prop === 'symbol') { return target[prop]; }
         prop = prop.toLowerCase();
-        if(prop in target) return target[prop];
+        if (prop in target) return target[prop];
         let keys = Object.keys(target);
         let i = keys.length;
-        while(i--) {
-          if(keys[i] && keys[i].toLowerCase() == prop) return target[keys[i]];
+        while (i--) {
+          if (keys[i] && keys[i].toLowerCase() == prop) return target[keys[i]];
         }
         return undefined;
       },
       set: function set(target, prop, value) {
-        if(typeof prop === 'symbol') {
+        if (typeof prop === 'symbol') {
           target[prop] = value;
         }
         target[prop.toLowerCase()] = value;
@@ -85,8 +86,8 @@
     $.extend(Date.prototype, {
       toString: function(format) {
         let formattedDate = format;
-        for(let k in o) {
-          if(new RegExp("(" + k + ")").test(format)) {
+        for (let k in o) {
+          if (new RegExp("(" + k + ")").test(format)) {
             formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
           }
         }
@@ -96,8 +97,8 @@
     //删除数组中的空元素
     $.extend(Array.prototype, {
       clean: function(deleteValue = "") {
-        for(let i = 0; i < this.length; i++) {
-          if(this[i] == deleteValue) {
+        for (let i = 0; i < this.length; i++) {
+          if (this[i] == deleteValue) {
             this.splice(i, 1);
             i--;
           }
@@ -107,7 +108,7 @@
     });
     $.extend(Number.prototype, {
       toString: function(num) {
-        if(isNaN(num)) num = 2;
+        if (isNaN(num)) num = 2;
         return this.toFixed(num);
       }
     });
@@ -138,30 +139,30 @@
         let queryString = url ? url.split('?')[1] : window.location.search.slice(1);
         let cachedkey = 'urlparameters' + queryString;
         let obj = $(window).data(cachedkey);
-        if(obj == undefined) {
+        if (obj == undefined) {
           obj = new Proxy({}, PropertiesCaseInsensitive);
           $(window).data(cachedkey, obj);
         } else return obj;
         // we'll store the parameters here
         // if query string exists
-        if(queryString) {
+        if (queryString) {
           // stuff after # is not part of query string, so get rid of it
           queryString = queryString.split('#')[0];
           // split our query string into its component parts
           let arr = queryString.split('&');
-          for(let i = 0; i < arr.length; i++) {
+          for (let i = 0; i < arr.length; i++) {
             // separate the keys and the values
             let a = arr[i].split('=');
             // set parameter name and value (use 'true' if empty)
             let paramName = a[0];
-            let paramValue = typeof(a[1]) === 'undefined' ? true : a[1];
+            let paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
             // if the paramName ends with square brackets, e.g. colors[] or colors[2]
-            if(paramName.match(/\[(\d+)?\]$/)) {
+            if (paramName.match(/\[(\d+)?\]$/)) {
               // create key if it doesn't exist
               let key = paramName.replace(/\[(\d+)?\]/, '');
-              if(!obj[key]) obj[key] = [];
+              if (!obj[key]) obj[key] = [];
               // if it's an indexed array e.g. colors[2]
-              if(paramName.match(/\[\d+\]$/)) {
+              if (paramName.match(/\[\d+\]$/)) {
                 // get the index value and add the entry at the appropriate position
                 let index = /\[(\d+)\]/.exec(paramName)[1];
                 obj[key][index] = paramValue;
@@ -171,10 +172,10 @@
               }
             } else {
               // we're dealing with a string
-              if(!obj[paramName]) {
+              if (!obj[paramName]) {
                 // if it doesn't exist, create property
                 obj[paramName] = paramValue;
-              } else if(obj[paramName] && typeof obj[paramName] === 'string') {
+              } else if (obj[paramName] && typeof obj[paramName] === 'string') {
                 // if property does exist and it's a string, convert it to an array
                 obj[paramName] = [obj[paramName]];
                 obj[paramName].push(paramValue);
@@ -201,6 +202,13 @@
     default: 60,
     type: 'dropdown',
     values: [5, 10, 20, 30, 50, 60, 90, 120, 300, 600, 1440, 10080]
+  },
+  {
+    key: 'markRankRed',
+    label: '突出前N名教师的名次',
+    default: 100,
+    type: 'dropdown',
+    values: [5, 10, 30, 50, 120, 500, 3000, 5000, 10080]
   }, {
     key: 'version',
     type: 'hidden',
@@ -238,15 +246,15 @@
    */
   let submit = function(fun) {
     let queue = $.queue(document, "fx", fun);
-    if(queue[0] == 'inprogress') {
+    if (queue[0] == 'inprogress') {
       return;
     }
     $.dequeue(document);
   };
 
   function getorAdd(key, func) {
-    if(!(key in sessionStorage)) {
-      let data = (typeof(func) == 'function') ? func(key) : func;
+    if (!(key in sessionStorage)) {
+      let data = (typeof (func) == 'function') ? func(key) : func;
       sessionStorage.setItem(key, data);
       return data;
     }
@@ -263,20 +271,20 @@
 
   function sleep(delay) {
     let start = (new Date()).getTime();
-    while((new Date()).getTime() - start < delay) {
+    while ((new Date()).getTime() - start < delay) {
       continue;
     }
   }
   let asc = function(a, b) {
     let av = $(a).attr('indicator');
     let bv = $(b).attr('indicator');
-    if(!av || !bv) return 0;
+    if (!av || !bv) return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? 1 : -1;
   };
   let desc = function(a, b) {
     let av = $(a).attr('indicator');
     let bv = $(b).attr('indicator');
-    if(!av || !bv) return 0;
+    if (!av || !bv) return 0;
     return $(a).attr('indicator').toFloat() > $(b).attr('indicator').toFloat() ? -1 : 1;
   };
   let sortByIndicator = function(sortBy) {
@@ -284,10 +292,10 @@
     $('.s-t-content.f-cb').empty().append(sortEle);
   };
 
-function getBatchNumberKey(){
-  //return $("input[name='Date']").val() + $("input[name='selectTime']").val();
-  return '__getBatchNumberKey';
-}
+  function getBatchNumberKey() {
+    //return $("input[name='Date']").val() + $("input[name='selectTime']").val();
+    return '__getBatchNumberKey';
+  }
   function getBatchNumber() {
     return getorAdd(getBatchNumberKey(), function(key) {
       return new Date().getTime();
@@ -297,13 +305,13 @@ function getBatchNumberKey(){
   function getLeftPageCount() {
     let pages = Number($('.s-t-page>.next-page:first').prev().text());
     let curr = Number($('.s-t-page>.active:first').text());
-    if(pages) return pages - curr;
+    if (pages) return pages - curr;
     else return 0;
   }
 
   function getAutoNextPagesCount() {
     let pages = getLeftPageCount();
-    if(settings.pagecount > pages) return pages;
+    if (settings.pagecount > pages) return pages;
     else return settings.pagecount;
   }
   $("head").append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
@@ -367,17 +375,17 @@ function getBatchNumberKey(){
   let num = /[0-9]*/g;
 
   function updateTeacherinfoToUI(jqel, tinfo) {
-    if(tinfo.label > maxlabel) maxlabel = tinfo.label;
-    if(tinfo.label < minlabel) minlabel = tinfo.label;
-    if(tinfo.favoritesCount > maxfc) maxfc = tinfo.favoritesCount;
-    if(tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
-    if(tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
-    if(tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
-    if(tinfo.age > maxage) maxage = tinfo.age;
-    if(tinfo.age < minage) minage = tinfo.age;
+    if (tinfo.label > maxlabel) maxlabel = tinfo.label;
+    if (tinfo.label < minlabel) minlabel = tinfo.label;
+    if (tinfo.favoritesCount > maxfc) maxfc = tinfo.favoritesCount;
+    if (tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
+    if (tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
+    if (tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
+    if (tinfo.age > maxage) maxage = tinfo.age;
+    if (tinfo.age < minage) minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
-    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[<label title='评论标签数量'>" + tinfo.label + "</label>|<label title='好评率'>" + tinfo.thumbupRate + "%</label>|<label title='收藏数量'>" + tinfo.favoritesCount + "</label>]");
-    //jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
+    jqel.find(".teacher-name").html(jqel.find(".teacher-name").html() + `<br /><label title='评论标签数量'>${tinfo.label}</label>|<label title='好评率'>${tinfo.thumbupRate}%</label>`);
+    jqel.find(".teacher-age").html(jqel.find(".teacher-age").html() + " | <label title='收藏数量'>" + tinfo.favoritesCount + "</label>");
     jqel.attr('indicator', tinfo.indicator);
   }
 
@@ -387,12 +395,12 @@ function getBatchNumberKey(){
     $.each($('.item'), function(i, item) {
       let node = $(item);
       let tinfojson = node.attr("teacherinfo");
-      if(!tinfojson) {
+      if (!tinfojson) {
         return true;
       }
       let tinfo = JSON.parse(tinfojson);
-      if((tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2) && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
-        if(node.is(':hidden')) { //如果node是隐藏的则显示node元素，否则隐藏
+      if ((tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2) && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
+        if (node.is(':hidden')) { //如果node是隐藏的则显示node元素，否则隐藏
           node.show();
           node.animate({
             left: "+=50"
@@ -436,7 +444,7 @@ function getBatchNumberKey(){
   function getinfokey() {
     return 'tinfo-' + gettid();
   };
-  if(settings.isListPage) {
+  if (settings.isListPage) {
     $(".item-top-cont").prop('innerHTML', function(i, val) {
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
@@ -455,11 +463,11 @@ function getBatchNumberKey(){
         curPageId = window.parameters().pageID ? window.parameters().pageID : 1,
         remainPages = totalPages - curPageId;
       let autonextpagecount = GM_getValue('autonextpagecount', 1);
-      if(autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
+      if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
         let dialog = $(`<div id="dialog-confirm" title="是否停止自动搜索老师?">
 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
 <b>正在根据您的选择自动获取教师信息</b><br><br>
-正在获取当前时段第${curPageId}页，剩余${remainPages}页总计${totalPages}页,约${ remainPages * 28}个教师<br>
+正在获取当前时段第${curPageId}页，剩余${remainPages}页总计${totalPages}页,约${remainPages * 28}个教师<br>
 总计选择${sessionStorage.getItem("selectedTimeSlotsTotal")}个时段，未获取${sessionStorage.getItem("selectedTimeSlotsRemain")}个时段，
 </p>
 </div>`);
@@ -495,13 +503,12 @@ function getBatchNumberKey(){
       }
       next();
     });
-
     function getTeacherInfoInList(jqel) {
       let age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]);
       let label = (function() {
         let j_len = jqel.find(".label").text().match(num).clean("").length;
         let l = 0;
-        for(let j = 0; j < j_len; j++) {
+        for (let j = 0; j < j_len; j++) {
           l += Number(jqel.find(".label").text().match(num).clean("")[j]);
         }
         l = Math.ceil(l / 5);
@@ -510,7 +517,7 @@ function getBatchNumberKey(){
       let name = jqel.find(".teacher-name").text();
       let type = $('.s-t-top-list .li-active').text();
       let effectivetime = getBatchNumber();
-      if(type == '收藏外教') {
+      if (type == '收藏外教') {
         let isfavorite = true;
         return {
           age,
@@ -536,14 +543,14 @@ function getBatchNumberKey(){
           let tinfokey = 'tinfo-' + tid;
           let teacherlistinfo = getTeacherInfoInList(jqel);
           let tinfo = GM_getValue(tinfokey);
-          if(tinfo) {
+          if (tinfo) {
             let now = new Date().getTime();
-            if(!tinfo.expire) {
+            if (!tinfo.expire) {
               tinfo.expire = new Date(1970, 1, 1).getTime();
             }
             tinfo = $.extend(tinfo, teacherlistinfo);
             GM_setValue(tinfokey, tinfo);
-            if(now - tinfo.expire < configExprMilliseconds) {
+            if (now - tinfo.expire < configExprMilliseconds) {
               updateTeacherinfoToUI(jqel, tinfo);
               next();
               return true;
@@ -557,11 +564,11 @@ function getBatchNumberKey(){
             dateType: 'html',
             success: function(r) {
               let jqr = $(r);
-              if(jqr.find('.teacher-name-tit').length > 0) {
+              if (jqr.find('.teacher-name-tit').length > 0) {
                 let tempitem = jqr.find('.teacher-name-tit')[0];
                 tempitem.innerHTML = tempitem.innerHTML.replace('<!--', '').replace('-->', '');
               }
-              if(jqr.find(".evaluate-content-left span").length >= 3) {
+              if (jqr.find(".evaluate-content-left span").length >= 3) {
                 let thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
                 let thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
                 let thumbupRate = ((thumbup + 0.00001) / (thumbdown + thumbup)).toFixed(2) * 100;
@@ -592,7 +599,7 @@ function getBatchNumberKey(){
               console.log("xhr error when getting teacher " + JSON.stringify(jqel) + ",error msg:" + JSON.stringify(data));
             }
           }).always(function() {
-            while((new Date()).getTime() - start < 600) {
+            while ((new Date()).getTime() - start < 600) {
               continue;
             }
             next();
@@ -603,17 +610,17 @@ function getBatchNumberKey(){
     submit(function(next) {
       //翻页
       let autonextpagecount = GM_getValue('autonextpagecount', 0);
-      if(autonextpagecount > 0) {
+      if (autonextpagecount > 0) {
         GM_setValue('autonextpagecount', autonextpagecount - 1);
-        if($('.s-t-page>.next-page').length == 0) {
+        if ($('.s-t-page>.next-page').length == 0) {
           GM_setValue('autonextpagecount', 0);
-          if(isStopShowboxAndAutoGetNextTimeTeachers()) return;
+          if (isStopShowboxAndAutoGetNextTimeTeachers()) return;
         } else {
           $('.s-t-page .next-page')[0].click();
           return false;
         }
       } else {
-        if(isStopShowboxAndAutoGetNextTimeTeachers()) return;
+        if (isStopShowboxAndAutoGetNextTimeTeachers()) return;
       }
       next();
     });
@@ -621,10 +628,10 @@ function getBatchNumberKey(){
 
   function isStopShowboxAndAutoGetNextTimeTeachers() {
     let str = sessionStorage.getItem('selectedTimeSlots');
-    if(!str) return false;
+    if (!str) return false;
     let selectedTimeSlots = JSON.parse(str);
     let cur = selectedTimeSlots.shift();
-    if(cur) {
+    if (cur) {
       GM_setValue('autonextpagecount', 500);
       sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
       sessionStorage.setItem('selectedTimeSlotsRemain', selectedTimeSlots.length);
@@ -635,7 +642,7 @@ function getBatchNumberKey(){
     }
     return false;
   }
-  if(settings.isDetailPage) {
+  if (settings.isDetailPage) {
     function processTeacherDetailPage(jqr) {
       jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
         return val.replaceAll('<!--', '').replaceAll('-->', '');
@@ -649,7 +656,7 @@ function getBatchNumberKey(){
         l = Math.ceil(l / 5);
         return l;
       })();
-      if(window.location.href.toLocaleLowerCase().includes("teachercomment")) {
+      if (window.location.href.toLocaleLowerCase().includes("teachercomment")) {
         tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
         tinfo.thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]);
         tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
@@ -672,7 +679,7 @@ function getBatchNumberKey(){
 			<span class="age age-line"><label title='被赞数量'>${tinfo.thumbup}</label></span>
 			<span class="age age-line"><label title='被踩数量'>${tinfo.thumbdown}</label></span>
 			<span class="age age-line"><label title='评论标签数量'>${tinfo.label}</label></span>
-      <span class="age age-line"><label title='在同类别教师中的排名'>排名<span id="teacherRank"></span></label></span>
+      <span class="age age-line"><label title='在同类别教师中的排名'><span id="teacherRank"></span></label></span>
 			`;
       });
     }
@@ -697,7 +704,7 @@ function getBatchNumberKey(){
       text: lbl ? lbl : val
     }).appendTo(container);
   }
-  if(settings.isListPage || settings.isDetailPage) {
+  if (settings.isListPage || settings.isDetailPage) {
 
     //构建插件信息
     submit(function(next) {
@@ -710,9 +717,9 @@ function getBatchNumberKey(){
           age1: minage,
           age2: maxage
         });
-        let buttons="";
-        if(settings.isListPage){
-          buttons=`
+        let buttons = "";
+        if (settings.isListPage) {
+          buttons = `
           <div id='buttons' style='text-align: center'>
             <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
             <button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
@@ -845,7 +852,7 @@ function getBatchNumberKey(){
           //清空缓存
           .eq(3).button({ icon: 'uiicon-trash', showLabel: false }).click(function() {
             $.each(GM_listValues(), function(i, item) {
-              if(item.startsWith('tinfo-')) {
+              if (item.startsWith('tinfo-')) {
                 GM_deleteValue(item);
               }
             });
@@ -867,7 +874,7 @@ function getBatchNumberKey(){
             let selectedTimeSlots = [];
             $('#timesmutipulecheck>input').each(function(i, item) {
               sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
-              if($(item).is(":checked")) {
+              if ($(item).is(":checked")) {
                 selectedTimeSlots.push($(item).val());
               }
             });
@@ -881,11 +888,11 @@ function getBatchNumberKey(){
         });
         let timesstr = sessionStorage.getItem("selectedTimeSlots"),
           selectedTimeSlots = [];
-        if(timesstr) {
+        if (timesstr) {
           selectedTimeSlots = JSON.parse(timesstr);
-          if(selectedTimeSlots.length > 0) {
+          if (selectedTimeSlots.length > 0) {
             let i = selectedTimeSlots.length;
-            while(i--) {
+            while (i--) {
               $("#timesmutipulecheck>input[value='" + selectedTimeSlots[i] + "']").attr('checked', true);
             }
           } else {
@@ -901,7 +908,7 @@ function getBatchNumberKey(){
         function getCatchedTeachers() {
           let teachers = [];
           $.each(GM_listValues(), function(i, item) {
-            if(item.startsWith('tinfo-')) {
+            if (item.startsWith('tinfo-')) {
               let t = GM_getValue(item);
               t.tid = item.slice(6, item.length);
               teachers.push(t);
@@ -909,15 +916,15 @@ function getBatchNumberKey(){
           });
           let indexs = {};
           teachers = teachers.sort(function(t1, t2) {
-            if(t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
+            if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
             return t1.indicator > t2.indicator ? -1 : 1;
           }).map((val, idx) => {
-            if(isNaN(indexs[val.type])) {
+            if (isNaN(indexs[val.type])) {
               indexs[val.type] = 1;
             } else {
               indexs[val.type] += 1;
             }
-            let t= $.extend(val, {
+            let t = $.extend(val, {
               //  'slevel': slevel,
               'tage': Number(val.tage),
               'thumbup': Number(val.thumbup),
@@ -937,7 +944,7 @@ function getBatchNumberKey(){
         $("#tabs").tabs({
           active: '#tabs-2',
           activate: function(event, ui) {
-            if(ui.newPanel.attr('id') != 'tabs-2') return;
+            if (ui.newPanel.attr('id') != 'tabs-2') return;
             let teachers = getCatchedTeachers();
             let jqtable = $("#teachertab");
             //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
@@ -956,7 +963,7 @@ function getBatchNumberKey(){
                   searchoptions: { sopt: ['cn'] },
                   formatter: function formatter(value, options, rData) {
                     let date = new Date(Number(value));
-                    if(date instanceof Date && !isNaN(date.valueOf())) { return date.toString('HHmmss'); }
+                    if (date instanceof Date && !isNaN(date.valueOf())) { return date.toString('HHmmss'); }
                     return value;
                   }
                 }, //
@@ -968,7 +975,7 @@ function getBatchNumberKey(){
                   align: 'left',
                   searchoptions: { sopt: ['cn'] },
                   formatter: function formatter(value, options, rData) {
-                    if(value) return value;
+                    if (value) return value;
                     else return 'na';
                   }
                 }, //
@@ -990,7 +997,7 @@ function getBatchNumberKey(){
                   align: 'left',
                   searchoptions: { sopt: ['cn'] },
                   formatter: function formatter(value, options, rData) {
-                    if(value) return '收藏';
+                    if (value) return '收藏';
                     else return '';
                   }
                 }, //
@@ -1011,9 +1018,9 @@ function getBatchNumberKey(){
                   align: 'right',
                   searchoptions: { sopt: ['cn'] },
                   formatter: function formatter(value, options, rData) {
-                    if(value) {
+                    if (value) {
                       let d = new Date().getTime() - value;
-                      if(d < 1000 * 60) { return "刚刚"; } else if(d < 1000 * 60 * 60) { return (d / 60000).toFixed(0) + "分"; } else if(d < 1000 * 60 * 60 * 24) {
+                      if (d < 1000 * 60) { return "刚刚"; } else if (d < 1000 * 60 * 60) { return (d / 60000).toFixed(0) + "分"; } else if (d < 1000 * 60 * 60 * 24) {
                         return (d / 3600000).toFixed(0) + "时";
                       } else {
                         return (d / 86400000).toFixed(0) + "天";
@@ -1037,21 +1044,21 @@ function getBatchNumberKey(){
               width: 732,
               //caption: "",,
             }).jqGrid('filterToolbar', { searchOperators: true });
-            if(settings.isListPage){
+            if (settings.isListPage) {
               $.each($('.item'), function(i, item) {
                 let jqel = $(item);
                 let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
                 let t = teachers.find((currentValue, index, arr) => {
-                    return currentValue.tid==tid ;
+                  return currentValue.tid == tid;
                 });
-                if(t )
-                  jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + t.rank + "</label>");
-
+                jqel.find(".teacher-name").html(`${jqel.find(".teacher-name").html()}| ${getRankHtml(t)}`);
               });
             }
-            if(settings.isDetailPage){
-                let tinfo = GM_getValue(getinfokey());
-              $("#teacherRank").html( tinfo.rank );
+            if (settings.isDetailPage) {
+              let t = teachers.find((currentValue, index, arr) => {
+                return currentValue.tid == gettid();
+              });
+              $("#teacherRank").html(getRankHtml(t));
             }
           }
         });
@@ -1067,13 +1074,23 @@ function getBatchNumberKey(){
         next();
       }
     });
+
+    function getRankHtml(t) {
+      if (t) {
+        let colorif = '';
+        if (t.rank <= conf.markRankRed) {
+          colorif = "style = 'color:red'";
+        }
+        return `<label title='在同类别教师中的排名' ${colorif}> ${t.rank}名</label>`;
+      }
+    }
     //弹出信息框
     submit(function(next) {
       $('.s-t-list').before($(".s-t-page").prop('outerHTML'));
       $('#tabs>div:first').append($(".s-t-page").prop('outerHTML'));
       sortByIndicator(desc);
       $("#tabs").tabs("option", "active", 1);
-      if(settings.isDetailPage) {
+      if (settings.isDetailPage) {
         $("#tabs").tabs("option", "disabled", [0]);
       }
       $('#filterdialog').dialog({
@@ -1084,7 +1101,7 @@ function getBatchNumberKey(){
       next();
     });
   }
-  if(settings.isCoursePage) {
+  if (settings.isCoursePage) {
     submit(function(next) {
       $('.course_lock').removeClass('course_lock').addClass('course_unlock');
       $('img.course_mask').removeClass('course_mask').attr('src', '');
