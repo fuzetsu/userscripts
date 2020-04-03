@@ -4,7 +4,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.3007
+// @version      2020.4.3008
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -367,7 +367,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (tinfo.age > maxage) maxage = tinfo.age;
     if (tinfo.age < minage) minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
-    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
+    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[<label title='评论标签数量'>" + tinfo.label + "</label>|<label title='好评率'>" + tinfo.thumbupRate + "%</label>|<label title='收藏数量'>" + tinfo.favoritesCount + "</label>]");
     //jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
     jqel.attr('indicator', tinfo.indicator);
   }
@@ -654,7 +654,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
       GM_setValue(getinfokey(), tinfo);
       jqr.find(".teacher-name-tit").prop('innerHTML', function (i, val) {
-        return val + '\n      <span class="age age-line">\u6392\u540D<span id="teacherRank"></span></span>\n\t\t\t<span class="age age-line">\u6307\u6807' + tinfo.indicator + '</span>\n\t\t\t<span class="age age-line">\u7387' + tinfo.thumbupRate + '%</span>\n\t\t\t<span class="age age-line">' + tinfo.thumbup + '\u8D5E</span>\n\t\t\t<span class="age age-line">' + tinfo.thumbdown + '\u8E29</span>\n\t\t\t<span class="age age-line">' + tinfo.label + '\u6807\u7B7E\u6570</span>\n\t\t\t';
+        return val + '\n\t\t\t<span class="age age-line"><label title=\'\u6307\u6807\'>' + tinfo.indicator + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u597D\u8BC4\u7387\'>' + tinfo.thumbupRate + '%</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u88AB\u8D5E\u6570\u91CF\'>' + tinfo.thumbup + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u88AB\u8E29\u6570\u91CF\'>' + tinfo.thumbdown + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF\'>' + tinfo.label + '</label></span>\n      <span class="age age-line"><label title=\'\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D\'>\u6392\u540D<span id="teacherRank"></span></label></span>\n\t\t\t';
       });
     };
 
@@ -715,7 +715,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               //'expire': new Date().getTime(),
               'rank': indexs[val.type]
             });
-            GM_setValue("tinfo-" + t.tid, t);
+            //GM_setValue("tinfo-"+t.tid,t);
             return t;
           });
           return teachers;
@@ -989,17 +989,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }).jqGrid('filterToolbar', { searchOperators: true });
             if (settings.isListPage) {
               $.each($('.item'), function (i, item) {
-                var jqel = $(el);
+                var jqel = $(item);
                 var tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
-                var tinfokey = 'tinfo-' + tid;
-                var tinfo = GM_getValue(tinfokey);
-
-                jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + tinfo.rank + "</label>");
+                var t = teachers.find(function (currentValue, index, arr) {
+                  return currentValue.tid == tid;
+                });
+                if (t) jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + t.rank + "</label>");
               });
             }
             if (settings.isDetailPage) {
               var tinfo = GM_getValue(getinfokey());
-              $("#teacherRank").html("<label title='排名'>" + tinfo.rank + "</label>");
+              $("#teacherRank").html(tinfo.rank);
             }
           }
         });

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.3007
+// @version      2020.4.3008
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -376,7 +376,7 @@ function getBatchNumberKey(){
     if(tinfo.age > maxage) maxage = tinfo.age;
     if(tinfo.age < minage) minage = tinfo.age;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
-    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[" + tinfo.label + "|" + tinfo.thumbupRate + "%|" + tinfo.favoritesCount + "]");
+    jqel.find(".teacher-name").html(jqel.find(".teacher-name").text() + "<br />[<label title='评论标签数量'>" + tinfo.label + "</label>|<label title='好评率'>" + tinfo.thumbupRate + "%</label>|<label title='收藏数量'>" + tinfo.favoritesCount + "</label>]");
     //jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排序指标'>" + tinfo.indicator + "</label>");
     jqel.attr('indicator', tinfo.indicator);
   }
@@ -667,12 +667,12 @@ function getBatchNumberKey(){
       GM_setValue(getinfokey(), tinfo);
       jqr.find(".teacher-name-tit").prop('innerHTML', function(i, val) {
         return `${val}
-      <span class="age age-line">排名<span id="teacherRank"></span></span>
-			<span class="age age-line">指标${tinfo.indicator}</span>
-			<span class="age age-line">率${tinfo.thumbupRate}%</span>
-			<span class="age age-line">${tinfo.thumbup}赞</span>
-			<span class="age age-line">${tinfo.thumbdown}踩</span>
-			<span class="age age-line">${tinfo.label}标签数</span>
+			<span class="age age-line"><label title='指标'>${tinfo.indicator}</label></span>
+			<span class="age age-line"><label title='好评率'>${tinfo.thumbupRate}%</label></span>
+			<span class="age age-line"><label title='被赞数量'>${tinfo.thumbup}</label></span>
+			<span class="age age-line"><label title='被踩数量'>${tinfo.thumbdown}</label></span>
+			<span class="age age-line"><label title='评论标签数量'>${tinfo.label}</label></span>
+      <span class="age age-line"><label title='在同类别教师中的排名'>排名<span id="teacherRank"></span></label></span>
 			`;
       });
     }
@@ -929,7 +929,7 @@ function getBatchNumberKey(){
               //'expire': new Date().getTime(),
               'rank': indexs[val.type]
             });
-            GM_setValue("tinfo-"+t.tid,t);
+            //GM_setValue("tinfo-"+t.tid,t);
             return t;
           });
           return teachers;
@@ -1039,18 +1039,19 @@ function getBatchNumberKey(){
             }).jqGrid('filterToolbar', { searchOperators: true });
             if(settings.isListPage){
               $.each($('.item'), function(i, item) {
-                let jqel = $(el);
+                let jqel = $(item);
                 let tid = jqel.find(".teacher-details-link a").attr('href').replace("https://www.51talk.com/TeacherNew/info/", "").replace('http://www.51talk.com/TeacherNew/info/', '');
-                let tinfokey = 'tinfo-' + tid;
-                let tinfo = GM_getValue(tinfokey);
-
-                jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + tinfo.rank + "</label>");
+                let t = teachers.find((currentValue, index, arr) => {
+                    return currentValue.tid==tid ;
+                });
+                if(t )
+                  jqel.find(".teacher-age").html(jqel.find(".teacher-age").text() + " | <label title='排名'>" + t.rank + "</label>");
 
               });
             }
             if(settings.isDetailPage){
                 let tinfo = GM_getValue(getinfokey());
-              $("#teacherRank").html("<label title='排名'>" + tinfo.rank + "</label>");
+              $("#teacherRank").html( tinfo.rank );
             }
           }
         });
