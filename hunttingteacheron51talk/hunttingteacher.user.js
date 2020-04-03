@@ -466,15 +466,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     $(".item-top-cont").prop('innerHTML', function (i, val) {
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
-    $(".s-t-days-list>li").click(function () {
-      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
-    });
-    $(".condition-type-time>li").click(function () {
-      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
-    });
-    $(".s-t-top-list>li>a").click(function () {
-      sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
-    });
+    // $(".s-t-days-list>li").click(function() {
+    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // });
+    // $(".condition-type-time>li").click(function() {
+    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // });
+    // $(".s-t-top-list>li>a").click(function() {
+    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // });
     // 自动获取时,显示停止按钮
     submit(function (next) {
       var totalPages = Number($('.s-t-page>a:eq(-2)').text()),
