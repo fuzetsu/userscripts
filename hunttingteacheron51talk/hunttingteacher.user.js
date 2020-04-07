@@ -4,7 +4,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // ==UserScript==
 // @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.30010
+// @version      2020.4.7001
 // @namespace    https://github.com/niubilityfrontend
 // @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author       jimbo
@@ -335,6 +335,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //return $("input[name='Date']").val() + $("input[name='selectTime']").val();
     return '__getBatchNumberKey';
   }
+
   function getBatchNumber() {
     return getorAdd(getBatchNumberKey(), function (key) {
       return new Date().getTime();
@@ -489,7 +490,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           remainPages = totalPages - curPageId;
       var autonextpagecount = GM_getValue('autonextpagecount', 1);
       if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
-        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n<b>\u6B63\u5728\u6839\u636E\u60A8\u7684\u9009\u62E9\u81EA\u52A8\u83B7\u53D6\u6559\u5E08\u4FE1\u606F</b><br><br>\n\u6B63\u5728\u83B7\u53D6\u5F53\u524D\u65F6\u6BB5\u7B2C' + curPageId + '\u9875\uFF0C\u5269\u4F59' + remainPages + '\u9875\u603B\u8BA1' + totalPages + '\u9875,\u7EA6' + remainPages * 28 + '\u4E2A\u6559\u5E08<br>\n\u603B\u8BA1\u9009\u62E9' + sessionStorage.getItem("selectedTimeSlotsTotal") + '\u4E2A\u65F6\u6BB5\uFF0C\u672A\u83B7\u53D6' + sessionStorage.getItem("selectedTimeSlotsRemain") + '\u4E2A\u65F6\u6BB5\uFF0C\n</p>\n</div>');
+        var dialog = $('<div id="dialog-confirm" title="\u662F\u5426\u505C\u6B62\u81EA\u52A8\u641C\u7D22\u8001\u5E08?">\n<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>\n<b>\u6B63\u5728\u6839\u636E\u60A8\u7684\u9009\u62E9\u81EA\u52A8\u83B7\u53D6\u6559\u5E08\u4FE1\u606F</b><br><br>\n\u5269\u4F59' + sessionStorage.getItem("selectedTimeSlotsRemain") + '/' + sessionStorage.getItem("selectedTimeSlotsTotal") + '\u4E2A\u65F6\u6BB5\uFF0C<br><br>\n\u5F53\u524D\u65F6\u6BB5\u7EA6' + totalPages * 28 + '\u4E2A\u6559\u5E08\uFF0C\u83B7\u53D6\u7B2C' + curPageId + '/' + totalPages + '\u9875\uFF0C\u8FDB\u5EA6' + Math.floor(curPageId / totalPages * 100) + '%,<br>\n\n</p>\n</div>');
         dialog.appendTo('body');
         dialog.dialog({
           resizable: false,
@@ -522,6 +523,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
       next();
     });
+
     $(".item").each(function (index, el) {
       submit(function (next) {
         Pace.track(function () {
