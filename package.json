@@ -16,7 +16,10 @@
     "path": "^0.12.7"
   },
   "dependencies": {
+    "@types/hubspot-pace": "^0.7.27",
     "@types/jquery": "^3.3.34",
+    "@types/jqueryui": "^1.12.10",
+    "@types/tampermonkey": "^4.0.0",
     "fs": "0.0.1-security",
     "jquery": "^3.4.1",
     "js-beautify": "^1.10.3",

@@ -1,0 +1,11 @@
+apm i tree-view-git-status
+apm i git-log
+apm i git-control
+apm i git-plus
+apm i script
+apm i regex-railroad-diagram
+apm i emmet
+
+
+
+
