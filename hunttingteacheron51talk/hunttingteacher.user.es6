@@ -1,32 +1,31 @@
 // ==UserScript==
-// @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.8001
-// @namespace    https://github.com/niubilityfrontend
-// @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
-// @author       jimbo
-// @license      OSL-3.0
-// @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
+// @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
+// @version 2020.4.8001
+// @namespace https://github.com/niubilityfrontend
+// @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
+// @author jimbo
+// @license OSL-3.0
+// @supportURL https://github.com/niubilityfrontend/hunttingteacheron51talk
 // @updateURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
 // @installURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
 // @downloadURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
-// @match        *://www.51talk.com/ReserveNew/index*
-// @match        *://www.51talk.com/TeacherNew/*
-// @match		 *://www.51talk.com/user/*
-// @grant        GM_xmlhttpRequest
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_listValues
-// @grant        GM_deleteValue
-// @grant        GM_registerMenuCommand
-// @require      http://code.jquery.com/jquery-3.4.1.min.js
-// @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
-// @require      https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
-// @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
+// @match *://www.51talk.com/ReserveNew/index*
+// @match *://www.51talk.com/TeacherNew/*
+// @match *://www.51talk.com/user/*
+// @grant GM_xmlhttpRequest
+// @grant GM_getValue
+// @grant GM_setValue
+// @grant GM_listValues
+// @grant GM_deleteValue
+// @grant GM_registerMenuCommand
+// @require http://code.jquery.com/jquery-3.4.1.min.js
+// @require https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
+// @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
+// @require https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
-//
 (function() {
   'use strict';
   //重载类型方法
@@ -66,7 +65,15 @@
         return true;
       }
     };
-    let getPaddedComp = comp => parseInt(comp) < 10 ? '0' + comp : comp,
+    let getPaddedComp = (comp, len) => {
+        if(len == undefined) len = 2;
+        else if(len < 1) len = 1;
+        let paddedLen = len - ('' + comp).length;
+        let ret = "";
+        if(paddedLen > 0)
+          while(paddedLen--) ret = ret.concat("0");
+        return ret.concat(comp);
+      },
       o = {
         '[y|Y]{4}': date => date.getFullYear(), // year
         '[y|Y]{2}': date => date.getFullYear().toString().slice(2), // year
@@ -316,14 +323,14 @@
     else return settings.pagecount;
   }
   $('head').append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`);
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`);
   $('head').append(`<style type="text/css">
 .search-teachers .s-t-list .item-time-list {margin-top:315px;}
-.search-teachers .s-t-list .item {   height: 679px; }
+.search-teachers .s-t-list .item { height: 679px; }
 .search-teachers .s-t-list .s-t-content { margin-right: 0px;}
 .search-teachers { width: 100%; }
 .search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
-.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }
+.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }
 .pace {
   -webkit-pointer-events: none;
   pointer-events: none;
@@ -346,23 +353,23 @@
   height: 2px;
 }
 .search-teachers .s-t-top .s-t-days .s-t-days-list li {
- float: left;
- width: 118px;
- height: 34px;
- line-height: 34px;
- margin-right: 5px;
- margin-bottom: 5px;
+  float: left;
+  width: 118px;
+  height: 34px;
+  line-height: 34px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 .search-teachers .s-t-top .s-t-top-details {
- padding: 2px 0 2px 30px;
+  padding: 2px 0 2px 30px;
 }
 .search-teachers .s-t-top .s-t-top-right {
- height: auto;
+  height: auto;
 }
 .search-teachers .s-t-top .s-t-top-left .condition-item {
- margin-bottom: 2px;
+  margin-bottom: 2px;
 }
-.s-t-page {   padding-top: 2px;}
+.s-t-page { padding-top: 2px;}
 </style>`);
   let maxrate = 0,
     minrate = 99999,
@@ -451,13 +458,13 @@
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
     // $(".s-t-days-list>li").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // $(".condition-type-time>li").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // $(".s-t-top-list>li>a").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // 自动获取时,显示停止按钮
     submit(function(next) {
@@ -487,19 +494,19 @@
               $(this).dialog('close');
             }
             // [`取后${(remainPages*0.25).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
+            // $(this).dialog("close");
             // },
             // [`取后${(remainPages*0.5).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
+            // $(this).dialog("close");
             // },
             // [`取后${(remainPages*0.75).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
+            // $(this).dialog("close");
             // },
           }
         });
@@ -680,13 +687,13 @@
       GM_setValue(getinfokey(), tinfo);
       jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
         return `${val}
-			<span class="age age-line"><label title='指标'>${tinfo.indicator}</label></span>
-			<span class="age age-line"><label title='好评率'>${tinfo.thumbupRate}%</label></span>
-			<span class="age age-line"><label title='被赞数量'>${tinfo.thumbup}</label></span>
-			<span class="age age-line"><label title='被踩数量'>${tinfo.thumbdown}</label></span>
-			<span class="age age-line"><label title='评论标签数量'>${tinfo.label}</label></span>
+    <span class="age age-line"><label title='指标'>${tinfo.indicator}</label></span>
+    <span class="age age-line"><label title='好评率'>${tinfo.thumbupRate}%</label></span>
+    <span class="age age-line"><label title='被赞数量'>${tinfo.thumbup}</label></span>
+    <span class="age age-line"><label title='被踩数量'>${tinfo.thumbdown}</label></span>
+    <span class="age age-line"><label title='评论标签数量'>${tinfo.label}</label></span>
       <span class="age age-line"><label title='在同类别教师中的排名'><span id="teacherRank"></span></label></span>
-			`;
+    `;
       });
     }
     submit(function(next) {
@@ -727,7 +734,7 @@
           buttons = `
           <div id='buttons' style='text-align: center'>
             <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
-            <button id='desc' title='当前为升序，点击进行降序排列'  style='display:none;'>降序</button>&nbsp;
+            <button id='desc' title='当前为升序，点击进行降序排列' style='display:none;'>降序</button>&nbsp;
             <input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
             <button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
             <a>去提建议和BUG</a>&nbsp;
@@ -740,28 +747,28 @@
           </div>`;
         }
         $('body').append(`<div id='filterdialog' title='Teacher Filter'>
-					<div id='tabs'>
-						<div>
-							<ul>
-								<li><a href="#tabs-1">Search Teachers</a></li>
-								<li><a href="#tabs-2">Sorted Teachers</a></li>
-							</ul>
-							<br />
-              ${buttons}
-						</div>
-						<div id="tabs-1">
-							当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
-							有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>
-							收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>
-							好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>
-							年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>
-						</div>
-						<div id="tabs-2">
-							<table id="teachertab"></table>
-							<div id="pager5"></div>
-						</div>
-					</div>
-				</div>`);
+      <div id='tabs'>
+        <div>
+          <ul>
+            <li><a href="#tabs-1">Search Teachers</a></li>
+            <li><a href="#tabs-2">Sorted Teachers</a></li>
+          </ul>
+          <br />
+            ${buttons}
+        </div>
+        <div id="tabs-1">
+          当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
+          有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>
+          收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>
+          好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>
+          年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>
+        </div>
+        <div id="tabs-2">
+          <table id="teachertab"></table>
+          <div id="pager5"></div>
+        </div>
+      </div>
+    </div>`);
         $('body').append("<div id='teachlistdialog' style='display:none;'></div>");
         $('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
         $('#tlabelslider').slider({
@@ -932,7 +939,7 @@
               indexs[val.type] += 1;
             }
             let t = $.extend(val, {
-              //  'slevel': slevel,
+              // 'slevel': slevel,
               tage: Number(val.tage),
               thumbup: Number(val.thumbup),
               thumbdown: Number(val.thumbdown),

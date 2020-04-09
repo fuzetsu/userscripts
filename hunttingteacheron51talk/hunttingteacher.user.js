@@ -3,34 +3,33 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 // ==UserScript==
-// @name         51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version      2020.4.8001
-// @namespace    https://github.com/niubilityfrontend
-// @description  辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
-// @author       jimbo
-// @license      OSL-3.0
-// @supportURL   https://github.com/niubilityfrontend/hunttingteacheron51talk
+// @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
+// @version 2020.4.8001
+// @namespace https://github.com/niubilityfrontend
+// @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
+// @author jimbo
+// @license OSL-3.0
+// @supportURL https://github.com/niubilityfrontend/hunttingteacheron51talk
 // @updateURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
 // @installURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
 // @downloadURL https://github.com/niubilityfrontend/userscripts/raw/master/hunttingteacheron51talk/hunttingteacher.user.js
-// @match        *://www.51talk.com/ReserveNew/index*
-// @match        *://www.51talk.com/TeacherNew/*
-// @match		 *://www.51talk.com/user/*
-// @grant        GM_xmlhttpRequest
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_listValues
-// @grant        GM_deleteValue
-// @grant        GM_registerMenuCommand
-// @require      http://code.jquery.com/jquery-3.4.1.min.js
-// @require      https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
-// @require      https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
-// @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
+// @match *://www.51talk.com/ReserveNew/index*
+// @match *://www.51talk.com/TeacherNew/*
+// @match *://www.51talk.com/user/*
+// @grant GM_xmlhttpRequest
+// @grant GM_getValue
+// @grant GM_setValue
+// @grant GM_listValues
+// @grant GM_deleteValue
+// @grant GM_registerMenuCommand
+// @require http://code.jquery.com/jquery-3.4.1.min.js
+// @require https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
+// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
+// @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
+// @require https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
-//
 (function () {
   'use strict';
   //重载类型方法
@@ -71,8 +70,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return true;
       }
     };
-    var getPaddedComp = function getPaddedComp(comp) {
-      return parseInt(comp) < 10 ? '0' + comp : comp;
+    var getPaddedComp = function getPaddedComp(comp, len) {
+      if (len == undefined) len = 2;else if (len < 1) len = 1;
+      var paddedLen = len - ('' + comp).length;
+      var ret = "";
+      if (paddedLen > 0) while (paddedLen--) {
+        ret = ret.concat("0");
+      }return ret.concat(comp);
     },
         o = {
       '[y|Y]{4}': function yY4(date) {
@@ -352,8 +356,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var pages = getLeftPageCount();
     if (settings.pagecount > pages) return pages;else return settings.pagecount;
   }
-  $('head').append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n\t\t<link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">');
-  $('head').append('<style type="text/css">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item {   height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto;  margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n float: left;\n width: 118px;\n height: 34px;\n line-height: 34px;\n margin-right: 5px;\n margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n margin-bottom: 2px;\n}\n.s-t-page {   padding-top: 2px;}\n</style>');
+  $('head').append('<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">\n  <link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">');
+  $('head').append('<style type="text/css">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item { height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n  float: left;\n  width: 118px;\n  height: 34px;\n  line-height: 34px;\n  margin-right: 5px;\n  margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n  padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n  height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n  margin-bottom: 2px;\n}\n.s-t-page { padding-top: 2px;}\n</style>');
   var maxrate = 0,
       minrate = 99999,
       maxlabel = 0,
@@ -474,13 +478,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     });
     // $(".s-t-days-list>li").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // $(".condition-type-time>li").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // $(".s-t-top-list>li>a").click(function() {
-    //   sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
+    // sessionStorage.setItem(getBatchNumberKey(), new Date().getTime());
     // });
     // 自动获取时,显示停止按钮
     submit(function (next) {
@@ -503,19 +507,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               $(this).dialog('close');
             }
             // [`取后${(remainPages*0.25).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.25).toFixed(0));
+            // $(this).dialog("close");
             // },
             // [`取后${(remainPages*0.5).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.5).toFixed(0));
+            // $(this).dialog("close");
             // },
             // [`取后${(remainPages*0.75).toFixed(0)}页`]: function() {
-            //   sessionStorage.setItem('selectedTimeSlots', '');
-            //   GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
-            //   $(this).dialog("close");
+            // sessionStorage.setItem('selectedTimeSlots', '');
+            // GM_setValue('autonextpagecount', (remainPages * 0.75).toFixed(0));
+            // $(this).dialog("close");
             // },
           }
         });
@@ -664,7 +668,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       tinfo.indicator = calcIndicator(tinfo);
       GM_setValue(getinfokey(), tinfo);
       jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
-        return val + '\n\t\t\t<span class="age age-line"><label title=\'\u6307\u6807\'>' + tinfo.indicator + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u597D\u8BC4\u7387\'>' + tinfo.thumbupRate + '%</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u88AB\u8D5E\u6570\u91CF\'>' + tinfo.thumbup + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u88AB\u8E29\u6570\u91CF\'>' + tinfo.thumbdown + '</label></span>\n\t\t\t<span class="age age-line"><label title=\'\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF\'>' + tinfo.label + '</label></span>\n      <span class="age age-line"><label title=\'\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D\'><span id="teacherRank"></span></label></span>\n\t\t\t';
+        return val + '\n    <span class="age age-line"><label title=\'\u6307\u6807\'>' + tinfo.indicator + '</label></span>\n    <span class="age age-line"><label title=\'\u597D\u8BC4\u7387\'>' + tinfo.thumbupRate + '%</label></span>\n    <span class="age age-line"><label title=\'\u88AB\u8D5E\u6570\u91CF\'>' + tinfo.thumbup + '</label></span>\n    <span class="age age-line"><label title=\'\u88AB\u8E29\u6570\u91CF\'>' + tinfo.thumbdown + '</label></span>\n    <span class="age age-line"><label title=\'\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF\'>' + tinfo.label + '</label></span>\n      <span class="age age-line"><label title=\'\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D\'><span id="teacherRank"></span></label></span>\n    ';
       });
     };
 
@@ -725,7 +729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               indexs[val.type] += 1;
             }
             var t = $.extend(val, {
-              //  'slevel': slevel,
+              // 'slevel': slevel,
               tage: Number(val.tage),
               thumbup: Number(val.thumbup),
               thumbdown: Number(val.thumbdown),
@@ -752,9 +756,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
         var buttons = '';
         if (settings.isListPage) {
-          buttons = '\n          <div id=\'buttons\' style=\'text-align: center\'>\n            <button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n            <button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\'  style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n            <input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n            <button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id=\'buttons1\' style=\'text-align: center;\'>\n            <div id=\'timesmutipulecheck\'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id=\'autogettodaysteachers\'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>';
+          buttons = '\n          <div id=\'buttons\' style=\'text-align: center\'>\n            <button id=\'asc\' title=\'\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217\'>\u5347\u5E8F</button>\n            <button id=\'desc\' title=\'\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217\' style=\'display:none;\'>\u964D\u5E8F</button>&nbsp;\n            <input id=\'tinfoexprhours\' title=\'\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09\'>&nbsp;\n            <button title=\'\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22\'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id=\'buttons1\' style=\'text-align: center;\'>\n            <div id=\'timesmutipulecheck\'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id=\'autogettodaysteachers\'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>';
         }
-        $('body').append('<div id=\'filterdialog\' title=\'Teacher Filter\'>\n\t\t\t\t\t<div id=\'tabs\'>\n\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-1">Search Teachers</a></li>\n\t\t\t\t\t\t\t\t<li><a href="#tabs-2">Sorted Teachers</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<br />\n              ' + buttons + '\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-1">\n\t\t\t\t\t\t\t\u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n\t\t\t\t\t\t\t\u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n\t\t\t\t\t\t\t\u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n\t\t\t\t\t\t\t\u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n\t\t\t\t\t\t\t\u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id="tabs-2">\n\t\t\t\t\t\t\t<table id="teachertab"></table>\n\t\t\t\t\t\t\t<div id="pager5"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>');
+        $('body').append('<div id=\'filterdialog\' title=\'Teacher Filter\'>\n      <div id=\'tabs\'>\n        <div>\n          <ul>\n            <li><a href="#tabs-1">Search Teachers</a></li>\n            <li><a href="#tabs-2">Sorted Teachers</a></li>\n          </ul>\n          <br />\n            ' + buttons + '\n        </div>\n        <div id="tabs-1">\n          \u5F53\u524D\u53EF\u9009<span id=\'tcount\' />\u4F4D,\u88AB\u6298\u53E0<span id=\'thidecount\' />\u4F4D\u3002<br />\n          \u6709\u6548\u7ECF\u9A8C\u503C <span id=\'_tLabelCount\' /><br /><div id=\'tlabelslider\'></div>\n          \u6536\u85CF\u6570 <span id=\'_tfc\' /><br /><div id=\'fcSlider\'></div>\n          \u597D\u8BC4\u7387 <span id=\'_thumbupRate\'/><br /><div id=\'thumbupRateslider\'></div>\n          \u5E74\u9F84 <span id=\'_tAge\' /><br /><div id=\'tAgeSlider\'></div>\n        </div>\n        <div id="tabs-2">\n          <table id="teachertab"></table>\n          <div id="pager5"></div>\n        </div>\n      </div>\n    </div>');
         $('body').append("<div id='teachlistdialog' style='display:none;'></div>");
         $('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
         $('#tlabelslider').slider({
