@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.1.2
+// @version      0.1.3
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @inject-into  content
@@ -11,15 +11,15 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.jsdelivr.net/gh/kufii/My-UserScripts@f1ce7887e0bbd0de78f9ceff1ec556c7b9c6389c/libs/gm_config.js
+// @require      https://cdn.jsdelivr.net/gh/kufii/My-UserScripts@00302ac8bd875599ed97df07b379b58f9b4932bd/libs/gm_config.js
 // ==/UserScript==
 /* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
 
 'use strict'
 
 const deps = [
-  'https://unpkg.com/prettier/standalone.js',
-  'https://unpkg.com/prettier/parser-babylon.js'
+  'https://unpkg.com/prettier@2/standalone.js',
+  'https://unpkg.com/prettier@2/parser-babel.js'
 ]
 
 const loadDep = url =>
@@ -58,7 +58,9 @@ const Config = GM_config([
     requireKey: true
   }
 ])
-GM_registerMenuCommand('Prettier Anywhere Settings', Config.setup)
+GM_registerMenuCommand('Prettier Anywhere Settings', () => {
+  if (window.top === window.self) Config.setup()
+})
 let config = Config.load()
 Config.onsave = cfg => (config = cfg)
 
@@ -122,10 +124,10 @@ const prettify = async clip => {
 }
 
 const keyBindingsMatch = (a, b) =>
-  !!a.ctrlKey === !!b.ctrlKey &&
-  !!a.altKey === !!b.altKey &&
-  !!a.shiftKey === !!b.shiftKey &&
-  !!a.metaKey === !!b.metaKey &&
+  !a.ctrlKey === !b.ctrlKey &&
+  !a.altKey === !b.altKey &&
+  !a.shiftKey === !b.shiftKey &&
+  !a.metaKey === !b.metaKey &&
   a.key.toUpperCase() === b.key.toUpperCase()
 
 window.addEventListener('keydown', e => {
