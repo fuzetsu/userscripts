@@ -1139,4 +1139,3 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     });
   }
 })();
-//# sourceMappingURL=hunttingteacher.user.js.map
