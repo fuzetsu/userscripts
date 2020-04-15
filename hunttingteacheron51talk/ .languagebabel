@@ -1,5 +1,5 @@
 {
-  "projectRoot": true,
+  "projectRoot": false,
   "babelMapsAddUrl": true,
   "babelMapsPath": "",
   "babelSourcePath": "",

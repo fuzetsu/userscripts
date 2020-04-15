@@ -1,0 +1,1 @@
+"use strict";(function(a,aa){return 1+32});
