@@ -205,11 +205,11 @@
     type: 'dropdown',
     values: [0, 5, 10, 20, 50, 1000]
   }, {
-    key: 'batchtimezoneMinutes',
-    label: '预定时间（分钟）',
-    default: 60,
+    key: 'newBatcherKeyHours',
+    label: '预定时间（小时），0为每次更新',
+    default: 24,
     type: 'dropdown',
-    values: [5, 10, 20, 30, 50, 60, 90, 120, 300, 600, 1440, 10080]
+    values: [0, 1, 2, 3, 5, 10, 24, 168, 168000]
   }, {
     key: 'markRankRed',
     label: '突出前N名教师的名次',
@@ -300,8 +300,8 @@
   };
 
   function getBatchNumberKey() {
-    //return $("input[name='Date']").val() + $("input[name='selectTime']").val();
-    return '__getBatchNumberKey';
+    if(conf.newBatcherKeyHours <= 0) return new Date().getTime();
+    return new ParseInt(Date().getTime() / conf.newBatcherKeyHours / 3600000);
   }
 
   function getBatchNumber() {
