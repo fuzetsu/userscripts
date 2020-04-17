@@ -1,1 +1,3 @@
-"use strict";(function(a,aa){return 1+32});
+(a, aa) => {
+  return 1 + 32232;
+};

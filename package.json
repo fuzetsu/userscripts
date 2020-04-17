@@ -26,7 +26,7 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@types/hubspot-pace": "^0.7.27",
-    "@types/jquery": "^3.3.34",
+    "@types/jquery": "^3.3.35",
     "@types/jqueryui": "^1.12.10",
     "@types/tampermonkey": "^4.0.0",
     "fs": "0.0.1-security",
@@ -34,53 +34,8 @@
     "js-beautify": "^1.11.0",
     "path": "^0.12.7"
   },
-  "peerDependencies": {
-    "@babel/core": "^7.0.0"
-  },
   "dependencies": {
     "@babel/polyfill": "^7.8.7"
-  },
-  "babel": {
-    "minified": true,
-    "only": [
-      "*.babel",
-      "*.jsx",
-      "*.es6",
-      "*.es8",
-      "*.es7"
-    ],
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "entry",
-          "targets": "> 0.25%, not dead"
-        }
-      ]
-    ],
-    "plugins": [
-      "@babel/plugin-syntax-dynamic-import",
-      "@babel/plugin-syntax-import-meta",
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-json-strings",
-      "@babel/transform-arrow-functions",
-      "@babel/plugin-proposal-function-sent",
-      "@babel/plugin-proposal-export-namespace-from",
-      "@babel/plugin-proposal-numeric-separator",
-      "@babel/plugin-proposal-throw-expressions",
-      "@babel/plugin-proposal-export-default-from",
-      "@babel/plugin-proposal-logical-assignment-operators",
-      "@babel/plugin-proposal-optional-chaining",
-      [
-        "@babel/plugin-proposal-pipeline-operator",
-        {
-          "proposal": "minimal"
-        }
-      ],
-      "@babel/plugin-proposal-nullish-coalescing-operator",
-      "@babel/plugin-proposal-do-expressions",
-      "@babel/plugin-proposal-function-bind"
-    ]
   },
   "main": "build-readme.js",
   "scripts": {
