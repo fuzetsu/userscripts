@@ -28,10 +28,10 @@
 // @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
 // @require https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
-(function() {
+(function () {
   'use strict'; //重载类型方法
 
-  (function() {
+  (function () {
     let PropertiesCaseInsensitive = {
       has: function has(target, prop) {
         if (typeof prop === 'symbol') {
@@ -76,73 +76,73 @@
     };
 
     let getPaddedComp = function getPaddedComp(comp, len) {
-      if (len == undefined) len = 2; else if (len < 1) len = 1;
+      if (len == undefined) len = 2;else if (len < 1) len = 1;
       let paddedLen = len - ('' + comp).length;
       let ret = "";
       if (paddedLen > 0) while (paddedLen--) ret = ret.concat("0");
       return ret.concat(comp);
     },
-      o = {
-        '[y|Y]{4}': function yY4(date) {
-          return date.getFullYear();
-        },
-        // year
-        '[y|Y]{2}': function yY2(date) {
-          return date.getFullYear().toString().slice(2);
-        },
-        // year
-        MM: function MM(date) {
-          return getPaddedComp(date.getMonth() + 1);
-        },
-        //month
-        M: function M(date) {
-          return date.getMonth() + 1;
-        },
-        //month
-        '[d|D]{2}': function dD2(date) {
-          return getPaddedComp(date.getDate());
-        },
-        //day
-        '[d|D]{1}': function dD1(date) {
-          return date.getDate();
-        },
-        //day
-        'h{2}': function h2(date) {
-          return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
-        },
-        //hour
-        'h{1}': function h1(date) {
-          return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
-        },
-        //hour
-        'H{2}': function H2(date) {
-          return getPaddedComp(date.getHours());
-        },
-        //hour
-        'H{1}': function H1(date) {
-          return date.getHours();
-        },
-        //hour
-        'm{2}': function m2(date) {
-          return getPaddedComp(date.getMinutes());
-        },
-        //minute
-        'm{1}': function m1(date) {
-          return date.getMinutes();
-        },
-        //minute
-        's+': function s(date) {
-          return getPaddedComp(date.getSeconds());
-        },
-        //second
-        'f+': function f(date) {
-          return getPaddedComp(date.getMilliseconds());
-        },
-        //millisecond,
-        'b+': function b(date) {
-          return date.getHours() >= 12 ? 'PM' : 'AM';
-        }
-      };
+        o = {
+      '[y|Y]{4}': function yY4(date) {
+        return date.getFullYear();
+      },
+      // year
+      '[y|Y]{2}': function yY2(date) {
+        return date.getFullYear().toString().slice(2);
+      },
+      // year
+      MM: function MM(date) {
+        return getPaddedComp(date.getMonth() + 1);
+      },
+      //month
+      M: function M(date) {
+        return date.getMonth() + 1;
+      },
+      //month
+      '[d|D]{2}': function dD2(date) {
+        return getPaddedComp(date.getDate());
+      },
+      //day
+      '[d|D]{1}': function dD1(date) {
+        return date.getDate();
+      },
+      //day
+      'h{2}': function h2(date) {
+        return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+      },
+      //hour
+      'h{1}': function h1(date) {
+        return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+      },
+      //hour
+      'H{2}': function H2(date) {
+        return getPaddedComp(date.getHours());
+      },
+      //hour
+      'H{1}': function H1(date) {
+        return date.getHours();
+      },
+      //hour
+      'm{2}': function m2(date) {
+        return getPaddedComp(date.getMinutes());
+      },
+      //minute
+      'm{1}': function m1(date) {
+        return date.getMinutes();
+      },
+      //minute
+      's+': function s(date) {
+        return getPaddedComp(date.getSeconds());
+      },
+      //second
+      'f+': function f(date) {
+        return getPaddedComp(date.getMilliseconds());
+      },
+      //millisecond,
+      'b+': function b(date) {
+        return date.getHours() >= 12 ? 'PM' : 'AM';
+      }
+    };
 
     $.extend(Date.prototype, {
       toString: function toString(format) {
@@ -286,7 +286,7 @@
   }]);
   let conf = config.load();
 
-  config.onsave = function(cfg) {
+  config.onsave = function (cfg) {
     conf = cfg;
     $('#autogetnextpage').text('自动获取' + getAutoNextPagesCount() + '页');
   };
@@ -383,7 +383,7 @@
   }
 
   function getBatchNumber() {
-    return getorAdd(getBatchNumberKey(), function(key) {
+    return getorAdd(getBatchNumberKey(), function (key) {
       return new Date().getTime();
     });
   }
@@ -391,24 +391,24 @@
   function getLeftPageCount() {
     let pages = Number($('.s-t-page>.next-page:first').prev().text());
     let curr = Number($('.s-t-page>.active:first').text());
-    if (pages) return pages - curr; else return 0;
+    if (pages) return pages - curr;else return 0;
   }
 
   function getAutoNextPagesCount() {
     let pages = getLeftPageCount();
-    if (settings.pagecount > pages) return pages; else return settings.pagecount;
+    if (settings.pagecount > pages) return pages;else return settings.pagecount;
   }
 
   $('head').append("<link href=\"https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\">\n  <link href=\"https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css\" rel=\"stylesheet\" type=\"text/css\">");
   $('head').append("<style type=\"text/css\">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item { height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n  float: left;\n  width: 118px;\n  height: 34px;\n  line-height: 34px;\n  margin-right: 5px;\n  margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n  padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n  height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n  margin-bottom: 2px;\n}\n.s-t-page { padding-top: 2px;}\n</style>");
   let maxrate = 0,
-    minrate = 99999,
-    maxlabel = 0,
-    minlabel = 9999999,
-    maxfc = 0,
-    minfc = 999999,
-    maxage = 0,
-    minage = 99999;
+      minrate = 99999,
+      maxlabel = 0,
+      minlabel = 9999999,
+      maxfc = 0,
+      minfc = 999999,
+      maxage = 0,
+      minage = 99999;
   let configExprMilliseconds = 3600000 * GM_getValue('tinfoexprhours', 168); //缓存7天小时
 
   let num = /[0-9]*/g;
@@ -430,8 +430,8 @@
 
   function executeFilters(uifilters) {
     let tcount = 0,
-      hidecount = 0;
-    $.each($('.item'), function(i, item) {
+        hidecount = 0;
+    $.each($('.item'), function (i, item) {
       let node = $(item);
       let tinfojson = node.attr('teacherinfo');
 
@@ -489,14 +489,14 @@
   }
 
   if (settings.isListPage) {
-    $('.item-top-cont').prop('innerHTML', function(i, val) {
+    $('.item-top-cont').prop('innerHTML', function (i, val) {
       return val.replaceAll('<!--', '').replaceAll('-->', '');
     }); // 自动获取时,显示停止按钮
 
-    submit(function(next) {
+    submit(function (next) {
       let totalPages = Number($('.s-t-page>a:eq(-2)').text()),
-        curPageId = window.parameters().pageID ? window.parameters().pageID : 1,
-        remainPages = totalPages - curPageId;
+          curPageId = window.parameters().pageID ? window.parameters().pageID : 1,
+          remainPages = totalPages - curPageId;
       let autonextpagecount = GM_getValue('autonextpagecount', 1);
 
       if (autonextpagecount > 0 && $('.s-t-page>.next-page').length > 0) {
@@ -538,7 +538,7 @@
     function getTeacherInfoInList(jqel) {
       let age = Number(jqel.find('.teacher-age').text().match(num).clean('')[0]);
 
-      let label = function() {
+      let label = function () {
         let j_len = jqel.find('.label').text().match(num).clean('').length;
         let l = 0;
 
@@ -572,9 +572,9 @@
     } //获取列表中数据
 
 
-    $('.item').each(function(index, el) {
-      submit(function(next) {
-        Pace.track(function() {
+    $('.item').each(function (index, el) {
+      submit(function (next) {
+        Pace.track(function () {
           let jqel = $(el);
           let tid = jqel.find('.teacher-details-link a').attr('href').replace('https://www.51talk.com/TeacherNew/info/', '').replace('http://www.51talk.com/TeacherNew/info/', '');
           let tinfokey = 'tinfo-' + tid;
@@ -642,7 +642,7 @@
             error: function error(data) {
               console.log('xhr error when getting teacher ' + JSON.stringify(jqel) + ',error msg:' + JSON.stringify(data));
             }
-          }).always(function() {
+          }).always(function () {
             while (new Date().getTime() - start < 600) {
               continue;
             }
@@ -652,7 +652,7 @@
         });
       });
     });
-    submit(function(next) {
+    submit(function (next) {
       //翻页
       let autonextpagecount = GM_getValue('autonextpagecount', 0);
 
@@ -699,14 +699,14 @@
 
   if (settings.isDetailPage) {
     function processTeacherDetailPage(jqr) {
-      jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+      jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
         return val.replaceAll('<!--', '').replaceAll('-->', '');
       });
       let tinfo = GM_getValue(getinfokey(), {});
 
-      tinfo.label = function() {
+      tinfo.label = function () {
         let l = 0;
-        $.each(jqr.find('.t-d-label').text().match(num).clean(''), function(i, val) {
+        $.each(jqr.find('.t-d-label').text().match(num).clean(''), function (i, val) {
           l += Number(val);
         });
         return l;
@@ -730,12 +730,12 @@
       tinfo.effectivetime = getBatchNumber();
       tinfo.indicator = calcIndicator(tinfo);
       GM_setValue(getinfokey(), tinfo);
-      jqr.find('.teacher-name-tit').prop('innerHTML', function(i, val) {
+      jqr.find('.teacher-name-tit').prop('innerHTML', function (i, val) {
         return "".concat(val, "\n    <span class=\"age age-line\"><label title='\u6307\u6807'>").concat(tinfo.indicator, "</label></span>\n    <span class=\"age age-line\"><label title='\u597D\u8BC4\u7387'>").concat(tinfo.thumbupRate, "%</label></span>\n    <span class=\"age age-line\"><label title='\u88AB\u8D5E\u6570\u91CF'>").concat(tinfo.thumbup, "</label></span>\n    <span class=\"age age-line\"><label title='\u88AB\u8E29\u6570\u91CF'>").concat(tinfo.thumbdown, "</label></span>\n    <span class=\"age age-line\"><label title='\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF'>").concat(tinfo.label, "</label></span>\n      <span class=\"age age-line\"><label title='\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D'><span id=\"teacherRank\"></span></label></span>\n    ");
       });
     }
 
-    submit(function(next) {
+    submit(function (next) {
       processTeacherDetailPage($(document));
       next();
     });
@@ -759,7 +759,7 @@
 
   if (settings.isListPage || settings.isDetailPage) {
     //构建插件信息
-    submit(function(next) {
+    submit(function (next) {
       try {
         let config = GM_getValue('filterconfig', {
           l1: 300,
@@ -787,7 +787,7 @@
           slide: function slide(event, ui) {
             $('#_tLabelCount').html(ui.values[0] + ' - ' + ui.values[1]);
           }
-        }).on('slidestop', function(event, ui) {
+        }).on('slidestop', function (event, ui) {
           let l1 = $('#tlabelslider').slider('values', 0);
           let l2 = $('#tlabelslider').slider('values', 1);
           let uifilters = getUiFilters();
@@ -805,7 +805,7 @@
           slide: function slide(event, ui) {
             $('#_tfc').html(ui.values[0] + ' - ' + ui.values[1]);
           }
-        }).on('slidestop', function(event, ui) {
+        }).on('slidestop', function (event, ui) {
           let fc1 = $('#fcSlider').slider('values', 0);
           let fc2 = $('#fcSlider').slider('values', 1);
           let uifilters = getUiFilters();
@@ -823,7 +823,7 @@
           slide: function slide(_event, ui) {
             $('#_thumbupRate').html(ui.values[0] + '% - ' + ui.values[1] + '%');
           }
-        }).on('slidestop', function(event, ui) {
+        }).on('slidestop', function (event, ui) {
           let rate1 = $('#thumbupRateslider').slider('values', 0);
           let rate2 = $('#thumbupRateslider').slider('values', 1);
           let uifilters = getUiFilters();
@@ -843,7 +843,7 @@
           slide: function slide(event, ui) {
             $('#_tAge').html(ui.values[0] + ' - ' + ui.values[1]);
           }
-        }).on('slidestop', function(event, ui) {
+        }).on('slidestop', function (event, ui) {
           let age1 = $('#tAgeSlider').slider('values', 0);
           let age2 = $('#tAgeSlider').slider('values', 1);
           let uifilters = getUiFilters();
@@ -854,78 +854,78 @@
           executeFilters(uifilters);
         });
         $('#buttons>button,#buttons>input,#buttons>a') //升序
-          .eq(0).button({
-            icon: 'ui-icon-arrowthick-1-n',
-            showLabel: false
-          }).click(function() {
-            $('#desc').show();
-            $(this).hide();
-            sortByIndicator(asc);
-          }).end() //降序
-          .eq(1).button({
-            icon: 'ui-icon-arrowthick-1-s',
-            showLabel: false
-          }).click(function() {
-            $('#asc').show();
-            $(this).hide();
-            sortByIndicator(desc);
-          }).end() // 缓存过期时间（小时）
-          .eq(2).spinner({
-            min: 0,
-            spin: function spin(event, ui) {
-              GM_setValue('tinfoexprhours', ui.value);
+        .eq(0).button({
+          icon: 'ui-icon-arrowthick-1-n',
+          showLabel: false
+        }).click(function () {
+          $('#desc').show();
+          $(this).hide();
+          sortByIndicator(asc);
+        }).end() //降序
+        .eq(1).button({
+          icon: 'ui-icon-arrowthick-1-s',
+          showLabel: false
+        }).click(function () {
+          $('#asc').show();
+          $(this).hide();
+          sortByIndicator(desc);
+        }).end() // 缓存过期时间（小时）
+        .eq(2).spinner({
+          min: 0,
+          spin: function spin(event, ui) {
+            GM_setValue('tinfoexprhours', ui.value);
+          }
+        }).css({
+          width: '45px'
+        }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end() //清空缓存
+        .eq(3).button({
+          icon: 'uiicon-trash',
+          showLabel: false
+        }).click(function () {
+          $.each(GM_listValues(), function (i, item) {
+            if (item.startsWith('tinfo-')) {
+              GM_deleteValue(item);
             }
-          }).css({
-            width: '45px'
-          }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end() //清空缓存
-          .eq(3).button({
-            icon: 'uiicon-trash',
-            showLabel: false
-          }).click(function() {
-            $.each(GM_listValues(), function(i, item) {
-              if (item.startsWith('tinfo-')) {
-                GM_deleteValue(item);
-              }
-            });
-            $('.go-search').click();
-          }).end() //submit suggestion
-          .eq(4).button({
-            icon: 'ui-icon-comment',
-            showLabel: false
-          }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end() //系统帮助
-          .eq(5).button({
-            icon: 'ui-icon-help',
-            showLabel: false
-          }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
+          });
+          $('.go-search').click();
+        }).end() //submit suggestion
+        .eq(4).button({
+          icon: 'ui-icon-comment',
+          showLabel: false
+        }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end() //系统帮助
+        .eq(5).button({
+          icon: 'ui-icon-help',
+          showLabel: false
+        }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
         $('#buttons1>button') //反选时间段
-          .eq(0).button({
-            icon: 'ui-icon-seek-next',
-            showLabel: true
-          }).click(function() {
-            $('#timesmutipulecheck>input').each(function(i, item) {
-              $(item).prop('checked', !$(item).is(':checked')).change();
-            });
-          }).end() // 获取选定时段老师
-          .eq(1).button({
-            icon: 'ui-icon-seek-next',
-            showLabel: true
-          }).click(function() {
-            let selectedTimeSlots = [];
-            $('#timesmutipulecheck>input').each(function(i, item) {
-              if ($(item).is(':checked')) {
-                selectedTimeSlots.push($(item).val());
-              }
-            });
-            sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
-            sessionStorage.setItem('selectedTimeSlotsTotal', selectedTimeSlots.length);
-            isStopShowboxAndAutoGetNextTimeTeachers();
-          }).end(); //初始化时间选择按钮
+        .eq(0).button({
+          icon: 'ui-icon-seek-next',
+          showLabel: true
+        }).click(function () {
+          $('#timesmutipulecheck>input').each(function (i, item) {
+            $(item).prop('checked', !$(item).is(':checked')).change();
+          });
+        }).end() // 获取选定时段老师
+        .eq(1).button({
+          icon: 'ui-icon-seek-next',
+          showLabel: true
+        }).click(function () {
+          let selectedTimeSlots = [];
+          $('#timesmutipulecheck>input').each(function (i, item) {
+            if ($(item).is(':checked')) {
+              selectedTimeSlots.push($(item).val());
+            }
+          });
+          sessionStorage.setItem('selectedTimeSlots', JSON.stringify(selectedTimeSlots));
+          sessionStorage.setItem('selectedTimeSlotsTotal', selectedTimeSlots.length);
+          isStopShowboxAndAutoGetNextTimeTeachers();
+        }).end(); //初始化时间选择按钮
 
-        $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function(i, item) {
+        $('div.condition-type:eq(0)>ul.condition-type-time>li').each(function (i, item) {
           addCheckbox($(item).attr('data-val'), $(item).text());
         });
         let timesstr = sessionStorage.getItem('selectedTimeSlots'),
-          selectedTimeSlots = [];
+            selectedTimeSlots = [];
 
         if (timesstr) {
           selectedTimeSlots = JSON.parse(timesstr);
@@ -949,7 +949,7 @@
 
         function getCatchedTeachers() {
           let teachers = [];
-          $.each(GM_listValues(), function(i, item) {
+          $.each(GM_listValues(), function (i, item) {
             if (item.startsWith('tinfo-')) {
               let t = GM_getValue(item);
               t.tid = item.slice(6, item.length);
@@ -957,10 +957,10 @@
             }
           });
           let indexs = {};
-          teachers = teachers.sort(function(t1, t2) {
+          teachers = teachers.sort(function (t1, t2) {
             if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
             return t1.indicator > t2.indicator ? -1 : 1;
-          }).map(function(val, idx) {
+          }).map(function (val, idx) {
             if (isNaN(indexs[val.type])) {
               indexs[val.type] = 1;
             } else {
@@ -998,183 +998,183 @@
               height: 240,
               colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
               colModel: [//
-                {
-                  name: 'effectivetime',
-                  index: 'effectivetime',
-                  width: 45,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    let date = new Date(Number(value));
+              {
+                name: 'effectivetime',
+                index: 'effectivetime',
+                width: 45,
+                sorttype: 'float',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  let date = new Date(Number(value));
 
-                    if (date instanceof Date && !isNaN(date.valueOf())) {
-                      return date.toString('HHmmss');
+                  if (date instanceof Date && !isNaN(date.valueOf())) {
+                    return date.toString('HHmmss');
+                  }
+
+                  return value;
+                }
+              }, //
+              {
+                name: 'type',
+                index: 'type',
+                width: 55,
+                sorttype: 'string',
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) return value;else return 'na';
+                }
+              }, //
+              {
+                name: 'rank',
+                index: 'rank',
+                width: 40,
+                sorttype: 'float',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le']
+                }
+              }, //
+              {
+                name: 'name',
+                index: 'name',
+                width: 125,
+                sorttype: 'string',
+                formatter: function formatter(value, options, rData) {
+                  return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + '</a>';
+                }
+              }, //
+              {
+                name: 'isfavorite',
+                index: 'isfavorite',
+                width: 39,
+                sorttype: 'string',
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) return '收藏';else return '';
+                }
+              }, //
+              {
+                name: 'indicator',
+                index: 'indicator',
+                width: 50,
+                sorttype: 'float',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'label',
+                index: 'label',
+                width: 45,
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'thumbupRate',
+                index: 'thumbupRate',
+                width: 35,
+                align: 'right',
+                sorttype: 'float',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'favoritesCount',
+                index: 'favoritesCount',
+                width: 35,
+                align: 'right',
+                sorttype: 'float',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'slevel',
+                index: 'slevel',
+                width: 85,
+                sorttype: 'string',
+                align: 'left',
+                searchoptions: {
+                  sopt: ['cn', 'nc']
+                }
+              }, //
+              {
+                name: 'tage',
+                index: 'tage',
+                width: 25,
+                sorttype: 'float',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'thumbup',
+                index: 'thumbup',
+                width: 45,
+                align: 'right',
+                sorttype: 'float',
+                searchoptions: {
+                  sopt: ['ge']
+                }
+              }, //
+              {
+                name: 'thumbdown',
+                index: 'thumbdown',
+                width: 30,
+                sorttype: 'float',
+                align: 'right'
+              }, //
+              {
+                name: 'age',
+                index: 'age',
+                width: 30,
+                sorttype: 'float',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['le', 'ge', 'eq']
+                }
+              }, //
+              {
+                name: 'expire',
+                index: 'expire',
+                width: 35,
+                sorttype: 'Date',
+                align: 'right',
+                searchoptions: {
+                  sopt: ['cn']
+                },
+                formatter: function formatter(value, options, rData) {
+                  if (value) {
+                    let d = new Date().getTime() - value;
+
+                    if (d < 1000 * 60) {
+                      return '刚刚';
+                    } else if (d < 1000 * 60 * 60) {
+                      return (d / 60000).toFixed(0) + '分';
+                    } else if (d < 1000 * 60 * 60 * 24) {
+                      return (d / 3600000).toFixed(0) + '时';
+                    } else {
+                      return (d / 86400000).toFixed(0) + '天';
                     }
 
-                    return value;
-                  }
-                }, //
-                {
-                  name: 'type',
-                  index: 'type',
-                  width: 55,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) return value; else return 'na';
-                  }
-                }, //
-                {
-                  name: 'rank',
-                  index: 'rank',
-                  width: 40,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['le']
-                  }
-                }, //
-                {
-                  name: 'name',
-                  index: 'name',
-                  width: 125,
-                  sorttype: 'string',
-                  formatter: function formatter(value, options, rData) {
-                    return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + '</a>';
-                  }
-                }, //
-                {
-                  name: 'isfavorite',
-                  index: 'isfavorite',
-                  width: 39,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) return '收藏'; else return '';
-                  }
-                }, //
-                {
-                  name: 'indicator',
-                  index: 'indicator',
-                  width: 50,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'label',
-                  index: 'label',
-                  width: 45,
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'thumbupRate',
-                  index: 'thumbupRate',
-                  width: 35,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'favoritesCount',
-                  index: 'favoritesCount',
-                  width: 35,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'slevel',
-                  index: 'slevel',
-                  width: 85,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: {
-                    sopt: ['cn', 'nc']
-                  }
-                }, //
-                {
-                  name: 'tage',
-                  index: 'tage',
-                  width: 25,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'thumbup',
-                  index: 'thumbup',
-                  width: 45,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: {
-                    sopt: ['ge']
-                  }
-                }, //
-                {
-                  name: 'thumbdown',
-                  index: 'thumbdown',
-                  width: 30,
-                  sorttype: 'float',
-                  align: 'right'
-                }, //
-                {
-                  name: 'age',
-                  index: 'age',
-                  width: 30,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['le', 'ge', 'eq']
-                  }
-                }, //
-                {
-                  name: 'expire',
-                  index: 'expire',
-                  width: 35,
-                  sorttype: 'Date',
-                  align: 'right',
-                  searchoptions: {
-                    sopt: ['cn']
-                  },
-                  formatter: function formatter(value, options, rData) {
-                    if (value) {
-                      let d = new Date().getTime() - value;
-
-                      if (d < 1000 * 60) {
-                        return '刚刚';
-                      } else if (d < 1000 * 60 * 60) {
-                        return (d / 60000).toFixed(0) + '分';
-                      } else if (d < 1000 * 60 * 60 * 24) {
-                        return (d / 3600000).toFixed(0) + '时';
-                      } else {
-                        return (d / 86400000).toFixed(0) + '天';
-                      }
-
-                      return d;
-                    } else return 'na';
-                  }
-                }],
+                    return d;
+                  } else return 'na';
+                }
+              }],
               multiselect: false,
               rowNum: 10,
               rowList: [5, 10, 20, 30],
@@ -1193,10 +1193,10 @@
             });
 
             if (settings.isListPage) {
-              $.each($('.item'), function(i, item) {
+              $.each($('.item'), function (i, item) {
                 let jqel = $(item);
                 let tid = jqel.find('.teacher-details-link a').attr('href').replace('https://www.51talk.com/TeacherNew/info/', '').replace('http://www.51talk.com/TeacherNew/info/', '');
-                let t = teachers.find(function(currentValue, index, arr) {
+                let t = teachers.find(function (currentValue, index, arr) {
                   return currentValue.tid == tid;
                 });
                 jqel.find('.teacher-name').html("".concat(jqel.find('.teacher-name').html(), "| ").concat(getRankHtml(t)));
@@ -1204,7 +1204,7 @@
             }
 
             if (settings.isDetailPage) {
-              let t = teachers.find(function(currentValue, index, arr) {
+              let t = teachers.find(function (currentValue, index, arr) {
                 return currentValue.tid == gettid();
               });
               $('#teacherRank').html(getRankHtml(t));
@@ -1237,7 +1237,7 @@
     } //弹出信息框
 
 
-    submit(function(next) {
+    submit(function (next) {
       $('.s-t-list').before($('.s-t-page').prop('outerHTML'));
       $('#tabs>div:first').append($('.s-t-page').prop('outerHTML'));
       sortByIndicator(desc);
@@ -1257,7 +1257,7 @@
   }
 
   if (settings.isCoursePage) {
-    submit(function(next) {
+    submit(function (next) {
       $('.course_lock').removeClass('course_lock').addClass('course_unlock');
       $('img.course_mask').removeClass('course_mask').attr('src', '');
       next();

@@ -1,12 +1,6 @@
 {
   "minified": false,
-  "only": [
-    "*.babel",
-    "*.jsx",
-    "*.es6",
-    "*.es8",
-    "*.es7"
-  ],
+
   "presets": [
     [
         "@babel/env",
@@ -16,7 +10,7 @@
             "firefox": "60",
             "chrome": "67",
             "safari": "11.1"
-          } 
+          }
         }
       ]
   ],
