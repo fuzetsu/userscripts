@@ -727,7 +727,7 @@
             <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
             <button id='desc' title='当前为升序，点击进行降序排列' style='display:none;'>降序</button>&nbsp;
             <input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
-            <button title='清空教师信息缓存，并重新搜索'>清除缓存</button>&nbsp;
+            <button title='清空缓存，并重新搜索'>清除缓存</button>&nbsp;
             <a>去提建议和BUG</a>&nbsp;
             <a>?</a>&nbsp;
           </div>
@@ -857,9 +857,9 @@
           //清空缓存
           .eq(3).button({ icon: 'uiicon-trash', showLabel: false }).click(function() {
             $.each(GM_listValues(), function(i, item) {
-              if(item.startsWith('tinfo-')) {
-                GM_deleteValue(item);
-              }
+              //if(item.startsWith('tinfo-')) {
+              GM_deleteValue(item);
+              //}
             });
             $('.go-search').click();
           }).end()

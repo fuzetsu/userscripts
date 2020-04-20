@@ -265,25 +265,25 @@
   const config = GM_config([{
     key: 'pagecount',
     label: '最大页数 (自动获取时)',
-    default: 20,
+    "default": 20,
     type: 'dropdown',
     values: [0, 5, 10, 20, 50, 1000]
   }, {
     key: 'newBatcherKeyHours',
     label: '批次更新间隔（小时），0为每次更新',
-    default: 24,
+    "default": 24,
     type: 'dropdown',
     values: [0, 1, 2, 3, 5, 10, 24, 168, 168000]
   }, {
     key: 'markRankRed',
     label: '突出前N名教师的名次',
-    default: 100,
+    "default": 100,
     type: 'dropdown',
     values: [5, 10, 30, 50, 120, 500, 3000, 5000, 10080]
   }, {
     key: 'version',
     type: 'hidden',
-    default: 1
+    "default": 1
   }]);
   let conf = config.load();
 
@@ -753,7 +753,7 @@
       name: group
     }).appendTo(container);
     $('<label />', {
-      for: 'cb' + id,
+      "for": 'cb' + id,
       text: lbl ? lbl : val
     }).appendTo(container);
   }
@@ -773,7 +773,7 @@
         let buttons = '';
 
         if (settings.isListPage) {
-          buttons = "\n          <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u6559\u5E08\u4FE1\u606F\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
+          buttons = "\n          <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
         }
 
         $('body').append("<div id='filterdialog' title='Teacher Filter'>\n      <div id='tabs'>\n        <div>\n          <ul>\n            <li><a href=\"#tabs-1\">Search Teachers</a></li>\n            <li><a href=\"#tabs-2\">Sorted Teachers</a></li>\n          </ul>\n          <br />\n            ".concat(buttons, "\n        </div>\n        <div id=\"tabs-1\">\n          \u5F53\u524D\u53EF\u9009<span id='tcount' />\u4F4D,\u88AB\u6298\u53E0<span id='thidecount' />\u4F4D\u3002<br />\n          \u6709\u6548\u7ECF\u9A8C\u503C <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>\n          \u6536\u85CF\u6570 <span id='_tfc' /><br /><div id='fcSlider'></div>\n          \u597D\u8BC4\u7387 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>\n          \u5E74\u9F84 <span id='_tAge' /><br /><div id='tAgeSlider'></div>\n        </div>\n        <div id=\"tabs-2\">\n          <table id=\"teachertab\"></table>\n          <div id=\"pager5\"></div>\n        </div>\n      </div>\n    </div>"));
@@ -884,9 +884,8 @@
           showLabel: false
         }).click(function () {
           $.each(GM_listValues(), function (i, item) {
-            if (item.startsWith('tinfo-')) {
-              GM_deleteValue(item);
-            }
+            //if(item.startsWith('tinfo-')) {
+            GM_deleteValue(item); //}
           });
           $('.go-search').click();
         }).end() //submit suggestion
