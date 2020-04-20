@@ -12,6 +12,7 @@
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
+// @match         *
 // ==/UserScript==
 (() => {
   'use strict';
