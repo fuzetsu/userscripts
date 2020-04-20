@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name         gm_config_toolbar
-// @version      0.0.4
+// @version      2020.4.20
 // @namespace    https://github.com/niubilityfrontend
 // @description  greasyfork configuration toolbar on the script addins
 // @author       kufii
