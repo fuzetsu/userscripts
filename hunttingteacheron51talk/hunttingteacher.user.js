@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.4.20000
+// @version 2020.4.20001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -26,7 +26,7 @@
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
 // @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
-// @require https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=794977
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
 (function () {
   'use strict'; //重载类型方法
