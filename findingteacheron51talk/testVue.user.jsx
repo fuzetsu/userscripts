@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         jsProxyTestPropertiesCaseinsensitive
-// @version      2019.12.20
+// @version      2019.12.20000
 // @namespace    https://github.com/niubilityfrontend
 // @description
 // @author       jimbo

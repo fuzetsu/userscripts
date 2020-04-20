@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.4.17000
+// @version 2020.4.20000
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -75,8 +75,9 @@
       }
     };
 
-    let getPaddedComp = function getPaddedComp(comp, len) {
-      if (len == undefined) len = 2;else if (len < 1) len = 1;
+    let getPaddedComp = function getPaddedComp(comp) {
+      let len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+      if (len < 1) len = 1;
       let paddedLen = len - ('' + comp).length;
       let ret = "";
       if (paddedLen > 0) while (paddedLen--) ret = ret.concat("0");
@@ -269,7 +270,7 @@
     values: [0, 5, 10, 20, 50, 1000]
   }, {
     key: 'newBatcherKeyHours',
-    label: '预定时间（小时），0为每次更新',
+    label: '批次更新间隔（小时），0为每次更新',
     default: 24,
     type: 'dropdown',
     values: [0, 1, 2, 3, 5, 10, 24, 168, 168000]
