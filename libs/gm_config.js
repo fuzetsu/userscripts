@@ -7,6 +7,8 @@
 // @description  greasyfork configuration toolbar on the script addins
 // @author       kufii
 // @license      OSL-3.0
+// @match *
+// @include *
 // @supportURL   https://github.com/kufii/My-UserScripts
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
@@ -14,7 +16,6 @@
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
-// @match         *
 // ==/UserScript==
 (function () {
   'use strict';
