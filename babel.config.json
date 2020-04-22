@@ -1,11 +1,9 @@
 {
   "minified": false,
   "only": [
-    "*.babel",
-    "*.jsx",
-    "**/*.es6",
-    "*.es8",
-    "*.es7"
+    "**/*.babel",
+    "**/*.jsx",
+    "**/*.es6"
   ],
   "presets": [
     [

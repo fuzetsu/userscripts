@@ -1,4 +1,4 @@
-echo -n "输入提交介绍，默认为‘auto commit’ ->"
+echo -n "输入提交介绍，默认为‘committing as comment 'auto commit’ ->"
 read msg
  if [ -z "$msg" ]; then
      echo "committing as comment 'auto commit'"

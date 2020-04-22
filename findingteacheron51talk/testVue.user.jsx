@@ -59,7 +59,7 @@ let PropertiesCaseInsensitiveProxyHandler = {
 };
 
 function myFunction() {
-  var Foo = '333';
+  var Foo = '333343';
   var wwww = 'wwww';
   var obj1 = { Foo, wwww };
   obj1['sSs'] = 'sssss';

@@ -1,4 +1,15 @@
 {
-  
-  "transpileOnSave": true
+  "babelMapsPath": "",
+  "babelMapsAddUrl": false,
+  "babelSourcePath": "",
+  "babelTranspilePath": "",
+  "createMap": false,
+  "createTargetDirectories": true,
+  "createTranspiledCode": true,
+  "disableWhenNoBabelrcFileInPath": false,
+  "keepFileExtension": false,
+  "projectRoot": true,
+  "suppressSourcePathMessages": false,
+  "suppressTranspileOnSaveMessages": false,
+  "transpileOnSave": false
 }

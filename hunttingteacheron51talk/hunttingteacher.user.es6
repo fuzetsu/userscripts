@@ -28,6 +28,7 @@
 // ==/UserScript==
 (function() {
   'use strict';
+  (a, b) => a + b + 6;
   //重载类型方法
   (function() {
     let PropertiesCaseInsensitive = {

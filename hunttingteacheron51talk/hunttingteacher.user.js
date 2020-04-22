@@ -29,7 +29,12 @@
 // @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
 (function () {
-  'use strict'; //重载类型方法
+  'use strict';
+
+  (function (a, b) {
+    return a + b + 6;
+  }); //重载类型方法
+
 
   (function () {
     let PropertiesCaseInsensitive = {
