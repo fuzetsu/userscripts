@@ -6,28 +6,26 @@
 
 ## 功能 What
 
-![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/Instructions.png)
-![instructions](https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/hunttingteacheron51talk/Instructions2.png)
-
 ### 页签 Sorted Teachers **主要功能**
 
 表格形式列出所有缓存教师信息，点击列头均可排序，第二行有简单过滤功能，自己琢磨一下
 列说明
 
-- '排名' 教师在其分类下的排名
-- 'type' 教师类别-优选、收藏、欧美
+- ‘批号 ’： 这是查询的批号，通过“设置”来设定刷新间隔，默认为24小时，如果更换课程时间或者关闭浏览器，这个值将会变化
+- '类型' 教师类别-优选、收藏、欧美
+-  '排名' 教师在其分类下的排名
 - 'name' 教师姓名， **点击可以转到教师的详细信息页**
-- 'indicator' 排序指标= 有效经验值 x 好评率+收藏数
-- '标签' 有效经验值
+- '分' 排序指标= 有效经验值 x 好评率+收藏数
+- '标' 有效经验值
 - '率‰' 好评率
 - '收藏数' 收藏数
 - '学' 适合学生级别
-- '教' 教师教龄
+- '教龄' 教师教龄
 - '好' 好评数
 - '差' 差评数
-- 'age' 教师年龄
+- '年龄' 教师年龄
 - ‘更新’ ：教师信息的更新时间
-- ‘批号 ’： 这是查询的批号，通过“设置”来设定刷新间隔，默认为24小时，如果更换课程时间或者关闭浏览器，这个值将会变化
+
 
 ### 页签 Searching Teachers
 

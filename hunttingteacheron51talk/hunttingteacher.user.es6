@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.4.20001
+// @version 2020.4.22001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -735,7 +735,7 @@
           <div id='buttons1' style='text-align: center;'>
             <div id='timesmutipulecheck'></div>
             <button>反选时间段</button>&nbsp;
-            <button id='autogettodaysteachers'>获取选定时段老师</button>&nbsp;
+            <button id='autogettodaysteachers' title='自动获取上述选择时段的全部教师并缓存'>获取选定时段老师</button>&nbsp;
           </div>`;
         }
         $('body').append(`<div id='filterdialog' title='Teacher Filter'>
