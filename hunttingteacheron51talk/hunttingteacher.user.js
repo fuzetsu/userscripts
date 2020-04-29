@@ -995,9 +995,8 @@
           activate: function activate(event, ui) {
             if (ui.newPanel.attr('id') != 'tabs-2') return;
             let teachers = getCatchedTeachers();
-            let jqtable = $('#teachertab'); //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
-
-            jqtable.jqGrid({
+            $('#teachertab') //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
+            .jqGrid({
               data: teachers,
               datatype: 'local',
               height: 240,

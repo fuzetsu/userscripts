@@ -951,179 +951,179 @@
           activate: function(event, ui) {
             if(ui.newPanel.attr('id') != 'tabs-2') return;
             let teachers = getCatchedTeachers();
-            let jqtable = $('#teachertab');
-            //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
-            jqtable.jqGrid({
-              data: teachers,
-              datatype: 'local',
-              height: 240,
-              colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
-              colModel: [
-                //
-                {
-                  name: 'effectivetime',
-                  index: 'effectivetime',
-                  width: 45,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: { sopt: ['cn'] },
-                  formatter: function formatter(value, options, rData) {
-                    let date = new Date(Number(value));
-                    if(date instanceof Date && !isNaN(date.valueOf())) {
-                      return date.toString('HHmmss');
-                    }
-                    return value;
-                  }
-                }, //
-                {
-                  name: 'type',
-                  index: 'type',
-                  width: 55,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: { sopt: ['cn'] },
-                  formatter: function formatter(value, options, rData) {
-                    if(value) return value;
-                    else return 'na';
-                  }
-                }, //
-                {
-                  name: 'rank',
-                  index: 'rank',
-                  width: 40,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: { sopt: ['le'] }
-                }, //
-                {
-                  name: 'name',
-                  index: 'name',
-                  width: 125,
-                  sorttype: 'string',
-                  formatter: function formatter(value, options, rData) {
-                    return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + '</a>';
-                  }
-                }, //
-                {
-                  name: 'isfavorite',
-                  index: 'isfavorite',
-                  width: 39,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: { sopt: ['cn'] },
-                  formatter: function formatter(value, options, rData) {
-                    if(value) return '收藏';
-                    else return '';
-                  }
-                }, //
-                {
-                  name: 'indicator',
-                  index: 'indicator',
-                  width: 50,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'label',
-                  index: 'label',
-                  width: 45,
-                  align: 'right',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'thumbupRate',
-                  index: 'thumbupRate',
-                  width: 35,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'favoritesCount',
-                  index: 'favoritesCount',
-                  width: 35,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'slevel',
-                  index: 'slevel',
-                  width: 85,
-                  sorttype: 'string',
-                  align: 'left',
-                  searchoptions: { sopt: ['cn', 'nc'] }
-                }, //
-                {
-                  name: 'tage',
-                  index: 'tage',
-                  width: 25,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'thumbup',
-                  index: 'thumbup',
-                  width: 45,
-                  align: 'right',
-                  sorttype: 'float',
-                  searchoptions: { sopt: ['ge'] }
-                }, //
-                {
-                  name: 'thumbdown',
-                  index: 'thumbdown',
-                  width: 30,
-                  sorttype: 'float',
-                  align: 'right'
-                }, //
-                {
-                  name: 'age',
-                  index: 'age',
-                  width: 30,
-                  sorttype: 'float',
-                  align: 'right',
-                  searchoptions: { sopt: ['le', 'ge', 'eq'] }
-                }, //
-                {
-                  name: 'expire',
-                  index: 'expire',
-                  width: 35,
-                  sorttype: 'Date',
-                  align: 'right',
-                  searchoptions: { sopt: ['cn'] },
-                  formatter: function formatter(value, options, rData) {
-                    if(value) {
-                      let d = new Date().getTime() - value;
-                      if(d < 1000 * 60) {
-                        return '刚刚';
-                      } else if(d < 1000 * 60 * 60) {
-                        return (d / 60000).toFixed(0) + '分';
-                      } else if(d < 1000 * 60 * 60 * 24) {
-                        return (d / 3600000).toFixed(0) + '时';
-                      } else {
-                        return (d / 86400000).toFixed(0) + '天';
+            $('#teachertab')
+              //searchoptions:{sopt:['eq','ne','le','lt','gt','ge','bw','bn','cn','nc','ew','en']}
+              .jqGrid({
+                data: teachers,
+                datatype: 'local',
+                height: 240,
+                colNames: ['查', '类型', '排名', 'Name', '爱', '分', '标', '率%', '收藏数', '学', '教龄', '好', '差', '龄', '更新'],
+                colModel: [
+                  //
+                  {
+                    name: 'effectivetime',
+                    index: 'effectivetime',
+                    width: 45,
+                    sorttype: 'float',
+                    align: 'right',
+                    searchoptions: { sopt: ['cn'] },
+                    formatter: function formatter(value, options, rData) {
+                      let date = new Date(Number(value));
+                      if(date instanceof Date && !isNaN(date.valueOf())) {
+                        return date.toString('HHmmss');
                       }
-                      return d;
-                    } else return 'na';
+                      return value;
+                    }
+                  }, //
+                  {
+                    name: 'type',
+                    index: 'type',
+                    width: 55,
+                    sorttype: 'string',
+                    align: 'left',
+                    searchoptions: { sopt: ['cn'] },
+                    formatter: function formatter(value, options, rData) {
+                      if(value) return value;
+                      else return 'na';
+                    }
+                  }, //
+                  {
+                    name: 'rank',
+                    index: 'rank',
+                    width: 40,
+                    sorttype: 'float',
+                    align: 'right',
+                    searchoptions: { sopt: ['le'] }
+                  }, //
+                  {
+                    name: 'name',
+                    index: 'name',
+                    width: 125,
+                    sorttype: 'string',
+                    formatter: function formatter(value, options, rData) {
+                      return "<a href='http://www.51talk.com/TeacherNew/info/" + rData['tid'] + "' target='_blank' style='color:blue'>" + (!!value ? value : rData['tid']) + '</a>';
+                    }
+                  }, //
+                  {
+                    name: 'isfavorite',
+                    index: 'isfavorite',
+                    width: 39,
+                    sorttype: 'string',
+                    align: 'left',
+                    searchoptions: { sopt: ['cn'] },
+                    formatter: function formatter(value, options, rData) {
+                      if(value) return '收藏';
+                      else return '';
+                    }
+                  }, //
+                  {
+                    name: 'indicator',
+                    index: 'indicator',
+                    width: 50,
+                    sorttype: 'float',
+                    align: 'right',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'label',
+                    index: 'label',
+                    width: 45,
+                    align: 'right',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'thumbupRate',
+                    index: 'thumbupRate',
+                    width: 35,
+                    align: 'right',
+                    sorttype: 'float',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'favoritesCount',
+                    index: 'favoritesCount',
+                    width: 35,
+                    align: 'right',
+                    sorttype: 'float',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'slevel',
+                    index: 'slevel',
+                    width: 85,
+                    sorttype: 'string',
+                    align: 'left',
+                    searchoptions: { sopt: ['cn', 'nc'] }
+                  }, //
+                  {
+                    name: 'tage',
+                    index: 'tage',
+                    width: 25,
+                    sorttype: 'float',
+                    align: 'right',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'thumbup',
+                    index: 'thumbup',
+                    width: 45,
+                    align: 'right',
+                    sorttype: 'float',
+                    searchoptions: { sopt: ['ge'] }
+                  }, //
+                  {
+                    name: 'thumbdown',
+                    index: 'thumbdown',
+                    width: 30,
+                    sorttype: 'float',
+                    align: 'right'
+                  }, //
+                  {
+                    name: 'age',
+                    index: 'age',
+                    width: 30,
+                    sorttype: 'float',
+                    align: 'right',
+                    searchoptions: { sopt: ['le', 'ge', 'eq'] }
+                  }, //
+                  {
+                    name: 'expire',
+                    index: 'expire',
+                    width: 35,
+                    sorttype: 'Date',
+                    align: 'right',
+                    searchoptions: { sopt: ['cn'] },
+                    formatter: function formatter(value, options, rData) {
+                      if(value) {
+                        let d = new Date().getTime() - value;
+                        if(d < 1000 * 60) {
+                          return '刚刚';
+                        } else if(d < 1000 * 60 * 60) {
+                          return (d / 60000).toFixed(0) + '分';
+                        } else if(d < 1000 * 60 * 60 * 24) {
+                          return (d / 3600000).toFixed(0) + '时';
+                        } else {
+                          return (d / 86400000).toFixed(0) + '天';
+                        }
+                        return d;
+                      } else return 'na';
+                    }
                   }
-                }
-              ],
-              multiselect: false,
-              rowNum: 10,
-              rowList: [5, 10, 20, 30],
-              pager: '#pager5',
-              sortname: 'effectivetime desc,indicator desc',
-              viewrecords: true,
-              multiSort: true,
-              sortorder: 'desc',
-              grouping: false,
-              shrinkToFit: false,
-              //autowidth: true,
-              width: 732
-              //caption: "",,
-            }).jqGrid('filterToolbar', { searchOperators: true });
+                ],
+                multiselect: false,
+                rowNum: 10,
+                rowList: [5, 10, 20, 30],
+                pager: '#pager5',
+                sortname: 'effectivetime desc,indicator desc',
+                viewrecords: true,
+                multiSort: true,
+                sortorder: 'desc',
+                grouping: false,
+                shrinkToFit: false,
+                //autowidth: true,
+                width: 732
+                //caption: "",,
+              }).jqGrid('filterToolbar', { searchOperators: true });
             if(settings.isListPage) {
               $.each($('.item'), function(i, item) {
                 let jqel = $(item);
