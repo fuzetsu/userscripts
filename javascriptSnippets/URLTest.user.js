@@ -27,23 +27,37 @@
 // ==/UserScript==
 //
 function myFunction() {
-  var uri = "https://www.w3schools.com/jsref/tryit.asp?Filename=tryjsref_decodeuri&color[0]=red&color[1]=green&selection=1&selection=2&selection=3#testhashzhong中文";
-  var enc = encodeURI(uri);
-  var dec = decodeURI(enc);
-  var params = new URL(uri).searchParams;
-  var res = "Encoded URI: " + enc + "<br>" + "Decoded URI: " + dec + "<br> JSON" + JSON.stringify(params);
+  var uri = "https://www.w3schools.com/jsref/tryit.asp?Filename=tryjsref_decodeuri&color[0]=red&color[1]=green&selection=1&selection=2&selection=3#testhashzhong中文",
+      enc = encodeURI(uri),
+      dec = decodeURI(enc),
+      params = new URL(uri).searchParams,
+      res = "Encoded URI: " + enc + "<br>" + "Decoded URI: " + dec + "<br> JSON" + JSON.stringify(params);
   $("<div></div>").appendTo('body').html(res);
   params.forEach(function (val, k, arr) {
-    console.log(val + " " + k + " ");
+    console.log("".concat(val, " ").concat(k, " "));
   });
 }
+
 myFunction();
 $('#timesmutipulecheck').find("input").checkboxradio({
   icon: false
 });
-$("#btns").eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function () {
+$("#btns").eq(0).button({
+  icon: 'ui-icon-seek-next',
+  showLabel: true
+}).click(function () {
   $('#timesmutipulecheck>input').each(function (i, item) {
     $(item).prop("checked", !$(item).is(":checked")).change(); //checkboxradio 修改值后，必须调用change才会引发UI更新
   });
 }).end();
-//# sourceMappingURL=URLTest.user.js.map
+
+function test() {
+  for (var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "hello", {
+    a: a,
+    b: b
+  } = arguments.length > 1 ? arguments[1] : undefined, _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  console.log(x, a, b, args);
+}

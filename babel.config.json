@@ -3,7 +3,8 @@
   "only": [
     "**/*.babel",
     "**/*.jsx",
-    "**/*.es6"
+    "**/*.es6",
+    "*/*.es6"
   ],
   "presets": [
     [
@@ -57,6 +58,18 @@
     ],
     "babel-plugin-transform-merge-sibling-variables",
     "babel-plugin-minify-numeric-literals",
-    "@babel/plugin-transform-block-scoping"
+     
+    [
+      "@babel/plugin-transform-shorthand-properties"
+    ],
+    [
+      "@babel/plugin-transform-parameters"
+    ],
+    [
+      "@babel/plugin-transform-block-scoping",
+      {
+        "throwIfClosureRequired": true
+      }
+    ]
   ]
 }

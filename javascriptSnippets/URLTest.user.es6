@@ -44,3 +44,7 @@ $("#btns").eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(fu
     $(item).prop("checked", !$(item).is(":checked")).change(); //checkboxradio 修改值后，必须调用change才会引发UI更新
   });
 }).end();
+
+function test(x = "hello", { a, b }, ...args) {
+  console.log(x, a, b, args);
+}
