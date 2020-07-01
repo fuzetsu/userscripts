@@ -28,7 +28,6 @@
 // ==/UserScript==
 (function() {
   'use strict';
-  (a, b) => a + b + 6;
   //重载类型方法
   (function() {
     let PropertiesCaseInsensitive = {
@@ -259,7 +258,7 @@
     $.dequeue(document);
   };
 
-  function getorAdd(key, func) {
+  function getorAddSession(key, func) {
     if(!(key in sessionStorage)) {
       let data = typeof func == 'function' ? func(key) : func;
       sessionStorage.setItem(key, data);
@@ -299,15 +298,9 @@
     $('.s-t-content.f-cb').empty().append(sortEle);
   };
 
-  function getBatchNumberKey() {
+  function getBatchNumber() {
     if(conf.newBatcherKeyHours <= 0) return new Date().getTime();
     return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 3600000);
-  }
-
-  function getBatchNumber() {
-    return getorAdd(getBatchNumberKey(), function(key) {
-      return new Date().getTime();
-    });
   }
 
   function getLeftPageCount() {

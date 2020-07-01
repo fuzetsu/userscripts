@@ -29,12 +29,7 @@
 // @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
 (function () {
-  'use strict';
-
-  (function (a, b) {
-    return a + b + 6;
-  }); //重载类型方法
-
+  'use strict'; //重载类型方法
 
   (function () {
     var PropertiesCaseInsensitive = {
@@ -333,7 +328,7 @@
     $.dequeue(document);
   };
 
-  function getorAdd(key, func) {
+  function getorAddSession(key, func) {
     if (!(key in sessionStorage)) {
       var data = typeof func == 'function' ? func(key) : func;
       sessionStorage.setItem(key, data);
@@ -380,15 +375,9 @@
     $('.s-t-content.f-cb').empty().append(sortEle);
   };
 
-  function getBatchNumberKey() {
+  function getBatchNumber() {
     if (conf.newBatcherKeyHours <= 0) return new Date().getTime();
     return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 36e5);
-  }
-
-  function getBatchNumber() {
-    return getorAdd(getBatchNumberKey(), function (key) {
-      return new Date().getTime();
-    });
   }
 
   function getLeftPageCount() {
@@ -475,14 +464,14 @@
         fc1 = $('#fcSlider').slider('values', 0),
         fc2 = $('#fcSlider').slider('values', 1);
     return {
-      l1,
-      l2,
-      rate1,
-      rate2,
-      age1,
-      age2,
-      fc1,
-      fc2
+      l1: l1,
+      l2: l2,
+      rate1: rate1,
+      rate2: rate2,
+      age1: age1,
+      age2: age2,
+      fc1: fc1,
+      fc2: fc2
     };
   }
 
@@ -556,18 +545,18 @@
       if (type == '收藏外教') {
         var isfavorite = true;
         return {
-          age,
-          label,
-          name,
-          effectivetime,
-          isfavorite
+          age: age,
+          label: label,
+          name: name,
+          effectivetime: effectivetime,
+          isfavorite: isfavorite
         };
       } else return {
-        age,
-        label,
-        name,
-        effectivetime,
-        type
+        age: age,
+        label: label,
+        name: name,
+        effectivetime: effectivetime,
+        type: type
       };
     } //获取列表中数据
 
