@@ -40,7 +40,11 @@ function waitForElems({ sel, onmatch, context = document.body, stop = false, thr
     observer.disconnect()
   }
 
+  // start waiting
   connect()
+
+  // run initial check in case element is already on the page
+  check()
 
   return { start: connect, stop: disconnect }
 }
