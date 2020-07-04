@@ -2,7 +2,7 @@
 // @name         Prettier Anything
 // @namespace    prettier-anything
 // @author       fuzetsu
-// @version      0.1.3
+// @version      0.1.4
 // @description  Apply prettier formatting to any text input
 // @match        *://*/*
 // @inject-into  content
@@ -81,9 +81,7 @@ const getSelection = () => {
     if (!document.getSelection().toString()) return
     document.execCommand('copy')
     return navigator.clipboard.readText()
-  } else {
-    return document.getSelection().toString()
-  }
+  } else return document.getSelection().toString()
 }
 
 const insertText = text => {
@@ -101,23 +99,25 @@ const prettify = async clip => {
   p('key combo HIT, selection = ', code, '; clip = ', clip)
   if (!code) return p('no selection, so nothing to do')
   p('--- PRETTIER START ---')
+
   p('Loading Prettier')
   const loadStart = Date.now()
   await load()
   p('Loaded, delta = ', Date.now() - loadStart)
+
   const conf = {
     ...JSON.parse(config.prettierrc || '{}'),
     parser: 'babel',
     plugins: prettierPlugins
   }
   p('formatting using conf:', conf)
+
   const formatted = prettier.format(code, conf)
-  if (clip) {
-    GM_setClipboard(formatted)
-    document.getSelection().empty()
-  } else {
-    insertText(formatted)
-  }
+  if (clip) GM_setClipboard(formatted)
+  else insertText(formatted)
+
+  document.getSelection().empty()
+
   p('BEFORE:\n', code)
   p('AFTER:\n', formatted)
   p('--- PRETTIER END ---')
