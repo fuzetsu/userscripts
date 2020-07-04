@@ -47,7 +47,7 @@ function waitForElems({ sel, onmatch, context = document.body, stop = false, thr
 
 /**
  * waitForUrl
- * @param {RegExp|(url: string) => boolean} match
+ * @param {RegExp | ((url: string) => boolean)} match
  * @param {(url: string) => void} onmatch
  * @param {boolean} stopLooking
  */
