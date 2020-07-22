@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.22001
+// @version 2020.7.22003
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -306,7 +306,7 @@
 
   function getBatchNumber() {
     if(conf.newBatcherKeyHours <= 0) return new Date().getTime();
-    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 3600000);
+    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 3600000) * conf.newBatcherKeyHours * 3600000;
   }
 
   function getLeftPageCount() {
@@ -323,7 +323,7 @@
   }
   $('head').append(`
     <link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">
-    <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/flick/jquery-ui.css" rel="stylesheet" type="text/css">
+    <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
   `);
   $('head').append(`<style type="text/css">
 .search-teachers .s-t-list .item-time-list {margin-top:315px;}

@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.22001
+// @version 2020.7.22003
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -388,7 +388,7 @@
 
   function getBatchNumber() {
     if (conf.newBatcherKeyHours <= 0) return new Date().getTime();
-    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 36e5);
+    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 36e5) * conf.newBatcherKeyHours * 36e5;
   }
 
   function getLeftPageCount() {
@@ -402,7 +402,7 @@
     if (settings.pagecount > pages) return pages;else return settings.pagecount;
   }
 
-  $('head').append("\n    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css\" rel=\"stylesheet\" type=\"text/css\">\n    <link href=\"https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/flick/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\">\n  ");
+  $('head').append("\n    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css\" rel=\"stylesheet\" type=\"text/css\">\n    <link href=\"https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/base/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\">\n  ");
   $('head').append("<style type=\"text/css\">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item { height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n  float: left;\n  width: 118px;\n  height: 34px;\n  line-height: 34px;\n  margin-right: 5px;\n  margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n  padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n  height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n  margin-bottom: 2px;\n}\n.s-t-page { padding-top: 2px;}\n</style>");
   var maxrate = 0,
       minrate = 99999,
