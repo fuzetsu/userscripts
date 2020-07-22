@@ -1009,7 +1009,7 @@
                   var date = new Date(Number(value));
 
                   if (date instanceof Date && !isNaN(date.valueOf())) {
-                    return date.toString('yyMMddhhmmss');
+                    return date.toString('yyyyMMddHHmm');
                   }
 
                   return value;
