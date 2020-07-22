@@ -1142,7 +1142,7 @@
                 let t = teachers.find((currentValue, index, arr) => {
                   return currentValue.tid == tid;
                 });
-                let lb = jqel.find('.teacher-name>label');
+                let lb = jqel.find('.teacher-name>label:eq(1)');
                 if(lb.length == 0) jqel.find('.teacher-name').html(`${jqel.find('.teacher-name').html()}| ${getRankHtml(t)}`);
                 else lb.replaceWith(getRankHtml(t));
               });

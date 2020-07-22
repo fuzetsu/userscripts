@@ -1206,7 +1206,7 @@
                     t = teachers.find(function (currentValue, index, arr) {
                   return currentValue.tid == tid;
                 }),
-                    lb = jqel.find('.teacher-name>label');
+                    lb = jqel.find('.teacher-name>label:eq(1)');
                 if (lb.length == 0) jqel.find('.teacher-name').html("".concat(jqel.find('.teacher-name').html(), "| ").concat(getRankHtml(t)));else lb.replaceWith(getRankHtml(t));
               });
             }
