@@ -1030,7 +1030,8 @@
                 sorttype: 'string',
                 align: 'left',
                 searchoptions: {
-                  sopt: ['cn']
+                  sopt: ['cn'],
+                  defaultValue: $('.s-t-top-list .li-active').text() == '收藏外教' ? '' : $('.s-t-top-list .li-active').text()
                 },
                 formatter: function formatter(value, options, rData) {
                   if (value) return value;else return 'na';
@@ -1196,7 +1197,7 @@
 
             }).jqGrid('filterToolbar', {
               searchOperators: true
-            });
+            })[0].triggerToolbar();
 
             if (settings.isListPage) {
               $.each($('.item'), function (i, item) {

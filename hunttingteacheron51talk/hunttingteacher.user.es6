@@ -989,7 +989,10 @@
                     width: 55,
                     sorttype: 'string',
                     align: 'left',
-                    searchoptions: { sopt: ['cn'] },
+                    searchoptions: {
+                      sopt: ['cn'],
+                      defaultValue: $('.s-t-top-list .li-active').text() == '收藏外教' ? '' : $('.s-t-top-list .li-active').text()
+                    },
                     formatter: function formatter(value, options, rData) {
                       if(value) return value;
                       else return 'na';
@@ -1131,7 +1134,7 @@
                 //autowidth: true,
                 width: 732
                 //caption: "",,
-              }).jqGrid('filterToolbar', { searchOperators: true });
+              }).jqGrid('filterToolbar', { searchOperators: true })[0].triggerToolbar();
             if(settings.isListPage) {
               $.each($('.item'), function(i, item) {
                 let jqel = $(item);
