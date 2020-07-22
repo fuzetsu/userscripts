@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.1001
+// @version 2020.7.22001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -20,8 +20,8 @@
 // @grant GM_listValues
 // @grant GM_deleteValue
 // @grant GM_registerMenuCommand
-// @require http://code.jquery.com/jquery-3.4.1.min.js
-// @require https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
+// @require https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js
+// @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
@@ -29,9 +29,9 @@
 // @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
 (function () {
-  'use strict'; //重载类型方法
+  'use strict'; ///extend method parameters of window, get parameter's value with key case-insensitive
 
-  (function () {
+  (function ($) {
     var PropertiesCaseInsensitive = {
       has: function has(target, prop) {
         if (typeof prop === 'symbol') {
@@ -73,132 +73,7 @@
         target[prop.toLowerCase()] = value;
         return true;
       }
-    },
-        getPaddedComp = function getPaddedComp(comp) {
-      var len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-      if (len < 1) len = 1;
-      var paddedLen = len - ('' + comp).length,
-          ret = "";
-      if (paddedLen > 0) while (paddedLen--) {
-        ret = ret.concat("0");
-      }
-      return ret.concat(comp);
-    },
-        o = {
-      '[y|Y]{4}': function yY4(date) {
-        return date.getFullYear();
-      },
-      // year
-      '[y|Y]{2}': function yY2(date) {
-        return date.getFullYear().toString().slice(2);
-      },
-      // year
-      MM: function MM(date) {
-        return getPaddedComp(date.getMonth() + 1);
-      },
-      //month
-      M: function M(date) {
-        return date.getMonth() + 1;
-      },
-      //month
-      '[d|D]{2}': function dD2(date) {
-        return getPaddedComp(date.getDate());
-      },
-      //day
-      '[d|D]{1}': function dD1(date) {
-        return date.getDate();
-      },
-      //day
-      'h{2}': function h2(date) {
-        return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
-      },
-      //hour
-      'h{1}': function h1(date) {
-        return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
-      },
-      //hour
-      'H{2}': function H2(date) {
-        return getPaddedComp(date.getHours());
-      },
-      //hour
-      'H{1}': function H1(date) {
-        return date.getHours();
-      },
-      //hour
-      'm{2}': function m2(date) {
-        return getPaddedComp(date.getMinutes());
-      },
-      //minute
-      'm{1}': function m1(date) {
-        return date.getMinutes();
-      },
-      //minute
-      's+': function s(date) {
-        return getPaddedComp(date.getSeconds());
-      },
-      //second
-      'f+': function f(date) {
-        return getPaddedComp(date.getMilliseconds());
-      },
-      //millisecond,
-      'b+': function b(date) {
-        return date.getHours() >= 12 ? 'PM' : 'AM';
-      }
     };
-
-    $.extend(Date.prototype, {
-      toString: function toString(format) {
-        var formattedDate = format;
-
-        for (var k in o) {
-          if (new RegExp('(' + k + ')').test(format)) {
-            formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
-          }
-        }
-
-        return formattedDate;
-      }
-    }); //删除数组中的空元素
-
-    $.extend(Array.prototype, {
-      clean: function clean() {
-        for (var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '', i = 0; i < this.length; i++) {
-          if (this[i] == deleteValue) {
-            this.splice(i, 1);
-            i--;
-          }
-        }
-
-        return this;
-      }
-    });
-    $.extend(Number.prototype, {
-      toString: function toString(num) {
-        if (isNaN(num)) num = 2;
-        return this.toFixed(num);
-      }
-    });
-    $.extend(String.prototype, {
-      toFloat: function toFloat() {
-        return parseFloat(this);
-      },
-      toInt: function toInt() {
-        return parseInt(this);
-      },
-      startsWith: function startsWith(str) {
-        return this.slice(0, str.length) == str;
-      },
-      endsWith: function endsWith(str) {
-        return this.slice(-str.length) == str;
-      },
-      includes: function includes(str) {
-        return this.indexOf(str) > -1;
-      },
-      replaceAll: function replaceAll(search, replacement) {
-        var target = this;
-        return target.replace(new RegExp(search, 'g'), replacement);
-      }
-    });
     $.extend(window, {
       parameters: function parameters(url) {
         // get query string from url (optional) or window
@@ -259,7 +134,143 @@
         return obj;
       }
     });
-  })();
+  })($); ///date to string with formater
+
+
+  (function ($) {
+    var getPaddedComp = function getPaddedComp(comp) {
+      var len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+      if (len < 1) len = 1;
+      comp = '' + comp;
+      var paddedLen = len - ('' + comp).length;
+
+      if (paddedLen > 0) {
+        return [...Array(paddedLen).fill('0'), ...comp].join('');
+      } else return comp;
+    },
+        o = {
+      '[y|Y]{4}': function yY4(date) {
+        return date.getFullYear();
+      },
+      // year
+      '[y|Y]{2}': function yY2(date) {
+        return date.getFullYear().toString().slice(2);
+      },
+      // year
+      MM: function MM(date) {
+        return getPaddedComp(date.getMonth() + 1);
+      },
+      //month
+      M: function M(date) {
+        return date.getMonth() + 1;
+      },
+      //month
+      '[d|D]{2}': function dD2(date) {
+        return getPaddedComp(date.getDate());
+      },
+      //day
+      '[d|D]{1}': function dD1(date) {
+        return date.getDate();
+      },
+      //day
+      'h{2}': function h2(date) {
+        return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
+      },
+      //hour
+      'h{1}': function h1(date) {
+        return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
+      },
+      //hour
+      'H{2}': function H2(date) {
+        return getPaddedComp(date.getHours());
+      },
+      //hour
+      'H{1}': function H1(date) {
+        return date.getHours();
+      },
+      //hour
+      'm{2}': function m2(date) {
+        return getPaddedComp(date.getMinutes());
+      },
+      //minute
+      'm{1}': function m1(date) {
+        return date.getMinutes();
+      },
+      //minute
+      's+': function s(date) {
+        return getPaddedComp(date.getSeconds());
+      },
+      //second
+      'f+': function f(date) {
+        return getPaddedComp(date.getMilliseconds(), 3);
+      },
+      //millisecond,
+      'f{1}': function f1(date) {
+        return getPaddedComp(date.getMilliseconds(), 0);
+      },
+      //millisecond,
+      'b+': function b(date) {
+        return date.getHours() >= 12 ? 'PM' : 'AM';
+      }
+    };
+
+    $.extend(Date.prototype, {
+      toString: function toString(format) {
+        var formattedDate = format;
+
+        for (var k in o) {
+          if (new RegExp('(' + k + ')').test(format)) {
+            formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+          }
+        }
+
+        return formattedDate;
+      }
+    });
+  })($); //扩展基本类型方法 array.clean(val), Number.toString(len),String.toFloat, String.toInt,String.startsWtih,String.endsWith, ** String.replaceAll区别育默认的string.replace
+
+
+  (function ($) {
+    $.extend(Array.prototype, {
+      clean: function clean() {
+        for (var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '', i = 0; i < this.length; i++) {
+          if (this[i] == deleteValue) {
+            this.splice(i, 1);
+            i--;
+          }
+        }
+
+        return this;
+      }
+    });
+    $.extend(Number.prototype, {
+      toString: function toString(num) {
+        if (isNaN(num)) num = 2;
+        return this.toFixed(num);
+      }
+    });
+    $.extend(String.prototype, {
+      toFloat: function toFloat() {
+        return parseFloat(this);
+      },
+      toInt: function toInt() {
+        return parseInt(this);
+      },
+      startsWith: function startsWith(str) {
+        return this.slice(0, str.length) == str;
+      },
+      endsWith: function endsWith(str) {
+        return this.slice(-str.length) == str;
+      },
+      includes: function includes(str) {
+        return this.indexOf(str) > -1;
+      },
+      replaceAll: function replaceAll(search, replacement) {
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+      }
+    });
+  })($);
 
   var config = GM_config([{
     key: 'pagecount',
@@ -391,7 +402,7 @@
     if (settings.pagecount > pages) return pages;else return settings.pagecount;
   }
 
-  $('head').append("<link href=\"https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\">\n  <link href=\"https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css\" rel=\"stylesheet\" type=\"text/css\">");
+  $('head').append("\n    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css\" rel=\"stylesheet\" type=\"text/css\">\n    <link href=\"https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/flick/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\">\n  ");
   $('head').append("<style type=\"text/css\">\n.search-teachers .s-t-list .item-time-list {margin-top:315px;}\n.search-teachers .s-t-list .item { height: 679px; }\n.search-teachers .s-t-list .s-t-content { margin-right: 0px;}\n.search-teachers { width: 100%; }\n.search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}\n.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }\n.pace {\n  -webkit-pointer-events: none;\n  pointer-events: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.pace-inactive {\n  display: none;\n}\n.ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}\n.ui-dialog .ui-dialog-content { padding: .5em 0.2em;}\n.pace .pace-progress {\n  background: #29d;\n  position: fixed;\n  z-index: 2000;\n  top: 0;\n  right: 100%;\n  width: 100%;\n  height: 2px;\n}\n.search-teachers .s-t-top .s-t-days .s-t-days-list li {\n  float: left;\n  width: 118px;\n  height: 34px;\n  line-height: 34px;\n  margin-right: 5px;\n  margin-bottom: 5px;\n}\n.search-teachers .s-t-top .s-t-top-details {\n  padding: 2px 0 2px 30px;\n}\n.search-teachers .s-t-top .s-t-top-right {\n  height: auto;\n}\n.search-teachers .s-t-top .s-t-top-left .condition-item {\n  margin-bottom: 2px;\n}\n.s-t-page { padding-top: 2px;}\n</style>");
   var maxrate = 0,
       minrate = 99999,
@@ -761,10 +772,10 @@
             buttons = '';
 
         if (settings.isListPage) {
-          buttons = "\n          <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers' title='\u81EA\u52A8\u83B7\u53D6\u4E0A\u8FF0\u9009\u62E9\u65F6\u6BB5\u7684\u5168\u90E8\u6559\u5E08\u5E76\u7F13\u5B58'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
+          buttons = "\n            <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers' title='\u81EA\u52A8\u83B7\u53D6\u4E0A\u8FF0\u9009\u62E9\u65F6\u6BB5\u7684\u5168\u90E8\u6559\u5E08\u5E76\u7F13\u5B58'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
         }
 
-        $('body').append("<div id='filterdialog' title='Teacher Filter'>\n      <div id='tabs'>\n        <div>\n          <ul>\n            <li><a href=\"#tabs-1\">Search Teachers</a></li>\n            <li><a href=\"#tabs-2\">Sorted Teachers</a></li>\n          </ul>\n          <br />\n            ".concat(buttons, "\n        </div>\n        <div id=\"tabs-1\">\n          \u5F53\u524D\u53EF\u9009<span id='tcount' />\u4F4D,\u88AB\u6298\u53E0<span id='thidecount' />\u4F4D\u3002<br />\n          \u6709\u6548\u7ECF\u9A8C\u503C <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>\n          \u6536\u85CF\u6570 <span id='_tfc' /><br /><div id='fcSlider'></div>\n          \u597D\u8BC4\u7387 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>\n          \u5E74\u9F84 <span id='_tAge' /><br /><div id='tAgeSlider'></div>\n        </div>\n        <div id=\"tabs-2\">\n          <table id=\"teachertab\"></table>\n          <div id=\"pager5\"></div>\n        </div>\n      </div>\n    </div>"));
+        $('body').append("<div id='filterdialog' title='Teacher Filter'>\n      <div id='tabs'>\n        <div>\n          <ul>\n            <li><a href=\"#tabs-1\">Search Teachers</a></li>\n            <li><a href=\"#tabs-2\">Sorted Teachers</a></li>\n          </ul>\n          <br />\n            ".concat(buttons, "\n        </div>\n        <div id=\"tabs-1\">\n          \u5F53\u524D\u53EF\u9009<span id='tcount' ></span>\u4F4D,\u88AB\u6298\u53E0<span id='thidecount' ></span>\u4F4D\u3002<br />\n          \u6709\u6548\u7ECF\u9A8C\u503C <span id='_tLabelCount' ></span><br /><div id='tlabelslider'></div>\n          \u6536\u85CF\u6570 <span id='_tfc' ></span><br /><div id='fcSlider'></div>\n          \u597D\u8BC4\u7387 <span id='_thumbupRate'></span><br /><div id='thumbupRateslider'></div>\n          \u5E74\u9F84 <span id='_tAge' ></span><br /><div id='tAgeSlider'></div>\n        </div>\n        <div id=\"tabs-2\">\n          <table id=\"teachertab\"></table>\n          <div id=\"pager5\"></div>\n        </div>\n      </div>\n    </div>"));
         $('body').append("<div id='teachlistdialog' style='display:none;'></div>");
         $('body').append("<div id='wwwww'>已加载选课辅助插件。</div>"); //这是一个奇怪的BUG on jqueryui. 如果不多额外添加一个，则dialog无法弹出。
 
@@ -1185,8 +1196,9 @@
                     tid = jqel.find('.teacher-details-link a').attr('href').replace('https://www.51talk.com/TeacherNew/info/', '').replace('http://www.51talk.com/TeacherNew/info/', ''),
                     t = teachers.find(function (currentValue, index, arr) {
                   return currentValue.tid == tid;
-                });
-                jqel.find('.teacher-name').html("".concat(jqel.find('.teacher-name').html(), "| ").concat(getRankHtml(t)));
+                }),
+                    lb = jqel.find('.teacher-name>label');
+                if (lb.length == 0) jqel.find('.teacher-name').html("".concat(jqel.find('.teacher-name').html(), "| ").concat(getRankHtml(t)));else lb.replaceWith(getRankHtml(t));
               });
             }
 

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.1001
+// @version 2020.7.22001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -18,8 +18,8 @@
 // @grant GM_listValues
 // @grant GM_deleteValue
 // @grant GM_registerMenuCommand
-// @require http://code.jquery.com/jquery-3.4.1.min.js
-// @require https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
+// @require https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js
+// @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
@@ -28,8 +28,8 @@
 // ==/UserScript==
 (function() {
   'use strict';
-  //重载类型方法
-  (function() {
+  ///extend method parameters of window, get parameter's value with key case-insensitive
+  (function($) {
     let PropertiesCaseInsensitive = {
       has: function has(target, prop) {
         if(typeof prop === 'symbol') {
@@ -65,81 +65,6 @@
         return true;
       }
     };
-    let getPaddedComp = (comp, len = 2) => {
-        if(len < 1) len = 1;
-        let paddedLen = len - ('' + comp).length;
-        let ret = "";
-        if(paddedLen > 0)
-          while(paddedLen--) ret = ret.concat("0");
-        return ret.concat(comp);
-      },
-      o = {
-        '[y|Y]{4}': date => date.getFullYear(), // year
-        '[y|Y]{2}': date => date.getFullYear().toString().slice(2), // year
-        MM: date => getPaddedComp(date.getMonth() + 1), //month
-        M: date => date.getMonth() + 1, //month
-        '[d|D]{2}': date => getPaddedComp(date.getDate()), //day
-        '[d|D]{1}': date => date.getDate(), //day
-        'h{2}': date => getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours()), //hour
-        'h{1}': date => date.getHours() > 12 ? date.getHours() % 12 : date.getHours(), //hour
-        'H{2}': date => getPaddedComp(date.getHours()), //hour
-        'H{1}': date => date.getHours(), //hour
-        'm{2}': date => getPaddedComp(date.getMinutes()), //minute
-        'm{1}': date => date.getMinutes(), //minute
-        's+': date => getPaddedComp(date.getSeconds()), //second
-        'f+': date => getPaddedComp(date.getMilliseconds()), //millisecond,
-        'b+': date => date.getHours() >= 12 ? 'PM' : 'AM'
-      };
-    $.extend(Date.prototype, {
-      toString: function(format) {
-        let formattedDate = format;
-        for(let k in o) {
-          if(new RegExp('(' + k + ')').test(format)) {
-            formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
-          }
-        }
-        return formattedDate;
-      }
-    });
-    //删除数组中的空元素
-    $.extend(Array.prototype, {
-      clean: function(deleteValue = '') {
-        for(let i = 0; i < this.length; i++) {
-          if(this[i] == deleteValue) {
-            this.splice(i, 1);
-            i--;
-          }
-        }
-        return this;
-      }
-    });
-    $.extend(Number.prototype, {
-      toString: function(num) {
-        if(isNaN(num)) num = 2;
-        return this.toFixed(num);
-      }
-    });
-    $.extend(String.prototype, {
-      toFloat: function() {
-        return parseFloat(this);
-      },
-      toInt: function() {
-        return parseInt(this);
-      },
-      startsWith: function(str) {
-        return this.slice(0, str.length) == str;
-      },
-      endsWith: function(str) {
-        return this.slice(-str.length) == str;
-      },
-      includes: function(str) {
-        return this.indexOf(str) > -1;
-      },
-      replaceAll: function(search, replacement) {
-        let target = this;
-        return target.replace(new RegExp(search, 'g'), replacement);
-      }
-    });
     $.extend(window, {
       parameters: function(url) {
         // get query string from url (optional) or window
@@ -196,7 +121,88 @@
         return obj;
       }
     });
-  })();
+  })($);
+  ///date to string with formater
+  (function($) {
+    let getPaddedComp = (comp, len = 2) => {
+        if(len < 1) len = 1;
+        comp = '' + comp;
+        let paddedLen = len - ('' + comp).length;
+        if(paddedLen > 0) {
+          return [...Array(paddedLen).fill('0'), ...comp].join('');
+        } else return comp;
+      },
+      o = {
+        '[y|Y]{4}': (date) => date.getFullYear(), // year
+        '[y|Y]{2}': (date) => date.getFullYear().toString().slice(2), // year
+        MM: (date) => getPaddedComp(date.getMonth() + 1), //month
+        M: (date) => date.getMonth() + 1, //month
+        '[d|D]{2}': (date) => getPaddedComp(date.getDate()), //day
+        '[d|D]{1}': (date) => date.getDate(), //day
+        'h{2}': (date) => getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours()), //hour
+        'h{1}': (date) => date.getHours() > 12 ? date.getHours() % 12 : date.getHours(), //hour
+        'H{2}': (date) => getPaddedComp(date.getHours()), //hour
+        'H{1}': (date) => date.getHours(), //hour
+        'm{2}': (date) => getPaddedComp(date.getMinutes()), //minute
+        'm{1}': (date) => date.getMinutes(), //minute
+        's+': (date) => getPaddedComp(date.getSeconds()), //second
+        'f+': (date) => getPaddedComp(date.getMilliseconds(), 3), //millisecond,
+        'f{1}': (date) => getPaddedComp(date.getMilliseconds(), 0), //millisecond,
+        'b+': (date) => (date.getHours() >= 12 ? 'PM' : 'AM'),
+      };
+    $.extend(Date.prototype, {
+      toString: function(format) {
+        let formattedDate = format;
+        for(let k in o) {
+          if(new RegExp('(' + k + ')').test(format)) {
+            formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
+          }
+        }
+        return formattedDate;
+      },
+    });
+  })($);
+  //扩展基本类型方法 array.clean(val), Number.toString(len),String.toFloat, String.toInt,String.startsWtih,String.endsWith, ** String.replaceAll区别育默认的string.replace
+  (function($) {
+    $.extend(Array.prototype, {
+      clean: function(deleteValue = '') {
+        for(let i = 0; i < this.length; i++) {
+          if(this[i] == deleteValue) {
+            this.splice(i, 1);
+            i--;
+          }
+        }
+        return this;
+      }
+    });
+    $.extend(Number.prototype, {
+      toString: function(num) {
+        if(isNaN(num)) num = 2;
+        return this.toFixed(num);
+      }
+    });
+    $.extend(String.prototype, {
+      toFloat: function() {
+        return parseFloat(this);
+      },
+      toInt: function() {
+        return parseInt(this);
+      },
+      startsWith: function(str) {
+        return this.slice(0, str.length) == str;
+      },
+      endsWith: function(str) {
+        return this.slice(-str.length) == str;
+      },
+      includes: function(str) {
+        return this.indexOf(str) > -1;
+      },
+      replaceAll: function(search, replacement) {
+        let target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+      }
+    });
+  })($);
   const config = GM_config([{
     key: 'pagecount',
     label: '最大页数 (自动获取时)',
@@ -315,8 +321,10 @@
     if(settings.pagecount > pages) return pages;
     else return settings.pagecount;
   }
-  $('head').append(`<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">`);
+  $('head').append(`
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" rel="stylesheet" type="text/css">
+    <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/flick/jquery-ui.css" rel="stylesheet" type="text/css">
+  `);
   $('head').append(`<style type="text/css">
 .search-teachers .s-t-list .item-time-list {margin-top:315px;}
 .search-teachers .s-t-list .item { height: 679px; }
@@ -717,7 +725,7 @@
         let buttons = '';
         if(settings.isListPage) {
           buttons = `
-          <div id='buttons' style='text-align: center'>
+            <div id='buttons' style='text-align: center'>
             <button id='asc' title='当前为降序，点击后按升序排列'>升序</button>
             <button id='desc' title='当前为升序，点击进行降序排列' style='display:none;'>降序</button>&nbsp;
             <input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
@@ -742,11 +750,11 @@
             ${buttons}
         </div>
         <div id="tabs-1">
-          当前可选<span id='tcount' />位,被折叠<span id='thidecount' />位。<br />
-          有效经验值 <span id='_tLabelCount' /><br /><div id='tlabelslider'></div>
-          收藏数 <span id='_tfc' /><br /><div id='fcSlider'></div>
-          好评率 <span id='_thumbupRate'/><br /><div id='thumbupRateslider'></div>
-          年龄 <span id='_tAge' /><br /><div id='tAgeSlider'></div>
+          当前可选<span id='tcount' ></span>位,被折叠<span id='thidecount' ></span>位。<br />
+          有效经验值 <span id='_tLabelCount' ></span><br /><div id='tlabelslider'></div>
+          收藏数 <span id='_tfc' ></span><br /><div id='fcSlider'></div>
+          好评率 <span id='_thumbupRate'></span><br /><div id='thumbupRateslider'></div>
+          年龄 <span id='_tAge' ></span><br /><div id='tAgeSlider'></div>
         </div>
         <div id="tabs-2">
           <table id="teachertab"></table>
@@ -1124,7 +1132,9 @@
                 let t = teachers.find((currentValue, index, arr) => {
                   return currentValue.tid == tid;
                 });
-                jqel.find('.teacher-name').html(`${jqel.find('.teacher-name').html()}| ${getRankHtml(t)}`);
+                let lb = jqel.find('.teacher-name>label');
+                if(lb.length == 0) jqel.find('.teacher-name').html(`${jqel.find('.teacher-name').html()}| ${getRankHtml(t)}`);
+                else lb.replaceWith(getRankHtml(t));
               });
             }
             if(settings.isDetailPage) {
