@@ -858,10 +858,17 @@
           }).css({ width: '45px' }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end()
           //清空缓存
           .eq(3).button({ icon: 'uiicon-trash', showLabel: true }).click(function() {
-            $.each(GM_listValues(), function(i, item) {
-              //if(item.startsWith('tinfo-')) {
-              GM_deleteValue(item);
-              //}
+            var keys = GM_listValues();
+            $.each(keys, function(i, item) {
+              let title = `正在删除第${i}个教师缓存`;
+              submit(function(next) {
+                try {
+                  $('title').html(title);
+                  GM_deleteValue(item);
+                } finally {
+                  next();
+                }
+              });
             });
             $('.go-search').click();
           }).end()

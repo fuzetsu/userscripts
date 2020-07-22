@@ -882,9 +882,17 @@
           icon: 'uiicon-trash',
           showLabel: true
         }).click(function () {
-          $.each(GM_listValues(), function (i, item) {
-            //if(item.startsWith('tinfo-')) {
-            GM_deleteValue(item); //}
+          var keys = GM_listValues();
+          $.each(keys, function (i, item) {
+            var title = "\u6B63\u5728\u5220\u9664\u7B2C".concat(i, "\u4E2A\u6559\u5E08\u7F13\u5B58");
+            submit(function (next) {
+              try {
+                $('title').html(title);
+                GM_deleteValue(item);
+              } finally {
+                next();
+              }
+            });
           });
           $('.go-search').click();
         }).end() //submit suggestion
