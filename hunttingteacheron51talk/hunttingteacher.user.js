@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.22003
+// @version 2020.7.22005
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -362,9 +362,9 @@
   };
 
   function sleep(delay) {
-    var start = new Date().getTime();
+    var start = Date.now();
 
-    while (new Date().getTime() - start < delay) {
+    while (Date.now() - start < delay) {
       continue;
     }
   }
@@ -387,8 +387,8 @@
   };
 
   function getBatchNumber() {
-    if (conf.newBatcherKeyHours <= 0) return new Date().getTime();
-    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 36e5) * conf.newBatcherKeyHours * 36e5;
+    if (conf.newBatcherKeyHours <= 0) return Date.now();
+    return parseInt(Date.now() / conf.newBatcherKeyHours / 36e5) * conf.newBatcherKeyHours * 36e5;
   }
 
   function getLeftPageCount() {
@@ -582,7 +582,7 @@
               tinfo = GM_getValue(tinfokey);
 
           if (tinfo) {
-            var now = new Date().getTime();
+            var now = Date.now();
 
             if (!tinfo.expire) {
               tinfo.expire = new Date(1970, 1, 1).getTime();
@@ -599,7 +599,7 @@
           } // ajax 请求一定要包含在一个函数中
 
 
-          var start = new Date().getTime();
+          var start = Date.now();
           $.ajax({
             url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
             type: 'GET',
@@ -629,7 +629,7 @@
                   thumbupRate: thumbupRate,
                   favoritesCount: favoritesCount,
                   isfavorite: isfavorite,
-                  expire: new Date().getTime()
+                  expire: Date.now()
                 };
                 tinfo = $.extend(tinfo, teacherlistinfo);
                 tinfo.indicator = calcIndicator(tinfo);
@@ -643,7 +643,7 @@
               console.log('xhr error when getting teacher ' + JSON.stringify(jqel) + ',error msg:' + JSON.stringify(data));
             }
           }).always(function () {
-            while (new Date().getTime() - start < 600) {
+            while (Date.now() - start < 600) {
               continue;
             }
 
@@ -717,7 +717,7 @@
         tinfo.thumbdown = Number(jqr.find('.evaluate-content-left span:eq(2)').text().match(num).clean('')[0]);
         tinfo.thumbupRate = ((tinfo.thumbup + 1e-5) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
         tinfo.slevel = jqr.find('.sui-students').text();
-        tinfo.expire = new Date().getTime();
+        tinfo.expire = Date.now();
       }
 
       tinfo.favoritesCount = Number(jqr.find('.clear-search').text().match(num).clean('')[0]);
@@ -772,7 +772,7 @@
             buttons = '';
 
         if (settings.isListPage) {
-          buttons = "\n            <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u53BB\u63D0\u5EFA\u8BAE\u548CBUG</a>&nbsp;\n            <a>?</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers' title='\u81EA\u52A8\u83B7\u53D6\u4E0A\u8FF0\u9009\u62E9\u65F6\u6BB5\u7684\u5168\u90E8\u6559\u5E08\u5E76\u7F13\u5B58'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
+          buttons = "\n            <div id='buttons' style='text-align: center'>\n            <button id='asc' title='\u5F53\u524D\u4E3A\u964D\u5E8F\uFF0C\u70B9\u51FB\u540E\u6309\u5347\u5E8F\u6392\u5217'>\u5347\u5E8F</button>\n            <button id='desc' title='\u5F53\u524D\u4E3A\u5347\u5E8F\uFF0C\u70B9\u51FB\u8FDB\u884C\u964D\u5E8F\u6392\u5217' style='display:none;'>\u964D\u5E8F</button>&nbsp;\n            <input id='tinfoexprhours' title='\u7F13\u5B58\u8FC7\u671F\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09'>&nbsp;\n            <button title='\u6E05\u7A7A\u7F13\u5B58\uFF0C\u5E76\u91CD\u65B0\u641C\u7D22'>\u6E05\u9664\u7F13\u5B58</button>&nbsp;\n            <a>\u62A5\u544ABUG</a>&nbsp;\n            <a>\u5E2E\u52A9</a>&nbsp;\n          </div>\n          <div id='buttons1' style='text-align: center;'>\n            <div id='timesmutipulecheck'></div>\n            <button>\u53CD\u9009\u65F6\u95F4\u6BB5</button>&nbsp;\n            <button id='autogettodaysteachers' title='\u81EA\u52A8\u83B7\u53D6\u4E0A\u8FF0\u9009\u62E9\u65F6\u6BB5\u7684\u5168\u90E8\u6559\u5E08\u5E76\u7F13\u5B58'>\u83B7\u53D6\u9009\u5B9A\u65F6\u6BB5\u8001\u5E08</button>&nbsp;\n          </div>";
         }
 
         $('body').append("<div id='filterdialog' title='Teacher Filter'>\n      <div id='tabs'>\n        <div>\n          <ul>\n            <li><a href=\"#tabs-1\">Search Teachers</a></li>\n            <li><a href=\"#tabs-2\">Sorted Teachers</a></li>\n          </ul>\n          <br />\n            ".concat(buttons, "\n        </div>\n        <div id=\"tabs-1\">\n          \u5F53\u524D\u53EF\u9009<span id='tcount' ></span>\u4F4D,\u88AB\u6298\u53E0<span id='thidecount' ></span>\u4F4D\u3002<br />\n          \u6709\u6548\u7ECF\u9A8C\u503C <span id='_tLabelCount' ></span><br /><div id='tlabelslider'></div>\n          \u6536\u85CF\u6570 <span id='_tfc' ></span><br /><div id='fcSlider'></div>\n          \u597D\u8BC4\u7387 <span id='_thumbupRate'></span><br /><div id='thumbupRateslider'></div>\n          \u5E74\u9F84 <span id='_tAge' ></span><br /><div id='tAgeSlider'></div>\n        </div>\n        <div id=\"tabs-2\">\n          <table id=\"teachertab\"></table>\n          <div id=\"pager5\"></div>\n        </div>\n      </div>\n    </div>"));
@@ -856,7 +856,7 @@
         $('#buttons>button,#buttons>input,#buttons>a') //升序
         .eq(0).button({
           icon: 'ui-icon-arrowthick-1-n',
-          showLabel: false
+          showLabel: true
         }).click(function () {
           $('#desc').show();
           $(this).hide();
@@ -864,7 +864,7 @@
         }).end() //降序
         .eq(1).button({
           icon: 'ui-icon-arrowthick-1-s',
-          showLabel: false
+          showLabel: true
         }).click(function () {
           $('#asc').show();
           $(this).hide();
@@ -880,7 +880,7 @@
         }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 36e5)).end() //清空缓存
         .eq(3).button({
           icon: 'uiicon-trash',
-          showLabel: false
+          showLabel: true
         }).click(function () {
           $.each(GM_listValues(), function (i, item) {
             //if(item.startsWith('tinfo-')) {
@@ -890,11 +890,11 @@
         }).end() //submit suggestion
         .eq(4).button({
           icon: 'ui-icon-comment',
-          showLabel: false
+          showLabel: true
         }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end() //系统帮助
         .eq(5).button({
           icon: 'ui-icon-help',
-          showLabel: false
+          showLabel: true
         }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
         $('#buttons1>button') //反选时间段
         .eq(0).button({
@@ -975,7 +975,7 @@
               indicator: Number(val.indicator),
               //'favoritesCount': val.favoritesCount,
               //'isfavorite': val.isfavorite,
-              //'expire': new Date().getTime(),
+              //'expire': Date.now(),
               rank: indexs[val.type]
             }); //GM_setValue("tinfo-"+t.tid,t);
 
@@ -1009,7 +1009,7 @@
                   var date = new Date(Number(value));
 
                   if (date instanceof Date && !isNaN(date.valueOf())) {
-                    return date.toString('HHmmss');
+                    return date.toString('yyMMddhhmmss');
                   }
 
                   return value;
@@ -1157,7 +1157,7 @@
                 },
                 formatter: function formatter(value, options, rData) {
                   if (value) {
-                    var d = new Date().getTime() - value;
+                    var d = Date.now() - value;
 
                     if (d < 1e3 * 60) {
                       return '刚刚';

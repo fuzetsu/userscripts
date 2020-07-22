@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.22003
+// @version 2020.7.22005
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -282,8 +282,8 @@
   };
 
   function sleep(delay) {
-    let start = new Date().getTime();
-    while(new Date().getTime() - start < delay) {
+    let start = Date.now();
+    while(Date.now() - start < delay) {
       continue;
     }
   }
@@ -305,8 +305,8 @@
   };
 
   function getBatchNumber() {
-    if(conf.newBatcherKeyHours <= 0) return new Date().getTime();
-    return parseInt(new Date().getTime() / conf.newBatcherKeyHours / 3600000) * conf.newBatcherKeyHours * 3600000;
+    if(conf.newBatcherKeyHours <= 0) return Date.now();
+    return parseInt(Date.now() / conf.newBatcherKeyHours / 3600000) * conf.newBatcherKeyHours * 3600000;
   }
 
   function getLeftPageCount() {
@@ -546,7 +546,7 @@
           let teacherlistinfo = getTeacherInfoInList(jqel);
           let tinfo = GM_getValue(tinfokey);
           if(tinfo) {
-            let now = new Date().getTime();
+            let now = Date.now();
             if(!tinfo.expire) {
               tinfo.expire = new Date(1970, 1, 1).getTime();
             }
@@ -559,7 +559,7 @@
             }
           }
           // ajax 请求一定要包含在一个函数中
-          let start = new Date().getTime();
+          let start = Date.now();
           $.ajax({
             url: window.location.protocol + '//www.51talk.com/TeacherNew/teacherComment?tid=' + tid + '&type=bad&has_msg=1',
             type: 'GET',
@@ -587,7 +587,7 @@
                   thumbupRate: thumbupRate,
                   favoritesCount: favoritesCount,
                   isfavorite: isfavorite,
-                  expire: new Date().getTime()
+                  expire: Date.now()
                 };
                 tinfo = $.extend(tinfo, teacherlistinfo);
                 tinfo.indicator = calcIndicator(tinfo);
@@ -601,7 +601,7 @@
               console.log('xhr error when getting teacher ' + JSON.stringify(jqel) + ',error msg:' + JSON.stringify(data));
             }
           }).always(function() {
-            while(new Date().getTime() - start < 600) {
+            while(Date.now() - start < 600) {
               continue;
             }
             next();
@@ -666,7 +666,7 @@
         tinfo.thumbdown = Number(jqr.find('.evaluate-content-left span:eq(2)').text().match(num).clean('')[0]);
         tinfo.thumbupRate = ((tinfo.thumbup + 0.00001) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
         tinfo.slevel = jqr.find('.sui-students').text();
-        tinfo.expire = new Date().getTime();
+        tinfo.expire = Date.now();
       }
       tinfo.favoritesCount = Number(jqr.find('.clear-search').text().match(num).clean('')[0]);
       tinfo.isfavorite = jqr.find('.go-search.cancel-collection').length > 0;
@@ -730,8 +730,8 @@
             <button id='desc' title='当前为升序，点击进行降序排列' style='display:none;'>降序</button>&nbsp;
             <input id='tinfoexprhours' title='缓存过期时间（小时）'>&nbsp;
             <button title='清空缓存，并重新搜索'>清除缓存</button>&nbsp;
-            <a>去提建议和BUG</a>&nbsp;
-            <a>?</a>&nbsp;
+            <a>报告BUG</a>&nbsp;
+            <a>帮助</a>&nbsp;
           </div>
           <div id='buttons1' style='text-align: center;'>
             <div id='timesmutipulecheck'></div>
@@ -838,13 +838,13 @@
         });
         $('#buttons>button,#buttons>input,#buttons>a')
           //升序
-          .eq(0).button({ icon: 'ui-icon-arrowthick-1-n', showLabel: false }).click(function() {
+          .eq(0).button({ icon: 'ui-icon-arrowthick-1-n', showLabel: true }).click(function() {
             $('#desc').show();
             $(this).hide();
             sortByIndicator(asc);
           }).end()
           //降序
-          .eq(1).button({ icon: 'ui-icon-arrowthick-1-s', showLabel: false }).click(function() {
+          .eq(1).button({ icon: 'ui-icon-arrowthick-1-s', showLabel: true }).click(function() {
             $('#asc').show();
             $(this).hide();
             sortByIndicator(desc);
@@ -857,7 +857,7 @@
             }
           }).css({ width: '45px' }).val(GM_getValue('tinfoexprhours', configExprMilliseconds / 3600000)).end()
           //清空缓存
-          .eq(3).button({ icon: 'uiicon-trash', showLabel: false }).click(function() {
+          .eq(3).button({ icon: 'uiicon-trash', showLabel: true }).click(function() {
             $.each(GM_listValues(), function(i, item) {
               //if(item.startsWith('tinfo-')) {
               GM_deleteValue(item);
@@ -866,9 +866,9 @@
             $('.go-search').click();
           }).end()
           //submit suggestion
-          .eq(4).button({ icon: 'ui-icon-comment', showLabel: false }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end()
+          .eq(4).button({ icon: 'ui-icon-comment', showLabel: true }).prop('href', 'https://github.com/niubilityfrontend/userscripts/issues/new?assignees=&labels=&template=feature_request.md&title=').prop('target', '_blank').end()
           //系统帮助
-          .eq(5).button({ icon: 'ui-icon-help', showLabel: false }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
+          .eq(5).button({ icon: 'ui-icon-help', showLabel: true }).prop('href', 'https://github.com/niubilityfrontend/userscripts/tree/master/hunttingteacheron51talk').prop('target', '_blank').end();
         $('#buttons1>button')
           //反选时间段
           .eq(0).button({ icon: 'ui-icon-seek-next', showLabel: true }).click(function() {
@@ -939,7 +939,7 @@
               indicator: Number(val.indicator),
               //'favoritesCount': val.favoritesCount,
               //'isfavorite': val.isfavorite,
-              //'expire': new Date().getTime(),
+              //'expire': Date.now(),
               rank: indexs[val.type]
             });
             //GM_setValue("tinfo-"+t.tid,t);
@@ -971,7 +971,7 @@
                     formatter: function formatter(value, options, rData) {
                       let date = new Date(Number(value));
                       if(date instanceof Date && !isNaN(date.valueOf())) {
-                        return date.toString('HHmmss');
+                        return date.toString('yyMMddhhmmss');
                       }
                       return value;
                     }
@@ -1096,7 +1096,7 @@
                     searchoptions: { sopt: ['cn'] },
                     formatter: function formatter(value, options, rData) {
                       if(value) {
-                        let d = new Date().getTime() - value;
+                        let d = Date.now() - value;
                         if(d < 1000 * 60) {
                           return '刚刚';
                         } else if(d < 1000 * 60 * 60) {
