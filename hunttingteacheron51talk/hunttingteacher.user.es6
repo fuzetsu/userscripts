@@ -1131,8 +1131,11 @@
                 sortorder: 'desc',
                 grouping: false,
                 shrinkToFit: false,
+                responsive: true,
+                del: true,
+                //refresh: true,
                 //autowidth: true,
-                width: 732
+                //width: 732
                 //caption: "",,
               }).jqGrid('filterToolbar', { searchOperators: true })[0].triggerToolbar();
             if(settings.isListPage) {
