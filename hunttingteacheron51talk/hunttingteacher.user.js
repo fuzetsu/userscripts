@@ -615,7 +615,6 @@
               if (jqr.find('.evaluate-content-left span').length >= 3) {
                 var thumbup = Number(jqr.find('.evaluate-content-left span:eq(1)').text().match(num).clean('')[0]),
                     thumbdown = Number(jqr.find('.evaluate-content-left span:eq(2)').text().match(num).clean('')[0]),
-                    thumbupRate = ((thumbup + 1e-5) / (thumbdown + thumbup)).toFixed(2) * 100,
                     favoritesCount = Number(jqr.find('.clear-search').text().match(num).clean('')[0]),
                     isfavorite = jqr.find('.go-search.cancel-collection').length > 0,
                     tage = Number(jqr.find('.teacher-name-tit > .age.age-line').text().match(num).clean('')[0]),
@@ -626,12 +625,13 @@
                   tage: tage,
                   thumbup: thumbup,
                   thumbdown: thumbdown,
-                  thumbupRate: thumbupRate,
+                  thumbupRate: 100,
                   favoritesCount: favoritesCount,
                   isfavorite: isfavorite,
                   expire: Date.now()
                 };
                 tinfo = $.extend(tinfo, teacherlistinfo);
+                tinfo.thumbupRate = calcThumbRate(tinfo);
                 tinfo.indicator = calcIndicator(tinfo);
                 GM_setValue(tinfokey, tinfo);
                 updateTeacherinfoToUI(jqel, tinfo);
@@ -678,6 +678,12 @@
     return Math.ceil(tinfo.label * tinfo.thumbupRate / 100) + tinfo.favoritesCount;
   }
 
+  function calcThumbRate(tinfo) {
+    var all = tinfo.thumbdown + tinfo.thumbup;
+    if (all < 1) all = 1;
+    return ((tinfo.thumbup + 1e-5) / all).toFixed(2) * 100;
+  }
+
   function isStopShowboxAndAutoGetNextTimeTeachers() {
     var str = sessionStorage.getItem('selectedTimeSlots');
     if (!str) return false;
@@ -715,7 +721,7 @@
       if (window.location.href.toLocaleLowerCase().includes('teachercomment')) {
         tinfo.thumbup = Number(jqr.find('.evaluate-content-left span:eq(1)').text().match(num).clean('')[0]);
         tinfo.thumbdown = Number(jqr.find('.evaluate-content-left span:eq(2)').text().match(num).clean('')[0]);
-        tinfo.thumbupRate = ((tinfo.thumbup + 1e-5) / (tinfo.thumbdown + tinfo.thumbup)).toFixed(2) * 100;
+        tinfo.thumbupRate = calcThumbRate(tinfo);
         tinfo.slevel = jqr.find('.sui-students').text();
         tinfo.expire = Date.now();
       }
