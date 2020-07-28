@@ -978,7 +978,7 @@
                     formatter: function formatter(value, options, rData) {
                       let date = new Date(Number(value));
                       if(date instanceof Date && !isNaN(date.valueOf())) {
-                        return date.toString('yyyyMMddHHmm');
+                        return date.toString('MMddHHmm');
                       }
                       return value;
                     }
