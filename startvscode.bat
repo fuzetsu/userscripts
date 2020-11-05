@@ -17,4 +17,4 @@ SET DOTNET_MULTILEVEL_LOOKUP=0
 
 SET PATH=%DOTNET_ROOT%;%PATH%
 
-cmd /k "code"
+start code
