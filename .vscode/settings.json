@@ -1,0 +1,17 @@
+{
+  "cSpell.words": ["jimbo"],
+  "auto-close-tag.disableOnLanguage": [],
+  "babel-compile-on-save.include": ["**/*.babel", "/**/*.es6", "**/*.es6", "*/*.es6"],
+  "babel-compile-on-save.emitTSDeclaration": false,
+  "babel-compile-on-save.outDir": "",
+  "babel-compile-on-save.srcDir": "/",
+  "babel-compile-on-save.outExt": ".js",
+  "beautify.language": {
+    "js": {
+      "type": ["javascript", "json", "jsonc"],
+      "filename": [".jshintrc", ".jsbeautifyrc"]
+    },
+    "css": ["css", "less", "scss"],
+    "html": ["htm", "html"]
+  }
+}

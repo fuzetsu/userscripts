@@ -1,12 +1,15 @@
-echo -n "输入提交介绍，默认为‘auto commit’ ->"
-read msg
- if [ -z "$msg" ]; then
-     echo "committing as comment 'auto commit'"
-	 msg="auto commit"
- fi
+#!/bin/bash
+if [ -n "$1" ]; then
+	msg="Synchronizing"
+else
+	read  -p 'Commit message>' msg
+	if [ -z "$msg" ]; then     
+	 msg="Synchronizing"
+	 echo "Committing as '$msg'"
+	fi  
+fi
 git pull
 git add *
+git add -A
 git commit -m "$msg"
 git push -u origin master
-
-pause
