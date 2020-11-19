@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd "$(dirname "$0")"
+pwd
 if [ -n "$1" ]; then
     msg="Synchronizing"
 else

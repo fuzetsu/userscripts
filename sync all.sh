@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pwd
 cd c:/tangj15/code
 pwd
 
