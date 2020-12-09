@@ -43,7 +43,8 @@
     "path": "^0.12.7"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.10.4"
+    "@babel/polyfill": "^7.10.4",
+    "nyc": "^15.1.0"
   },
   "main": "build-readme.js",
   "scripts": {
