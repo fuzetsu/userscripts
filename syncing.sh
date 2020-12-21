@@ -5,9 +5,9 @@ pwd
 if [ -n "$1" ]; then
     msg="Synchronizing"
 else
-    read  -p 'Commit message>' msg
+    read  -p 'Commit message > ' msg
     if [ -z "$msg" ]; then
-        msg="Synchronizing"
+        msg="Auto synchronizing"
         echo "Committing as '$msg'"
     fi
 fi
@@ -15,4 +15,4 @@ git pull
 git add *
 git add -A
 git commit -m "$msg"
-git push -u origin master
+git push -u
