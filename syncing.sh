@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 pwd
 if [ -n "$1" ]; then
-    msg="Synchronizing"
+    msg=$1
 else
     read  -p 'Commit message > ' msg
     if [ -z "$msg" ]; then
