@@ -1,115 +1,83 @@
 /**
- * @param obj - {
- *  sel: 'a',                    // the selector you want to wait for (optional)
- *  context: document.body,      // scope of search for selector or mutations (optional, default document.body)
- *  stop: true,                  // stop waiting after first result (optional, default false)
- *  mode: 'M',                   // M to use mutation observer, S to use setInterval (optional, default M)
- *  onchange: func,              // if using mode 'M' this function will be called whenever mutation handler triggers
- *  onmatch: func,               // if selector is specified function will be called for each match with element as parameter
- *  config: { attributes: true } // if using mode 'M' this object will override settings passed to mutation observer
- * }
+ * waitForElems
+ * @param {{
+ *  sel: string;
+ *  onmatch: (element: HTMLElement) => void,
+ *  context?: HTMLElement;
+ *  stop?: boolean;
+ *  throttle?: number;
+ * }} config
  */
-function waitForElems(obj) {
-  var tick;
-  var id = 'fke' + Math.floor(Math.random() * 12345);
-  var type = window.MutationObserver ? (obj.mode || 'M') : 'S';
-  var lastMutation = Date.now();
-  var lastCall = Date.now();
-  var context = obj.context;
-  var sel = obj.sel;
-  var config = obj.config || {
-    subtree: true,
-    childList: true
-  };
-  var onChange = obj.onchange;
-  var queuedCall;
-  var domLoaded = document && document.readyState !== 'loading';
+function waitForElems({ sel, onmatch, context = document.body, stop = false, throttle = 300 }) {
+  const matched = new WeakSet()
+  let lastCheck = 0
+  let checkId
 
-  function throttle(func) {
-    var now = Date.now();
-    clearTimeout(queuedCall);
-    // less than 100ms since last mutation
-    if (now - lastMutation < 100) {
-      // 500ms or more since last query
-      if (now - lastCall >= 500) {
-        func();
-      } else {
-        queuedCall = setTimeout(func, 100);
-      }
-    } else {
-      func();
+  const check = () => {
+    // throttle calls
+    clearTimeout(checkId)
+    const delta = Date.now() - lastCheck
+    if (delta < throttle) {
+      checkId = setTimeout(check, throttle - delta)
+      return
     }
-    lastMutation = now;
+    lastCheck = Date.now()
+
+    // look for matches
+    Array.from(context.querySelectorAll(sel), elem => {
+      if (matched.has(elem)) return
+      matched.add(elem)
+      onmatch(elem)
+      if (stop) disconnect()
+    })
   }
 
-  function findElem(sel) {
-    lastCall = Date.now();
-    var found = [].filter.call(context.querySelectorAll(sel), function(elem) {
-      return elem.dataset[id] !== 'y';
-    });
-    if (found.length > 0) {
-      if (obj.stop) {
-        type === 'M' ? tick.disconnect() : clearInterval(tick);
-      }
-      found.forEach(function(elem) {
-        elem.dataset[id] = 'y';
-        obj.onmatch(elem);
-      });
-    }
+  // observe DOM for changes
+  const observer = new MutationObserver(check)
+  const connect = () => observer.observe(context, { subtree: true, childList: true })
+  const disconnect = () => {
+    clearTimeout(checkId)
+    observer.disconnect()
   }
-  
-  function connect() {
-    context = context || document.body;
-    if (type === 'M') {
-      tick = new MutationObserver(function() {
-        if (sel) throttle.call(null, findElem.bind(null, sel));
-        if (onChange) onChange.apply(this, arguments);
-      });
-      tick.observe(context, config);
-    } else {
-      tick = setInterval(findElem.bind(null, sel), 300);
-    }
-    if (sel) findElem(sel);
-  }
-  
-  if(domLoaded) {
-    connect();
-  } else {
-    window.addEventListener('DOMContentLoaded', connect);
-  }
-  
-  return {
-    type: type,
-    stop: function() {
-      if (type === 'M') {
-        tick.disconnect();
-      } else {
-        clearInterval(tick);
-      }
-    },
-    resume: connect
-  };
+
+  // start waiting
+  connect()
+
+  // run initial check in case element is already on the page
+  check()
+
+  return { start: connect, stop: disconnect }
 }
+
 /**
- * @param regex - should match the site you're waiting for
- * @param action - the callback that will be executed when a matching url is visited
- * @param stopLooking - if true the function will stop waiting for another url match after the first match
+ * waitForUrl
+ * @param {RegExp | ((url: string) => boolean)} match
+ * @param {(url: string) => void} onmatch
+ * @param {boolean} stopLooking
  */
-function waitForUrl(regex, action, stopLooking) {
-  function checkUrl(urlTest) {
-    var url = window.location.href;
-    if (url !== lastUrl && urlTest(url)) {
-      if (stopLooking) {
-        clearInterval(tick);
-      }
-      lastUrl = url;
-      action();
+function waitForUrl(match, onmatch, stopLooking = false) {
+  // url check supports custom fn or regex
+  const isMatch = typeof match === 'function' ? match : url => match.test(url)
+
+  // when popstate fires run check
+  let lastUrl
+  const check = () => {
+    const url = location.href
+    if (url !== lastUrl && isMatch(url)) {
+      lastUrl = url
+      onmatch(url)
+      if (stopLooking) stop()
     }
-    lastUrl = url;
   }
-  var urlTest = (typeof regex === 'function' ? regex : regex.test.bind(regex)),
-    tick = setInterval(checkUrl.bind(null, urlTest), 300),
-    lastUrl;
-  checkUrl(urlTest);
-  return tick;
+  let checkId
+  const start = () => (checkId = setInterval(check, 300))
+  const stop = () => clearInterval(checkId)
+
+  // start listening
+  start()
+
+  // perform initial check since current url might be a match
+  check()
+
+  return { start, stop }
 }

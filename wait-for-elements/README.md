@@ -2,7 +2,8 @@
 
 Not really a userscript, but a utility for creating them.
 
-Include it in your userscript using the `@require` directive: 
+Include it in your userscript using the `@require` directive:
+
 ```js
 //@require https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 ```
@@ -10,26 +11,25 @@ Include it in your userscript using the `@require` directive:
 It provides 2 useful functions:
 
 ```js
-
 /**
- * @param obj - {
- *  sel: 'a',                    // the selector you want to wait for (optional)
- *  context: document.body,      // scope of search for selector or mutations (optional, default document.body)
- *  stop: true,                  // stop waiting after first result (optional, default false)
- *  mode: 'M',                   // M to use mutation observer, S to use setInterval (optional, default M)
- *  onchange: func,              // if using mode 'M' this function will be called whenever mutation handler triggers
- *  onmatch: func,               // if selector is specified function will be called for each match with element as parameter
- *  config: { attributes: true } // if using mode 'M' this object will override settings passed to mutation observer
- * }
+ * waitForElems
+ * @param {{
+ *  sel?: string;
+ *  context?: HTMLElement;
+ *  stop?: boolean;
+ *  onmatch?: (element: HTMLElement) => void,
+ *  onmutation?: (...args: Parameters<MutationCallback>) => void
+ *  throttle?: number;
+ *  config?: MutationObserverInit;
+ * }} config (all args are optional, only provide what you want)
  */
-function waitForElems(obj) {}
+function waitForElems(config) {}
 
 /**
- * @param       regex - should match the site you're waiting for
- * @param      action - the callback that will be executed when a matching url 
- *                      is visited
- * @param stopLooking - if true the function will stop waiting
- *                      for another url match after the first match
+ * waitForUrl
+ * @param {RegExp|(url: string) => boolean} match
+ * @param {(url: string) => void} onmatch
+ * @param {boolean} stopLooking (optional, false by default)
  */
 function waitForUrl(regex, action, stopLooking) {}
 ```
