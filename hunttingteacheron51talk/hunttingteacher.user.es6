@@ -396,7 +396,7 @@
         if (tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
         if (tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
         if (tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
-        if (tinfo.age > maxage) maxage = tinfo.age;
+        if (tinfo.age > maxage) maxage =Number(tinfo.age);
         if (tinfo.age < minage) minage = tinfo.age;
         jqel.attr("teacherinfo", JSON.stringify(tinfo));
         jqel.find(".teacher-name").html(jqel.find(".teacher-name").html() + `<br /><label title='评论标签数量'>${tinfo.label}</label>|<label title='好评率'>${tinfo.thumbupRate}%</label>`);
