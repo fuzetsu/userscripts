@@ -2,7 +2,7 @@
 
 // ==UserScript==
 // @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2020.7.22005
+// @version 2021.4.14001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -423,11 +423,11 @@
     if (tinfo.favoritesCount < minfc) minfc = tinfo.favoritesCount;
     if (tinfo.thumbupRate > maxrate) maxrate = tinfo.thumbupRate;
     if (tinfo.thumbupRate < minrate) minrate = tinfo.thumbupRate;
-    if (tinfo.age > maxage) maxage = Number(tinfo.age);
-    if (tinfo.age < minage) minage = tinfo.age;
+    if (tinfo.age > maxage) maxage = tinfo.age ? tinfo.age : 100;
+    if (tinfo.age < minage) minage = tinfo.age ? tinfo.age : 0;
     jqel.attr("teacherinfo", JSON.stringify(tinfo));
-    jqel.find(".teacher-name").html(jqel.find(".teacher-name").html() + "<br /><label title='\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF'>".concat(tinfo.label, "</label>|<label title='\u597D\u8BC4\u7387'>").concat(tinfo.thumbupRate, "%</label>"));
-    jqel.find(".teacher-age").html(jqel.find(".teacher-age").html() + " | <label title='收藏数量'>" + tinfo.favoritesCount + "</label>");
+    jqel.find(".teacher-name").html(jqel.find(".teacher-name").html() + "<br /><label title='\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF'>".concat(tinfo.label, "</label>|<label title='\u597D\u8BC4\u7387'>").concat(tinfo.thumbupRate, "%</label>\n            | <label title='\u6536\u85CF\u6570\u91CF'>").concat(tinfo.favoritesCount, " </label> ")); // jqel.find(".teacher-age").html(jqel.find(".teacher-age").html() + " | <label title='收藏数量'>" + tinfo.favoritesCount + "</label>");
+
     jqel.attr("indicator", tinfo.indicator);
   }
 
@@ -442,9 +442,14 @@
         return true;
       }
 
-      var tinfo = JSON.parse(tinfojson);
+      var tinfo = JSON.parse(tinfojson),
+          ret = true;
+      if (!isNaN(tinfo.thumbupRate)) ret = tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2;
+      if (!isNaN(tinfo.label)) ret = tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && ret;
+      if (!isNaN(tinfo.age)) tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && ret;
+      if (!isNaN(tinfo.favoritesCount)) tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2 && ret;
 
-      if (tinfo.thumbupRate >= uifilters.rate1 && tinfo.thumbupRate <= uifilters.rate2 && tinfo.label >= uifilters.l1 && tinfo.label <= uifilters.l2 && tinfo.age >= uifilters.age1 && tinfo.age <= uifilters.age2 && tinfo.favoritesCount >= uifilters.fc1 && tinfo.favoritesCount <= uifilters.fc2) {
+      if (ret) {
         if (node.is(":hidden")) {
           //如果node是隐藏的则显示node元素，否则隐藏
           node.show();
@@ -539,7 +544,7 @@
     });
 
     function getTeacherInfoInList(jqel) {
-      var age = Number(jqel.find(".teacher-age").text().match(num).clean("")[0]),
+      var age = 0,
           label = function () {
         var j_len = jqel.find(".label").text().match(num).clean("").length,
             l = 0;
@@ -618,12 +623,15 @@
                     thumbdown = Number(jqr.find(".evaluate-content-left span:eq(2)").text().match(num).clean("")[0]),
                     favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]),
                     isfavorite = jqr.find(".go-search.cancel-collection").length > 0,
-                    tage = Number(jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("")[0]),
+                    agesstr = jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean(""),
+                    tage = Number(agesstr[1]),
+                    age = Number(agesstr[0]),
                     slevel = jqr.find(".sui-students").text();
                 jqr.remove();
                 var tinfo = {
                   slevel: slevel,
                   tage: tage,
+                  age: age,
                   thumbup: thumbup,
                   thumbdown: thumbdown,
                   thumbupRate: 100,
@@ -697,7 +705,7 @@
       sessionStorage.setItem("selectedTimeSlotsRemain", selectedTimeSlots.length);
       $('form[name="searchform"]>input[name="selectTime"]').val(cur);
       $('form[name="searchform"]>input[name="pageID"]').val(1);
-      $(".go-search").click();
+      $(".go-search").trigger("click");
       return true;
     }
 
@@ -717,7 +725,10 @@
           l += Number(val);
         });
         return l;
-      }();
+      }(); //if never set expire then
+
+
+      if (!tinfo.expire) tinfo.expire = Date.now();
 
       if (window.location.href.toLocaleLowerCase().includes("teachercomment")) {
         tinfo.thumbup = Number(jqr.find(".evaluate-content-left span:eq(1)").text().match(num).clean("")[0]);
@@ -729,11 +740,12 @@
 
       tinfo.favoritesCount = Number(jqr.find(".clear-search").text().match(num).clean("")[0]);
       tinfo.isfavorite = jqr.find(".go-search.cancel-collection").length > 0;
-      tinfo.age = Number(jqr.find(".age.age-line:eq(0)").text().match(num).clean("")[0]);
       tinfo.name = jqr.find(".t-name").text().trim(); //无法获取type
       //tinfo.type = $('.s-t-top-list .li-active').text().trim();
 
-      tinfo.tage = Number(jqr.find(".teacher-name-tit > .age.age-line:eq(1)").text().match(num).clean("")[0]);
+      var agesstr = jqr.find(".teacher-name-tit > .age.age-line").text().match(num).clean("");
+      tinfo.tage = Number(agesstr[1]);
+      tinfo.age = Number(agesstr[0]);
       tinfo.effectivetime = getBatchNumber();
       tinfo.indicator = calcIndicator(tinfo);
       GM_setValue(getinfokey(), tinfo);
@@ -840,12 +852,11 @@
           GM_setValue("filterconfig", filterconfig);
           executeFilters(uifilters);
         });
+        console.log("log1 ".concat(minage, "  ").concat(maxage));
         $("#tAgeSlider").slider({
           range: true,
-          min: Number(minage),
-          // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
-          max: Number(maxage),
-          // 兼容旧缓存中的存储类型，2019-10-1后可以移除类型转换
+          min: minage,
+          max: maxage,
           values: [_config.age1 < minage ? minage : _config.age1, _config.age2 > maxage ? maxage : _config.age2],
           slide: function slide(event, ui) {
             $("#_tAge").html(ui.values[0] + " - " + ui.values[1]);
@@ -857,6 +868,7 @@
               filterconfig = GM_getValue("filterconfig", uifilters);
           filterconfig.age1 = age1;
           filterconfig.age2 = age2;
+          console.log("log2 ".concat(age1, "  ").concat(age2));
           GM_setValue("filterconfig", filterconfig);
           executeFilters(uifilters);
         });
@@ -1216,7 +1228,7 @@
                     t = teachers.find(function (currentValue, index, arr) {
                   return currentValue.tid == tid;
                 }),
-                    lb = jqel.find(".teacher-name>label:eq(1)");
+                    lb = jqel.find(".teacher-name>label:eq(3)");
                 if (lb.length == 0) jqel.find(".teacher-name").html("".concat(jqel.find(".teacher-name").html(), "| ").concat(getRankHtml(t)));else lb.replaceWith(getRankHtml(t));
               });
             }
@@ -1237,6 +1249,7 @@
         $("#_thumbupRate").html(uifilters.rate1 + "% - " + uifilters.rate2 + "%");
       } catch (ex) {
         console.log(ex + "");
+        throw ex;
       } finally {
         next();
       }
