@@ -20,9 +20,9 @@
 // @grant GM_registerMenuCommand
 // @require https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js
 // @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/i18n/grid.locale-cn.js
-// @require https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js
+// @require https://raw.githubusercontent.com/niubilityfrontend/pace/v1.2.4/pace.min.js
+// @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/i18n/grid.locale-cn.js
+// @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/jquery.jqgrid.min.js
 // @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
 // @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 //
