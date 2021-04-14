@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name 51talk选择最好最合适的老师-经验-好评率-年龄-收藏数
-// @version 2021.4.14001
+// @name find best teacher on 51talk.com
+// @version 2021.4.14002
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @author jimbo
@@ -24,7 +24,7 @@
 // @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/i18n/grid.locale-cn.js
 // @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/jquery.jqgrid.min.js
 // @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @require https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 //
 // ==/UserScript==
 (function () {
