@@ -1,11 +1,6 @@
 {
   "minified": false,
-  "only": [
-    "**/*.babel",
-    "**/*.jsx",
-    "**/*.es6",
-    "*/*.es6"
-  ],
+  "only": ["**/*.babel", "**/*.jsx", "**/*.es6", "*/*.es6"],
   "presets": [
     [
       "@babel/env",
@@ -14,8 +9,10 @@
           "edge": "17",
           "firefox": "60",
           "chrome": "67",
-          "safari": "11.1"
-        }
+          "safari": "11.1",
+          "esmodules": true
+        },
+        "useBuiltIns": "entry"
       }
     ],
     "@babel/preset-react"
@@ -58,17 +55,19 @@
     ],
     "babel-plugin-transform-merge-sibling-variables",
     "babel-plugin-minify-numeric-literals",
-     
-    [
-      "@babel/plugin-transform-shorthand-properties"
-    ],
-    [
-      "@babel/plugin-transform-parameters"
-    ],
+
+    ["@babel/plugin-transform-shorthand-properties"],
+    ["@babel/plugin-transform-parameters"],
     [
       "@babel/plugin-transform-block-scoping",
       {
         "throwIfClosureRequired": true
+      }
+    ],
+    [
+      "@babel/plugin-transform-modules-commonjs",
+      {
+        "allowTopLevelThis": true
       }
     ]
   ]
