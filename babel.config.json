@@ -24,7 +24,7 @@
         "spec": false
       }
     ],
-    "@babel/plugin-external-helpers",
+
     "@babel/plugin-proposal-do-expressions",
     "@babel/plugin-proposal-export-default-from",
     "@babel/plugin-proposal-export-namespace-from",
@@ -67,7 +67,9 @@
     [
       "@babel/plugin-transform-modules-commonjs",
       {
-        "allowTopLevelThis": true
+        "allowTopLevelThis": true,
+        "noInterop": true,
+        "lazy": true
       }
     ]
   ]

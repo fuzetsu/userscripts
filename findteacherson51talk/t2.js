@@ -1,6 +1,6 @@
 "use strict";
 
-var _t = babelHelpers.interopRequireDefault(require("./t1.es6"));
+var _t = require("./t1.es6");
 
 (function (x) {
   return x + _t["default"];
