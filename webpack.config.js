@@ -1,7 +1,7 @@
 const path = require('path');
 module.exports = {
   mode: 'development',
-  entry: path.join(__dirname, 'app', 'index'),
+  entry: path.join(__dirname, 'findteacherson51talk', 't2.es6'),
   watch: true,
   output: {
     path: path.join(__dirname, 'dist'),

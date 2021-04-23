@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "userscripts",
   "version": "0.0.1",
   "description": "tampermonkey scripts",
@@ -46,7 +47,8 @@
     "path": "^0.12.7",
     "webpack": "^5.34.0",
     "webpack-cli": "^4.6.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "webpack-userscript": "^2.5.7"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
