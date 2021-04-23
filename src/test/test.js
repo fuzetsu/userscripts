@@ -1,24 +1,19 @@
- var fs = require('fs');
- var glob = require('glob');
- var parseMeta = require('./../../libs/parseMeta.js');
+import parseMeta from './../../libs/parseMeta.mjs';
 
- var fs = require('fs');
-
- 
- const p = (...args) => (console.log(...args), args[0]);
-
- var test = 'Your awesome js code.';
-
- var filepath = './../auto-close-youtube-ads/auto-close-youtube-ads.user.js';
+import fs from 'fs';
+import glob from 'glob';
 
 
- var s = fs.readFileSync(filepath, 'utf8');
+const p = (...args) => (console.log(...args), args[0]);
 
-p(parseMeta)
+var test = 'Your awesome js code.';
 
+var filepath = './../auto-close-youtube-ads/auto-close-youtube-ads.user.js';
 
- var data = parseMeta(s)
+var s = fs.readFileSync(filepath, 'utf8');
 
+p(parseMeta);
 
+var data = parseMeta(s);
 
- p(data)
+p(data);

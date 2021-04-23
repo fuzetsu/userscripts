@@ -1,5 +1,6 @@
-export default fonction parseMeta(script) {
-    return script.slice(script.indexOf('==UserScript=='), script.indexOf('==/UserScript=='))
+export default function parseMeta(script) {
+    return script
+        .slice(script.indexOf('==UserScript=='), script.indexOf('==/UserScript=='))
         .split('\n')
         .map(line => line.match(/^\s*[\/]{2,}\s*@(\S+)\s+(.+)/i))
         .filter(match => !!match)
