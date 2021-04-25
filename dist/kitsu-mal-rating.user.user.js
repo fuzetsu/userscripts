@@ -1,0 +1,45 @@
+// ==UserScript==
+// @name        Kitsu MAL Rating
+// @version     2.3
+// @author      synthtech / fuzetsu
+// @description Shows MyAnimeList.net rating on Kitsu.io
+// @homepage    https://github.com/niubilityfrontend/userscripts#readme
+// @supportURL  https://github.com/niubilityfrontend/userscripts/issues
+// @match       *://kitsu.io/*
+// @namespace   http://fuzetsu.com/kitsu-mal-rating
+// @require     https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
+// @grant       GM_xmlhttpRequest
+// ==/UserScript==
+
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/kitsu-mal-rating/kitsu-mal-rating.user.js":
+/*!*******************************************************!*\
+  !*** ./src/kitsu-mal-rating/kitsu-mal-rating.user.js ***!
+  \*******************************************************/
+/***/ (() => {
+
+eval("// ==UserScript==\r\n// @name         Kitsu MAL Rating\r\n// @namespace    http://fuzetsu.com/kitsu-mal-rating\r\n// @version      2.3\r\n// @description  Shows MyAnimeList.net rating on Kitsu.io\r\n// @author       synthtech / fuzetsu\r\n// @match        *://kitsu.io/*\r\n// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465\r\n// @grant        GM_xmlhttpRequest\r\n// ==/UserScript==\r\n\r\n(function() {\r\n  'use strict';\r\n\r\n  var SCRIPT_NAME = 'Kitsu MAL Rating';\r\n  var API = 'https://kitsu.io/api/edge';\r\n  var REGEX = /^https?:\\/\\/kitsu\\.io\\/(anime|manga)\\/([^\\/]+)\\/?(?:\\?.*)?$/;\r\n\r\n  var Util = {\r\n    log: function() {\r\n      var args = [].slice.call(arguments);\r\n      args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');\r\n      console.log.apply(console, args);\r\n    },\r\n    q: function(query, context) {\r\n      return (context || document).querySelector(query);\r\n    },\r\n    qq: function(query, context) {\r\n      return [].slice.call((context || document).querySelectorAll(query));\r\n    }\r\n  };\r\n\r\n  var App = {\r\n    cache: {},\r\n    getMalLink: function(type, slug, cb) {\r\n      var id = type + '/' + slug;\r\n      var self = this;\r\n      if (self.cache.hasOwnProperty(id)) {\r\n        Util.log('Loading cached MAL ID:', self.cache[id]);\r\n        cb(self.cache[id]);\r\n      } else {\r\n        Util.log('Fetching mappings for Kitsu slug:', id);\r\n        GM_xmlhttpRequest({\r\n          method: 'GET',\r\n          url: API + '/' + type + '?filter[slug]=' + slug + '&fields[' + type + ']=id&include=mappings',\r\n          headers: {\r\n            'Accept': 'application/vnd.api+json'\r\n          },\r\n          onload: function(response) {\r\n            try {\r\n              var json = JSON.parse(response.responseText);\r\n              var malId;\r\n              if (json.included) {\r\n                for (var i = 0; i < json.included.length; i++) {\r\n                  if (json.included[i].attributes.externalSite == ('myanimelist/' + type)) {\r\n                    malId = json.included[i].attributes.externalId;\r\n                  }\r\n                }\r\n              }\r\n              self.cache[id] = malId;\r\n              cb(malId);\r\n            } catch (err) {\r\n              Util.log('Failed to parse API results');\r\n            }\r\n          },\r\n          onerror: function() {\r\n            Util.log('Failed to get Kitsu mappings');\r\n          }\r\n        });\r\n      }\r\n    },\r\n    getMalPage: function(url, cb) {\r\n      Util.log('Loading MAL page:', url);\r\n      GM_xmlhttpRequest({\r\n        method: 'GET',\r\n        url: url,\r\n        onload: function(response) {\r\n          try {\r\n            var tempDiv = document.createElement('div');\r\n            tempDiv.innerHTML = response.responseText;\r\n\r\n            var sidebar = Util.q('#content > table > tbody > tr > td.borderClass', tempDiv);\r\n            var rating = Util.q('span[itemprop=\"ratingValue\"]', sidebar);\r\n            var headerNum;\r\n\r\n            if (Util.q('h2.mt8', sidebar)) headerNum = 4;\r\n            else headerNum = 3;\r\n\r\n            if (rating) {\r\n              rating = rating.innerText;\r\n            } else {\r\n              var score = Util.q('h2:nth-of-type(' + headerNum + ') + div', sidebar).innerText.replace(/[\\n\\r]/g, '');\r\n              if (score.match(/Score:\\s+N\\/A/)) {\r\n                rating = null;\r\n              } else {\r\n                rating = score.match(/[0-9]{1,2}\\.[0-9]{2}/)[0];\r\n              }\r\n            }\r\n\r\n            cb(rating);\r\n          } catch (err) {\r\n            Util.log('Failed to parse MAL page');\r\n          }\r\n        },\r\n        onerror: function() {\r\n          Util.log('Error loading MAL page');\r\n        }\r\n      });\r\n    }\r\n  };\r\n\r\n  waitForUrl(REGEX, function() {\r\n    var type = location.href.match(REGEX)[1];\r\n    var slug = location.href.match(REGEX)[2];\r\n    var preMalBarCheck = Util.q('#mal-rating-bar');\r\n\r\n    App.getMalLink(type, slug, function(malId) {\r\n      if (!malId) {\r\n        Util.log('MAL ID not found');\r\n        if (preMalBarCheck) preMalBarCheck.remove();\r\n      } else {\r\n        var malLink = 'https://myanimelist.net/' + type + '/' + malId;\r\n\r\n        App.getMalPage(malLink, function(rating) {\r\n          if (!rating || rating == 'N/A') { rating = null; }\r\n          else { rating = parseFloat(rating * 10).toFixed(2); }\r\n\r\n          var malBarCheck = Util.q('#mal-rating-bar');\r\n          if (malBarCheck) {\r\n            var updateRating = malBarCheck.firstChild;\r\n            updateRating.className = 'media-community-rating';\r\n\r\n            if (rating) {\r\n              var percentColor = 'percent-quarter-';\r\n              if (rating <= 25) { percentColor += 1; }\r\n              else if (rating <= 50) { percentColor += 2; }\r\n              else if (rating <= 75) { percentColor += 3; }\r\n              else if (rating <= 100) { percentColor += 4; }\r\n              updateRating.classList.add(percentColor);\r\n            }\r\n\r\n            updateRating.firstChild.href = malLink;\r\n            rating ? updateRating.firstChild.textContent = rating + '% MAL Approval' : updateRating.firstChild.textContent = 'Unknown MAL Approval';\r\n          } else {\r\n            var newRatingBar = document.createElement('section');\r\n            newRatingBar.id = 'mal-rating-bar';\r\n            newRatingBar.className = 'media-rating';\r\n\r\n            var ratingElem = document.createElement('span');\r\n            ratingElem.className = 'media-community-rating';\r\n\r\n            if (rating) {\r\n              var percentColor = 'percent-quarter-';\r\n              if (rating <= 25) { percentColor += 1; }\r\n              else if (rating <= 50) { percentColor += 2; }\r\n              else if (rating <= 75) { percentColor += 3; }\r\n              else if (rating <= 100) { percentColor += 4; }\r\n              ratingElem.classList.add(percentColor);\r\n            }\r\n\r\n            var ratingLink = document.createElement('a');\r\n            ratingLink.id = 'mal-rating-link';\r\n            ratingLink.href = malLink;\r\n            ratingLink.target = '_blank';\r\n            ratingLink.rel = 'noopener noreferrer';\r\n            ratingLink.style.color = 'inherit';\r\n            ratingLink.style.fontFamily = 'inherit';\r\n            rating ? ratingLink.textContent = rating + '% MAL Approval' : ratingLink.textContent = 'Unknown MAL Approval';\r\n\r\n            ratingElem.appendChild(ratingLink);\r\n            newRatingBar.appendChild(ratingElem);\r\n\r\n            waitForElems({\r\n              sel: '.media-rating:not(#mal-rating-bar)',\r\n              stop: true,\r\n              onmatch: function(node) {\r\n                node.parentNode.insertBefore(newRatingBar, node.nextSibling);\r\n              }\r\n            });\r\n          }\r\n        });\r\n      }\r\n    });\r\n  });\r\n})();\r\n\n\n//# sourceURL=webpack://userscripts/./src/kitsu-mal-rating/kitsu-mal-rating.user.js?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = {};
+/******/ 	__webpack_modules__["./src/kitsu-mal-rating/kitsu-mal-rating.user.js"]();
+/******/ 	
+/******/ })()
+;

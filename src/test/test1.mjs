@@ -1,4 +1,4 @@
-import parseMeta from './../../libs/parseMeta';
+import parseMeta from './../../libs/parseMeta.mjs';
 
 
 const p = (...args) => (console.log(...args), args[0]);

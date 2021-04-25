@@ -1,43 +1,43 @@
 const path = require('path');
+const glob = require('glob')
+
+const WebpackUserscript = require('webpack-userscript')
+const dev = true; // process.env.NODE_ENV === 'development'
+const parseMeta = require('./src/../libs/parseMeta');
+const fs = require('fs');
+
+
+let entry =
+  glob.sync(path.resolve('./src/*/*.@(js|es6)')).reduce((entries, entry) => {
+    const entryName = path.parse(entry).name
+    entries[entryName] = entry
+    return entries
+  }, {});
 module.exports = {
   mode: 'development',
-  entry: path.join(__dirname, 'findteacherson51talk', 't2.es6'),
-  watch: true,
+  entry,
+ //watch: true,
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/dist/',
-    filename: "bundle.js",
+    filename: '[name].user.js',
+    clean: true,
     chunkFilename: '[name].js'
   },
-  module: {
-    rules: [{
-      test: /.jsx?$/,
-      include: [
-        path.resolve(__dirname, 'app')
-      ],
-      exclude: [
-        path.resolve(__dirname, 'node_modules')
-      ],
-      loader: 'babel-loader',
-      query: {
-        presets: [
-          ["@babel/env", {
-            "targets": {
-              "browsers": "last 2 chrome versions"
-            }
-          }]
-        ]
-      }
-    }]
-  },
-  resolve: {
-    extensions: ['.json', '.js', '.jsx']
-  },
-  devtool: 'source-map',
-  devServer: {
-    contentBase: path.join(__dirname, '/dist/'),
-    inline: true,
-    host: 'localhost',
-    port: 8080,
-  }
+
+
+  plugins: [
+    new WebpackUserscript({
+      headers: function (data) {
+       console.log(data);
+        console.log(`${entry[data.chunkName]} --${data.chunkFilename} `)
+        var d =
+          parseMeta(fs.readFileSync(entry[data.basename], 'utf8'));
+        console.log(d)
+        return d;
+      },
+      pretty: true,
+      metajs: false
+    })
+  ]
 };
