@@ -16,11 +16,11 @@ let entry =
 module.exports = {
   mode: 'development',
   entry,
- //watch: true,
+  //watch: true,
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/dist/',
-    filename: '[name].user.js',
+    filename: '[name].js',
     clean: true,
     chunkFilename: '[name].js'
   },
@@ -29,12 +29,17 @@ module.exports = {
   plugins: [
     new WebpackUserscript({
       headers: function (data) {
-       console.log(data);
-        console.log(`${entry[data.chunkName]} --${data.chunkFilename} `)
-        var d =
-          parseMeta(fs.readFileSync(entry[data.basename], 'utf8'));
-        console.log(d)
-        return d;
+        let origionpath = entry[data.basename];
+        if (!fs.existsSync(origionpath)) {
+          console.log(data);
+          console.log(`${entry[data.chunkName]} --${data.chunkFilename} `);
+          return {};
+        } else {
+          var d =
+            parseMeta(fs.readFileSync(entry[data.basename], 'utf8'));
+          console.log(d)
+          return d;
+        }
       },
       pretty: true,
       metajs: false
