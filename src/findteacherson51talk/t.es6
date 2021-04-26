@@ -14,8 +14,7 @@
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
 (() => {
-    "use strict";
-    (x) => x * 23;
+    "use strict";    
     window.GM_config = function(settings, storage = "cfg") {
         let ret = null;
         const prefix = "gm-config";

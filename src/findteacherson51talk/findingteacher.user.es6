@@ -32,6 +32,7 @@
 
 (function () {
     "use strict";
+    x=>x+12;
     ///extend method parameters of window, get parameter's value with key case-insensitive
     (function ($) {
         let PropertiesCaseInsensitive = {
