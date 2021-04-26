@@ -8,11 +8,12 @@ const fs = require('fs');
 
 
 let entry =
-  glob.sync(path.resolve('./src/*/*.@(js|es6)')).reduce((entries, entry) => {
+  glob.sync(path.resolve('./src/*/*.@(js|es6|mjs|cjs|ts)')).reduce((entries, entry) => {
     const entryName = path.parse(entry).name
     entries[entryName] = entry
     return entries
   }, {});
+
 module.exports = {
   mode: 'development',
   entry,
@@ -29,19 +30,19 @@ module.exports = {
   plugins: [
     new WebpackUserscript({
       headers: function (data) {
-        let origionpath = entry[data.basename];
+        let origionpath = entry[data.chunkName];
         if (!fs.existsSync(origionpath)) {
           console.log(data);
-          console.log(`${entry[data.chunkName]} --${data.chunkFilename} `);
+          console.log(`--${data.chunkName}  --  ${entry[data.chunkName]}  
+          
+          END-------------------------
+          `);
           return {};
         } else {
-          var d =
-            parseMeta(fs.readFileSync(entry[data.basename], 'utf8'));
-          console.log(d)
-          return d;
+          return parseMeta(fs.readFileSync(origionpath, 'utf8'));
         }
       },
-      pretty: true,
+      pretty: false,
       metajs: false
     })
   ]

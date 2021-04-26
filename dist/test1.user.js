@@ -19,23 +19,23 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/findteacherson51talk/t1.es6":
-/*!*****************************************!*\
-  !*** ./src/findteacherson51talk/t1.es6 ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "./libs/parseMeta.mjs":
+/*!****************************!*\
+  !*** ./libs/parseMeta.mjs ***!
+  \****************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (4);\n\n//# sourceURL=webpack://userscripts/./src/findteacherson51talk/t1.es6?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ parseMeta)\n/* harmony export */ });\nfunction parseMeta(script) {\r\n    return script\r\n        .slice(script.indexOf('==UserScript=='), script.indexOf('==/UserScript=='))\r\n        .split('\\n')\r\n        .map(line => line.match(/^\\s*[\\/]{2,}\\s*@(\\S+)\\s+(.+)/i))\r\n        .filter(match => !!match)\r\n        .reduce((result, [, key, value]) => {\r\n            if (Object.keys(result).includes(key)) {\r\n                if (Array.isArray(result[key])) {\r\n                    result[key].push(value);\r\n                } else {\r\n                    result[key] = [result[key], value];\r\n                }\r\n            } else {\r\n                result[key] = value;\r\n            }\r\n            return result;\r\n        }, {});\r\n}\n\n//# sourceURL=webpack://userscripts/./libs/parseMeta.mjs?");
 
 /***/ }),
 
-/***/ "./src/findteacherson51talk/t2.js":
-/*!****************************************!*\
-  !*** ./src/findteacherson51talk/t2.js ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ "./src/test/test1.mjs":
+/*!****************************!*\
+  !*** ./src/test/test1.mjs ***!
+  \****************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("\r\n\r\nvar _t = __webpack_require__(/*! ./t1.es6 */ \"./src/findteacherson51talk/t1.es6\");\r\n\r\n(function (x) {\r\n  return x + _t[\"default\"];\r\n});\r\n\r\n(function (b) {\r\n  return b + x(122);\r\n});\n\n//# sourceURL=webpack://userscripts/./src/findteacherson51talk/t2.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../libs/parseMeta.mjs */ \"./libs/parseMeta.mjs\");\n\r\n\r\n\r\nconst p = ()=>{};//(...args) => (console.log(...args), args[0]);\r\n\r\np((0,_libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__.default)(''));\n\n//# sourceURL=webpack://userscripts/./src/test/test1.mjs?");
 
 /***/ })
 
@@ -99,7 +99,7 @@ eval("\r\n\r\nvar _t = __webpack_require__(/*! ./t1.es6 */ \"./src/findteacherso
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/findteacherson51talk/t2.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/test/test1.mjs");
 /******/ 	
 /******/ })()
 ;

@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        userscripts
-// @version     0.0.1
+// @name userscripts
+// @version 0.0.1
 // @description tampermonkey scripts
-// @homepage    https://github.com/niubilityfrontend/userscripts#readme
-// @supportURL  https://github.com/niubilityfrontend/userscripts/issues
-// @match       *://*/*
+// @homepage https://github.com/niubilityfrontend/userscripts#readme
+// @supportURL https://github.com/niubilityfrontend/userscripts/issues
+// @match *://*/*
 // ==/UserScript==
 
 /*
@@ -35,7 +35,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../libs/parseMeta.mjs */ \"./libs/parseMeta.mjs\");\n\r\n  \r\n\r\n\r\nconst p = (...args) => (console.log(...args), args[0]);\r\n\r\nvar test = 'Your awesome js code.';\r\n\r\nvar filepath = './../auto-close-youtube-ads/auto-close-youtube-ads.user.js';\r\n\r\nvar s = ''\r\n\r\np(_libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__.default);\r\n\r\nvar data = (0,_libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__.default)(s);\r\n\r\np(data);\n\n//# sourceURL=webpack://userscripts/./src/test/test.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../libs/parseMeta.mjs */ \"./libs/parseMeta.mjs\");\n\r\n  \r\n\r\n\r\nconst p = (...args) => (console.log(...args), args[0]);\r\n\r\nvar test = 'Your awesome js code.';\r\n\r\nvar filepath = './../auto-close-youtube-ads/auto-close-youtube-ads.user.js';\r\n\r\nvar s = `\r\n    // ==UserScript==\r\n// @name        userscripts\r\n// @version     0.0.1\r\n// @description tampermonkey scripts\r\n// @homepage    https://github.com/niubilityfrontend/userscripts#readme\r\n// @supportURL  https://github.com/niubilityfrontend/userscripts/issues\r\n// @match       *://*/*\r\n// ==/UserScript==\r\n</CDATASection>`;\r\n\r\np(_libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__.default);\r\n\r\nvar data = (0,_libs_parseMeta_mjs__WEBPACK_IMPORTED_MODULE_0__.default)(s);\r\n\r\np(data);\n\n//# sourceURL=webpack://userscripts/./src/test/test.js?");
 
 /***/ })
 

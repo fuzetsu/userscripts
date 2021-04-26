@@ -1,19 +1,19 @@
 // ==UserScript==
-// @name        gm_config_toolbar
-// @version     0.0.4
-// @author      kufii
+// @name gm_config_toolbar
+// @version 0.0.4
+// @author kufii
 // @description greasyfork configuration toolbar on the script addins
-// @homepage    https://github.com/niubilityfrontend/userscripts#readme
-// @supportURL  https://github.com/kufii/My-UserScripts
-// @match       *://*/*
-// @namespace   https://github.com/niubilityfrontend
-// @license     OSL-3.0
-// @grant       GM_xmlhttpRequest
-// @grant       GM_getValue
-// @grant       GM_setValue
-// @grant       GM_listValues
-// @grant       GM_deleteValue
-// @grant       GM_registerMenuCommand
+// @homepage https://github.com/niubilityfrontend/userscripts#readme
+// @supportURL https://github.com/kufii/My-UserScripts
+// @match *://*/*
+// @namespace https://github.com/niubilityfrontend
+// @license OSL-3.0
+// @grant GM_xmlhttpRequest
+// @grant GM_getValue
+// @grant GM_setValue
+// @grant GM_listValues
+// @grant GM_deleteValue
+// @grant GM_registerMenuCommand
 // ==/UserScript==
 
 /*
