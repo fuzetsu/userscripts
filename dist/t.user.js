@@ -1,51 +1,299 @@
 // ==UserScript==
-// @name gm_config_toolbar
-// @version 0.0.4
-// @author kufii
+// @name        gm_config_toolbar
+// @version     0.0.4
+// @author      kufii
 // @description greasyfork configuration toolbar on the script addins
-// @homepage https://github.com/niubilityfrontend/userscripts#readme
-// @supportURL https://github.com/kufii/My-UserScripts
-// @match *://*/*
-// @namespace https://github.com/niubilityfrontend
-// @license OSL-3.0
-// @grant GM_xmlhttpRequest
-// @grant GM_getValue
-// @grant GM_setValue
-// @grant GM_listValues
-// @grant GM_deleteValue
-// @grant GM_registerMenuCommand
+// @homepage    https://github.com/niubilityfrontend/userscripts#readme
+// @supportURL  https://github.com/kufii/My-UserScripts
+// @match       *://*/*
+// @namespace   https://github.com/niubilityfrontend
+// @license     OSL-3.0
+// @grant       GM_xmlhttpRequest
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_listValues
+// @grant       GM_deleteValue
+// @grant       GM_registerMenuCommand
 // ==/UserScript==
 
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+var __webpack_exports__ = {};
 
-/***/ "./src/hunttingteacheron51talk/t.js":
-/*!******************************************!*\
-  !*** ./src/hunttingteacheron51talk/t.js ***!
-  \******************************************/
-/***/ (() => {
 
-eval("\r\n\r\nvar _this = void 0;\r\n\r\nfunction _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError(\"Cannot instantiate an arrow function\"); } }\r\n\r\n// ==UserScript==\r\n// @name         gm_config_toolbar\r\n// @version      0.0.4\r\n// @namespace    https://github.com/niubilityfrontend\r\n// @description  greasyfork configuration toolbar on the script addins\r\n// @author       kufii\r\n// @license      OSL-3.0\r\n// @supportURL   https://github.com/kufii/My-UserScripts\r\n// @grant        GM_xmlhttpRequest\r\n// @grant        GM_getValue\r\n// @grant        GM_setValue\r\n// @grant        GM_listValues\r\n// @grant        GM_deleteValue\r\n// @grant        GM_registerMenuCommand\r\n// ==/UserScript==\r\n(function () {\r\n  'use strict';\r\n\r\n  _newArrowCheck(this, _this);\r\n\r\n  window.GM_config = function (settings) {\r\n    let storage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'cfg';\r\n    let ret = null;\r\n    const prefix = 'gm-config';\r\n\r\n    const addStyle = function addStyle() {\r\n      const css = \"\\n\\t\\t\\t\\t.\".concat(prefix, \" {\\n\\t\\t\\t\\t\\tdisplay: grid;\\n\\t\\t\\t\\t\\talign-items: center;\\n\\t\\t\\t\\t\\tgrid-row-gap: 5px;\\n\\t\\t\\t\\t\\tgrid-column-gap: 10px;\\n\\t\\t\\t\\t\\tbackground-color: white;\\n\\t\\t\\t\\t\\tborder: 1px solid black;\\n\\t\\t\\t\\t\\tpadding: 5px;\\n\\t\\t\\t\\t\\tposition: fixed;\\n\\t\\t\\t\\t\\ttop: 0;\\n\\t\\t\\t\\t\\tright: 0;\\n\\t\\t\\t\\t\\tz-index: 2147483647;\\n\\t\\t\\t\\t}\\n\\n\\t\\t\\t\\t.\").concat(prefix, \" label {\\n\\t\\t\\t\\t\\tgrid-column: 1 / 2;\\n\\t\\t\\t\\t\\tcolor: black;\\n\\t\\t\\t\\t\\ttext-align: right;\\n\\t\\t\\t\\t\\tfont-size: small;\\n\\t\\t\\t\\t\\tfont-weight: bold;\\n\\t\\t\\t\\t}\\n\\n\\t\\t\\t\\t.\").concat(prefix, \" input,\\n\\t\\t\\t\\t.\").concat(prefix, \" textarea,\\n\\t\\t\\t\\t.\").concat(prefix, \" select {\\n\\t\\t\\t\\t\\tgrid-column: 2 / 4;\\n\\t\\t\\t\\t}\\n\\n\\t\\t\\t\\t.\").concat(prefix, \" .\").concat(prefix, \"-save {\\n\\t\\t\\t\\t\\tgrid-column: 2 / 3;\\n\\t\\t\\t\\t}\\n\\n\\t\\t\\t\\t.\").concat(prefix, \" .\").concat(prefix, \"-cancel {\\n\\t\\t\\t\\t\\tgrid-column: 3 / 4;\\n\\t\\t\\t\\t}\\n\\t\\t\\t\");\r\n\r\n      if (typeof GM_addStyle === 'undefined') {\r\n        const style = document.createElement('style');\r\n        style.textContent = css;\r\n        document.head.appendChild(style);\r\n      } else {\r\n        GM_addStyle(css);\r\n      }\r\n    };\r\n\r\n    const load = function load() {\r\n      var _this2 = this;\r\n\r\n      const defaults = {};\r\n      settings.forEach(function (_ref) {\r\n        let {\r\n          key,\r\n          \"default\": def\r\n        } = _ref;\r\n\r\n        _newArrowCheck(this, _this2);\r\n\r\n        return defaults[key] = def;\r\n      }.bind(this));\r\n      let cfg = typeof GM_getValue !== 'undefined' ? GM_getValue(storage) : localStorage.getItem(storage);\r\n      if (!cfg) return defaults;\r\n      cfg = JSON.parse(cfg);\r\n      Object.entries(defaults).forEach(function (_ref2) {\r\n        let [key, value] = _ref2;\r\n\r\n        _newArrowCheck(this, _this2);\r\n\r\n        if (typeof cfg[key] === 'undefined') {\r\n          cfg[key] = value;\r\n        }\r\n      }.bind(this));\r\n      return cfg;\r\n    };\r\n\r\n    const save = function save(cfg) {\r\n      const data = JSON.stringify(cfg);\r\n      typeof GM_setValue !== 'undefined' ? GM_setValue(storage, data) : localStorage.setItem(storage, data);\r\n    };\r\n\r\n    const setup = function setup() {\r\n      const createContainer = function createContainer() {\r\n        const form = document.createElement('form');\r\n        form.classList.add(prefix);\r\n        return form;\r\n      };\r\n\r\n      const createTextbox = function createTextbox(name, value, placeholder, maxLength, multiline, resize) {\r\n        const input = document.createElement(multiline ? 'textarea' : 'input');\r\n\r\n        if (multiline) {\r\n          input.style.resize = resize ? 'vertical' : 'none';\r\n        } else {\r\n          input.type = 'text';\r\n        }\r\n\r\n        input.name = name;\r\n        if (typeof value !== 'undefined') input.value = value;\r\n        if (placeholder) input.placeholder = placeholder;\r\n        if (maxLength) input.maxLength = maxLength;\r\n        return input;\r\n      };\r\n\r\n      const createNumber = function createNumber(name, value, placeholder, min, max, step) {\r\n        const input = createTextbox(name, value, placeholder);\r\n        input.type = 'number';\r\n        if (typeof min !== 'undefined') input.min = min;\r\n        if (typeof max !== 'undefined') input.max = max;\r\n        if (typeof step !== 'undefined') input.step = step;\r\n        return input;\r\n      };\r\n\r\n      const createSelect = function createSelect(name, options, value, showBlank) {\r\n        var _this3 = this;\r\n\r\n        const select = document.createElement('select');\r\n        select.name = name;\r\n\r\n        const createOption = function createOption(val) {\r\n          const {\r\n            value = val,\r\n            text = val\r\n          } = val;\r\n          const option = document.createElement('option');\r\n          option.value = value;\r\n          option.textContent = text;\r\n          return option;\r\n        };\r\n\r\n        if (showBlank) {\r\n          select.appendChild(createOption(''));\r\n        }\r\n\r\n        options.forEach(function (opt) {\r\n          var _this4 = this;\r\n\r\n          _newArrowCheck(this, _this3);\r\n\r\n          if (typeof opt.optgroup !== 'undefined') {\r\n            const optgroup = document.createElement('optgroup');\r\n            optgroup.label = opt.optgroup;\r\n            select.appendChild(optgroup);\r\n            opt.values.forEach(function (value) {\r\n              _newArrowCheck(this, _this4);\r\n\r\n              return optgroup.appendChild(createOption(value));\r\n            }.bind(this));\r\n          } else {\r\n            select.appendChild(createOption(opt));\r\n          }\r\n        }.bind(this));\r\n        select.value = value;\r\n        return select;\r\n      };\r\n\r\n      const createCheckbox = function createCheckbox(name, checked) {\r\n        const checkbox = document.createElement('input');\r\n        checkbox.id = \"\".concat(prefix, \"-\").concat(name);\r\n        checkbox.type = 'checkbox';\r\n        checkbox.name = name;\r\n        checkbox.checked = checked;\r\n        return checkbox;\r\n      };\r\n\r\n      const createButton = function createButton(text, onclick, classname) {\r\n        const button = document.createElement('button');\r\n        button.classList.add(\"\".concat(prefix, \"-\").concat(classname));\r\n        button.textContent = text;\r\n        button.onclick = onclick;\r\n        return button;\r\n      };\r\n\r\n      const createLabel = function createLabel(label, htmlFor) {\r\n        const lbl = document.createElement('label');\r\n        if (htmlFor) lbl.htmlFor = htmlFor;\r\n        lbl.textContent = label;\r\n        return lbl;\r\n      };\r\n\r\n      const init = function init(cfg) {\r\n        var _this5 = this;\r\n\r\n        const controls = {};\r\n        const div = createContainer();\r\n        settings.filter(function (_ref3) {\r\n          let {\r\n            type\r\n          } = _ref3;\r\n\r\n          _newArrowCheck(this, _this5);\r\n\r\n          return type !== 'hidden';\r\n        }.bind(this)).forEach(function (setting) {\r\n          var _this6 = this;\r\n\r\n          _newArrowCheck(this, _this5);\r\n\r\n          const value = cfg[setting.key];\r\n          let control;\r\n\r\n          if (setting.type === 'text') {\r\n            control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline, setting.resizable);\r\n          } else if (setting.type === 'number') {\r\n            control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);\r\n          } else if (setting.type === 'dropdown') {\r\n            control = createSelect(setting.key, setting.values, value, setting.showBlank);\r\n          } else if (setting.type === 'bool') {\r\n            control = createCheckbox(setting.key, value);\r\n          }\r\n\r\n          div.appendChild(createLabel(setting.label, control.id));\r\n          div.appendChild(control);\r\n          controls[setting.key] = control;\r\n          control.addEventListener(setting.type === 'dropdown' ? 'change' : 'input', function () {\r\n            _newArrowCheck(this, _this6);\r\n\r\n            if (ret.onchange) {\r\n              const control = controls[setting.key];\r\n              const value = setting.type === 'bool' ? control.checked : control.value;\r\n              ret.onchange(setting.key, value);\r\n            }\r\n          }.bind(this));\r\n        }.bind(this));\r\n        div.appendChild(createButton('Save', function () {\r\n          var _this7 = this;\r\n\r\n          _newArrowCheck(this, _this5);\r\n\r\n          settings.filter(function (_ref4) {\r\n            let {\r\n              type\r\n            } = _ref4;\r\n\r\n            _newArrowCheck(this, _this7);\r\n\r\n            return type !== 'hidden';\r\n          }.bind(this)).forEach(function (_ref5) {\r\n            let {\r\n              key,\r\n              type\r\n            } = _ref5;\r\n\r\n            _newArrowCheck(this, _this7);\r\n\r\n            const control = controls[key];\r\n            cfg[key] = type === 'bool' ? control.checked : control.value;\r\n          }.bind(this));\r\n          save(cfg);\r\n\r\n          if (ret.onsave) {\r\n            ret.onsave(cfg);\r\n          }\r\n\r\n          div.remove();\r\n        }.bind(this), 'save'));\r\n        div.appendChild(createButton('Cancel', function () {\r\n          _newArrowCheck(this, _this5);\r\n\r\n          if (ret.oncancel) {\r\n            ret.oncancel(cfg);\r\n          }\r\n\r\n          div.remove();\r\n        }.bind(this), 'cancel'));\r\n        document.body.appendChild(div);\r\n      };\r\n\r\n      init(load());\r\n    };\r\n\r\n    addStyle();\r\n    ret = {\r\n      load,\r\n      save,\r\n      setup\r\n    };\r\n    return ret;\r\n  };\r\n}).bind(void 0)();\n\n//# sourceURL=webpack://userscripts/./src/hunttingteacheron51talk/t.js?");
+var _this = void 0;
 
-/***/ })
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
-/******/ 	});
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./src/hunttingteacheron51talk/t.js"]();
-/******/ 	
+// ==UserScript==
+// @name         gm_config_toolbar
+// @version      0.0.4
+// @namespace    https://github.com/niubilityfrontend
+// @description  greasyfork configuration toolbar on the script addins
+// @author       kufii
+// @license      OSL-3.0
+// @supportURL   https://github.com/kufii/My-UserScripts
+// @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_listValues
+// @grant        GM_deleteValue
+// @grant        GM_registerMenuCommand
+// ==/UserScript==
+(function () {
+  'use strict';
+
+  _newArrowCheck(this, _this);
+
+  window.GM_config = function (settings) {
+    let storage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'cfg';
+    let ret = null;
+    const prefix = 'gm-config';
+
+    const addStyle = function addStyle() {
+      const css = "\n\t\t\t\t.".concat(prefix, " {\n\t\t\t\t\tdisplay: grid;\n\t\t\t\t\talign-items: center;\n\t\t\t\t\tgrid-row-gap: 5px;\n\t\t\t\t\tgrid-column-gap: 10px;\n\t\t\t\t\tbackground-color: white;\n\t\t\t\t\tborder: 1px solid black;\n\t\t\t\t\tpadding: 5px;\n\t\t\t\t\tposition: fixed;\n\t\t\t\t\ttop: 0;\n\t\t\t\t\tright: 0;\n\t\t\t\t\tz-index: 2147483647;\n\t\t\t\t}\n\n\t\t\t\t.").concat(prefix, " label {\n\t\t\t\t\tgrid-column: 1 / 2;\n\t\t\t\t\tcolor: black;\n\t\t\t\t\ttext-align: right;\n\t\t\t\t\tfont-size: small;\n\t\t\t\t\tfont-weight: bold;\n\t\t\t\t}\n\n\t\t\t\t.").concat(prefix, " input,\n\t\t\t\t.").concat(prefix, " textarea,\n\t\t\t\t.").concat(prefix, " select {\n\t\t\t\t\tgrid-column: 2 / 4;\n\t\t\t\t}\n\n\t\t\t\t.").concat(prefix, " .").concat(prefix, "-save {\n\t\t\t\t\tgrid-column: 2 / 3;\n\t\t\t\t}\n\n\t\t\t\t.").concat(prefix, " .").concat(prefix, "-cancel {\n\t\t\t\t\tgrid-column: 3 / 4;\n\t\t\t\t}\n\t\t\t");
+
+      if (typeof GM_addStyle === 'undefined') {
+        const style = document.createElement('style');
+        style.textContent = css;
+        document.head.appendChild(style);
+      } else {
+        GM_addStyle(css);
+      }
+    };
+
+    const load = function load() {
+      var _this2 = this;
+
+      const defaults = {};
+      settings.forEach(function (_ref) {
+        let {
+          key,
+          "default": def
+        } = _ref;
+
+        _newArrowCheck(this, _this2);
+
+        return defaults[key] = def;
+      }.bind(this));
+      let cfg = typeof GM_getValue !== 'undefined' ? GM_getValue(storage) : localStorage.getItem(storage);
+      if (!cfg) return defaults;
+      cfg = JSON.parse(cfg);
+      Object.entries(defaults).forEach(function (_ref2) {
+        let [key, value] = _ref2;
+
+        _newArrowCheck(this, _this2);
+
+        if (typeof cfg[key] === 'undefined') {
+          cfg[key] = value;
+        }
+      }.bind(this));
+      return cfg;
+    };
+
+    const save = function save(cfg) {
+      const data = JSON.stringify(cfg);
+      typeof GM_setValue !== 'undefined' ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
+    };
+
+    const setup = function setup() {
+      const createContainer = function createContainer() {
+        const form = document.createElement('form');
+        form.classList.add(prefix);
+        return form;
+      };
+
+      const createTextbox = function createTextbox(name, value, placeholder, maxLength, multiline, resize) {
+        const input = document.createElement(multiline ? 'textarea' : 'input');
+
+        if (multiline) {
+          input.style.resize = resize ? 'vertical' : 'none';
+        } else {
+          input.type = 'text';
+        }
+
+        input.name = name;
+        if (typeof value !== 'undefined') input.value = value;
+        if (placeholder) input.placeholder = placeholder;
+        if (maxLength) input.maxLength = maxLength;
+        return input;
+      };
+
+      const createNumber = function createNumber(name, value, placeholder, min, max, step) {
+        const input = createTextbox(name, value, placeholder);
+        input.type = 'number';
+        if (typeof min !== 'undefined') input.min = min;
+        if (typeof max !== 'undefined') input.max = max;
+        if (typeof step !== 'undefined') input.step = step;
+        return input;
+      };
+
+      const createSelect = function createSelect(name, options, value, showBlank) {
+        var _this3 = this;
+
+        const select = document.createElement('select');
+        select.name = name;
+
+        const createOption = function createOption(val) {
+          const {
+            value = val,
+            text = val
+          } = val;
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = text;
+          return option;
+        };
+
+        if (showBlank) {
+          select.appendChild(createOption(''));
+        }
+
+        options.forEach(function (opt) {
+          var _this4 = this;
+
+          _newArrowCheck(this, _this3);
+
+          if (typeof opt.optgroup !== 'undefined') {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = opt.optgroup;
+            select.appendChild(optgroup);
+            opt.values.forEach(function (value) {
+              _newArrowCheck(this, _this4);
+
+              return optgroup.appendChild(createOption(value));
+            }.bind(this));
+          } else {
+            select.appendChild(createOption(opt));
+          }
+        }.bind(this));
+        select.value = value;
+        return select;
+      };
+
+      const createCheckbox = function createCheckbox(name, checked) {
+        const checkbox = document.createElement('input');
+        checkbox.id = "".concat(prefix, "-").concat(name);
+        checkbox.type = 'checkbox';
+        checkbox.name = name;
+        checkbox.checked = checked;
+        return checkbox;
+      };
+
+      const createButton = function createButton(text, onclick, classname) {
+        const button = document.createElement('button');
+        button.classList.add("".concat(prefix, "-").concat(classname));
+        button.textContent = text;
+        button.onclick = onclick;
+        return button;
+      };
+
+      const createLabel = function createLabel(label, htmlFor) {
+        const lbl = document.createElement('label');
+        if (htmlFor) lbl.htmlFor = htmlFor;
+        lbl.textContent = label;
+        return lbl;
+      };
+
+      const init = function init(cfg) {
+        var _this5 = this;
+
+        const controls = {};
+        const div = createContainer();
+        settings.filter(function (_ref3) {
+          let {
+            type
+          } = _ref3;
+
+          _newArrowCheck(this, _this5);
+
+          return type !== 'hidden';
+        }.bind(this)).forEach(function (setting) {
+          var _this6 = this;
+
+          _newArrowCheck(this, _this5);
+
+          const value = cfg[setting.key];
+          let control;
+
+          if (setting.type === 'text') {
+            control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline, setting.resizable);
+          } else if (setting.type === 'number') {
+            control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);
+          } else if (setting.type === 'dropdown') {
+            control = createSelect(setting.key, setting.values, value, setting.showBlank);
+          } else if (setting.type === 'bool') {
+            control = createCheckbox(setting.key, value);
+          }
+
+          div.appendChild(createLabel(setting.label, control.id));
+          div.appendChild(control);
+          controls[setting.key] = control;
+          control.addEventListener(setting.type === 'dropdown' ? 'change' : 'input', function () {
+            _newArrowCheck(this, _this6);
+
+            if (ret.onchange) {
+              const control = controls[setting.key];
+              const value = setting.type === 'bool' ? control.checked : control.value;
+              ret.onchange(setting.key, value);
+            }
+          }.bind(this));
+        }.bind(this));
+        div.appendChild(createButton('Save', function () {
+          var _this7 = this;
+
+          _newArrowCheck(this, _this5);
+
+          settings.filter(function (_ref4) {
+            let {
+              type
+            } = _ref4;
+
+            _newArrowCheck(this, _this7);
+
+            return type !== 'hidden';
+          }.bind(this)).forEach(function (_ref5) {
+            let {
+              key,
+              type
+            } = _ref5;
+
+            _newArrowCheck(this, _this7);
+
+            const control = controls[key];
+            cfg[key] = type === 'bool' ? control.checked : control.value;
+          }.bind(this));
+          save(cfg);
+
+          if (ret.onsave) {
+            ret.onsave(cfg);
+          }
+
+          div.remove();
+        }.bind(this), 'save'));
+        div.appendChild(createButton('Cancel', function () {
+          _newArrowCheck(this, _this5);
+
+          if (ret.oncancel) {
+            ret.oncancel(cfg);
+          }
+
+          div.remove();
+        }.bind(this), 'cancel'));
+        document.body.appendChild(div);
+      };
+
+      init(load());
+    };
+
+    addStyle();
+    ret = {
+      load,
+      save,
+      setup
+    };
+    return ret;
+  };
+}).bind(void 0)();
 /******/ })()
 ;

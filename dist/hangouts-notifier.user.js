@@ -1,46 +1,147 @@
 // ==UserScript==
-// @name Hangouts Notifier
-// @version 0.0.9
-// @author fuzetsu
+// @name        Hangouts Notifier
+// @version     0.0.9
+// @author      fuzetsu
 // @description Show desktop notifications for the Hangouts web app
-// @homepage https://github.com/niubilityfrontend/userscripts#readme
-// @supportURL https://github.com/niubilityfrontend/userscripts/issues
-// @match https://hangouts.google.com/webchat/*
-// @namespace fuzetsu.com/HangoutsNotifier
-// @grant none
-// @deprecated true
+// @homepage    https://github.com/niubilityfrontend/userscripts#readme
+// @supportURL  https://github.com/niubilityfrontend/userscripts/issues
+// @match       https://hangouts.google.com/webchat/*
+// @namespace   fuzetsu.com/HangoutsNotifier
+// @grant       none
+// @deprecated  true
 // ==/UserScript==
 
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+var __webpack_exports__ = {};
+// ==UserScript==
+// @name         Hangouts Notifier
+// @namespace    fuzetsu.com/HangoutsNotifier
+// @version      0.0.9
+// @description  Show desktop notifications for the Hangouts web app
+// @author       fuzetsu
+// @match        https://hangouts.google.com/webchat/*
+// @grant        none
+// @deprecated   true
+// ==/UserScript==
+/* jshint -W097 */
 
-/***/ "./src/hangouts-notifier/hangouts-notifier.user.js":
-/*!*********************************************************!*\
-  !*** ./src/hangouts-notifier/hangouts-notifier.user.js ***!
-  \*********************************************************/
-/***/ (() => {
 
-eval("// ==UserScript==\r\n// @name         Hangouts Notifier\r\n// @namespace    fuzetsu.com/HangoutsNotifier\r\n// @version      0.0.9\r\n// @description  Show desktop notifications for the Hangouts web app\r\n// @author       fuzetsu\r\n// @match        https://hangouts.google.com/webchat/*\r\n// @grant        none\r\n// @deprecated   true\r\n// ==/UserScript==\r\n/* jshint -W097 */\r\n\r\n\r\nvar util = {\r\n    log: function () {\r\n        var args = [].slice.call(arguments);\r\n        args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: purple;');\r\n        console.log.apply(console, args);\r\n    },\r\n    q: function (query, context) {\r\n        return (context || document).querySelector(query);\r\n    },\r\n    qq: function (query, context) {\r\n        return [].slice.call((context || document).querySelectorAll(query));\r\n    }\r\n};\r\n\r\nvar SCRIPT_NAME = 'Hangouts Notifier';\r\nvar LAST_MESSAGE = '.tk.Sn';\r\nvar MESSAGE_TEXT = '.Mu:last-child';\r\nvar USER_IMAGE = 'img.Yf';\r\nvar NEW_MSG = '.Ik.uB';\r\nvar CHECK_INTERVAL = 1 * 1000;\r\nvar NOTIFY_HIDE_DELAY = 6 * 1000;\r\nvar NOTIFY_EXPIRE = 1 * 60 * 1000;\r\n\r\nvar hn = {\r\n    checkPermissions: function () {\r\n        return Notification.requestPermission(function (permission) {\r\n            util.log('permission', permission);\r\n        });\r\n    },\r\n    notification: function (title, opt) {\r\n        var n = new Notification(title, opt);\r\n        var id = setTimeout(function () {\r\n            n.close();\r\n        }, NOTIFY_EXPIRE);\r\n        n.onclick = function () {\r\n            clearTimeout(id);\r\n            n.close();\r\n            window.focus();\r\n        };\r\n        n.onshow = function () {\r\n            clearTimeout(id);\r\n            setTimeout(function () {\r\n                n.close();\r\n            }, NOTIFY_HIDE_DELAY);\r\n        };\r\n    },\r\n    notify: function (user, msg, img) {\r\n        if (!('Notification' in window)) {\r\n            alert('This browser does not support desktop notifications...');\r\n            return;\r\n        }\r\n        var title = user;\r\n        var opt = {\r\n            body: msg,\r\n            icon: img || 'https://cdn4.iconfinder.com/data/icons/miu-shadow-social/48/hangouts-128.png'\r\n        };\r\n        if (Notification.permission === 'granted') {\r\n            hn.notification(title, opt);\r\n        } else if (Notification.permission !== 'denied') {\r\n            return Notification.requestPermission(function (permission) {\r\n                if (permission === 'granted') {\r\n                    hn.notification(title, opt);\r\n                }\r\n            });\r\n        }\r\n    },\r\n    getLastMessage: function () {\r\n        var message = util.qq(LAST_MESSAGE).pop();\r\n        if (!message) return;\r\n        var user = util.q(USER_IMAGE, message);\r\n        message = util.q(MESSAGE_TEXT, message);\r\n        if (!message) return;\r\n        return {\r\n            user: user.alt,\r\n            id: message.id,\r\n            text: message.textContent,\r\n            img: user.src.replace(/\\/s32[^\\/]*\\//, '/s128/')\r\n        };\r\n    },\r\n    start: function () {\r\n        util.log('Starting...', location.href);\r\n        var lastId = null;\r\n        var res = hn.getLastMessage();\r\n        if (!res) {\r\n            util.log('failed to get last message, this probably  isn\\'t a hangouts chat window...');\r\n            if (document.URL.indexOf('prop=gmail#epreld') >= 0) {\r\n                util.log('So it may be a hangouts chat window, after all...');\r\n                res = {\r\n                    id: -1\r\n                };\r\n            } else {\r\n                return false;\r\n            }\r\n        }\r\n        // if window is focused set last message as read\r\n        if (document.hasFocus() || !util.q(NEW_MSG)) {\r\n            lastId = res.id;\r\n        }\r\n        setInterval(function () {\r\n            res = hn.getLastMessage();\r\n            if (res && res.id !== lastId) {\r\n                lastId = res.id;\r\n                if (!document.hasFocus() && util.q(NEW_MSG)) {\r\n                    hn.notify(res.user, res.text, res.img);\r\n                }\r\n            }\r\n        }, CHECK_INTERVAL);\r\n        return true;\r\n    }\r\n};\r\n\r\nhn.checkPermissions();\r\nif (!hn.start()) {\r\n    util.log('trying again in 5 seconds, just in case');\r\n    setTimeout(hn.start, 5000);\r\n}\n\n//# sourceURL=webpack://userscripts/./src/hangouts-notifier/hangouts-notifier.user.js?");
+var util = {
+    log: function () {
+        var args = [].slice.call(arguments);
+        args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: purple;');
+        console.log.apply(console, args);
+    },
+    q: function (query, context) {
+        return (context || document).querySelector(query);
+    },
+    qq: function (query, context) {
+        return [].slice.call((context || document).querySelectorAll(query));
+    }
+};
 
-/***/ })
+var SCRIPT_NAME = 'Hangouts Notifier';
+var LAST_MESSAGE = '.tk.Sn';
+var MESSAGE_TEXT = '.Mu:last-child';
+var USER_IMAGE = 'img.Yf';
+var NEW_MSG = '.Ik.uB';
+var CHECK_INTERVAL = 1 * 1000;
+var NOTIFY_HIDE_DELAY = 6 * 1000;
+var NOTIFY_EXPIRE = 1 * 60 * 1000;
 
-/******/ 	});
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./src/hangouts-notifier/hangouts-notifier.user.js"]();
-/******/ 	
+var hn = {
+    checkPermissions: function () {
+        return Notification.requestPermission(function (permission) {
+            util.log('permission', permission);
+        });
+    },
+    notification: function (title, opt) {
+        var n = new Notification(title, opt);
+        var id = setTimeout(function () {
+            n.close();
+        }, NOTIFY_EXPIRE);
+        n.onclick = function () {
+            clearTimeout(id);
+            n.close();
+            window.focus();
+        };
+        n.onshow = function () {
+            clearTimeout(id);
+            setTimeout(function () {
+                n.close();
+            }, NOTIFY_HIDE_DELAY);
+        };
+    },
+    notify: function (user, msg, img) {
+        if (!('Notification' in window)) {
+            alert('This browser does not support desktop notifications...');
+            return;
+        }
+        var title = user;
+        var opt = {
+            body: msg,
+            icon: img || 'https://cdn4.iconfinder.com/data/icons/miu-shadow-social/48/hangouts-128.png'
+        };
+        if (Notification.permission === 'granted') {
+            hn.notification(title, opt);
+        } else if (Notification.permission !== 'denied') {
+            return Notification.requestPermission(function (permission) {
+                if (permission === 'granted') {
+                    hn.notification(title, opt);
+                }
+            });
+        }
+    },
+    getLastMessage: function () {
+        var message = util.qq(LAST_MESSAGE).pop();
+        if (!message) return;
+        var user = util.q(USER_IMAGE, message);
+        message = util.q(MESSAGE_TEXT, message);
+        if (!message) return;
+        return {
+            user: user.alt,
+            id: message.id,
+            text: message.textContent,
+            img: user.src.replace(/\/s32[^\/]*\//, '/s128/')
+        };
+    },
+    start: function () {
+        util.log('Starting...', location.href);
+        var lastId = null;
+        var res = hn.getLastMessage();
+        if (!res) {
+            util.log('failed to get last message, this probably  isn\'t a hangouts chat window...');
+            if (document.URL.indexOf('prop=gmail#epreld') >= 0) {
+                util.log('So it may be a hangouts chat window, after all...');
+                res = {
+                    id: -1
+                };
+            } else {
+                return false;
+            }
+        }
+        // if window is focused set last message as read
+        if (document.hasFocus() || !util.q(NEW_MSG)) {
+            lastId = res.id;
+        }
+        setInterval(function () {
+            res = hn.getLastMessage();
+            if (res && res.id !== lastId) {
+                lastId = res.id;
+                if (!document.hasFocus() && util.q(NEW_MSG)) {
+                    hn.notify(res.user, res.text, res.img);
+                }
+            }
+        }, CHECK_INTERVAL);
+        return true;
+    }
+};
+
+hn.checkPermissions();
+if (!hn.start()) {
+    util.log('trying again in 5 seconds, just in case');
+    setTimeout(hn.start, 5000);
+}
 /******/ })()
 ;
