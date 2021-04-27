@@ -12,7 +12,10 @@
 // ==/UserScript==
 
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 var __webpack_exports__ = {};
+
+
 // ==UserScript==
 // @name         YouTube Playlist Search
 // @namespace    http://www.fuzetsu.com/YPS
@@ -23,130 +26,164 @@ var __webpack_exports__ = {};
 // @copyright    2014+, fuzetsu
 // @grant        none
 // ==/UserScript==
+var SCRIPT_NAME = 'YouTube Playlist Search',
+    ITEM_SELECTOR = '#contents > ytd-playlist-video-renderer,ytd-grid-video-renderer',
+    ITEM_PROGRESS_SELECTOR = ITEM_SELECTOR + ' #progress',
+    TEXT_SELECTOR = '#meta',
+    OFFSET_AREA_SELECTOR = '#masthead-container',
+    util = {
+  log: function log() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-const SCRIPT_NAME = 'YouTube Playlist Search';
-const ITEM_SELECTOR = '#contents > ytd-playlist-video-renderer,ytd-grid-video-renderer';
-const ITEM_PROGRESS_SELECTOR = ITEM_SELECTOR + ' #progress';
-const TEXT_SELECTOR = '#meta';
-const OFFSET_AREA_SELECTOR = '#masthead-container';
+    return console.log("%c".concat(SCRIPT_NAME), 'font-weight: bold;color: hotpink;', ...args);
+  },
+  q: function q(query, context) {
+    return (context || document).querySelector(query);
+  },
+  qq: function qq(query, context) {
+    return Array.from((context || document).querySelectorAll(query));
+  },
+  debounce: function debounce(cb, ms) {
+    var id;
+    return function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
 
-const util = {
-  log: (...args) => console.log(`%c${SCRIPT_NAME}`, 'font-weight: bold;color: hotpink;', ...args),
-  q: (query, context) => (context || document).querySelector(query),
-  qq: (query, context) => Array.from((context || document).querySelectorAll(query)),
-  debounce: (cb, ms) => {
-    let id;
-    return (...args) => {
       clearTimeout(id);
-      id = setTimeout(() => cb(...args), ms);
+      id = setTimeout(function () {
+        return cb(...args);
+      }, ms);
     };
   },
-  makeElem: (tag, attrs) => {
-    const elem = document.createElement(tag);
-    Object.entries(attrs).forEach(([attr, val]) => !['style'].includes(attr) && attr in elem ? elem[attr] = val : elem.setAttribute(attr, val));
+  makeElem: function makeElem(tag, attrs) {
+    var elem = document.createElement(tag);
+    Object.entries(attrs).forEach(function (_ref) {
+      var [attr, val] = _ref;
+      return !['style'].includes(attr) && attr in elem ? elem[attr] = val : elem.setAttribute(attr, val);
+    });
     return elem;
   }
-};
-
-const yps = {
+},
+    yps = {
   _items: [],
   hideWatched: false,
-  render: () => {
-    const commonStyles = [
-      'position: fixed',
-      `top: ${util.q(OFFSET_AREA_SELECTOR).clientHeight}px`,
-      'z-index: 9000',
-      'padding: 5px 8px',
-      'border: 1px solid #999',
-      'font-size: medium',
-      'color: var(--yt-primary-text-color)',
-      'margin: 0',
-      'box-sizing: border-box',
-      'background: var(--yt-main-app-background-tmp)'
-    ];
-    const txtSearch = util.makeElem('input', {
+  render: function render() {
+    var commonStyles = ['position: fixed', "top: ".concat(util.q(OFFSET_AREA_SELECTOR).clientHeight, "px"), 'z-index: 9000', 'padding: 5px 8px', 'border: 1px solid #999', 'font-size: medium', 'color: var(--yt-primary-text-color)', 'margin: 0', 'box-sizing: border-box', 'background: var(--yt-main-app-background-tmp)'],
+        txtSearch = util.makeElem('input', {
       type: 'text',
       placeholder: 'filter - start with ^ for inverse search',
-      style: [
-        ...commonStyles,
-        'right: 0',
-        'width: 300px'
-      ].join(';'),
-      onkeyup: util.debounce(e => resultCount.render(...yps.search(e.target.value)), 200)
-    });
-    const resultCount = util.makeElem('span', {
-      style: [
-        ...commonStyles,
-        'right: 300px'
-      ].join(';'),
+      style: [...commonStyles, 'right: 0', 'width: 300px'].join(';'),
+      onkeyup: util.debounce(function (e) {
+        return resultCount.render(...yps.search(e.target.value));
+      }, 200)
+    }),
+        resultCount = util.makeElem('span', {
+      style: [...commonStyles, 'right: 300px'].join(';'),
       textContent: '-'
     });
-    resultCount.render = (x, y, invert) => resultCount.childNodes[0].textContent = `Showing ${x} of ${y} ${invert ? '(NOT)' : ''} | Hide Watched `;
-    const toggleWatched = util.makeElem('input', {
+
+    resultCount.render = function (x, y, invert) {
+      return resultCount.childNodes[0].textContent = "Showing ".concat(x, " of ").concat(y, " ").concat(invert ? '(NOT)' : '', " | Hide Watched ");
+    };
+
+    var toggleWatched = util.makeElem('input', {
       type: 'checkbox',
       value: yps.hideWatched,
-      onchange: () => (yps.hideWatched = toggleWatched.checked, resultCount.render(...yps.search(txtSearch.value)))
+      onchange: function onchange() {
+        return yps.hideWatched = toggleWatched.checked, resultCount.render(...yps.search(txtSearch.value));
+      }
     });
     resultCount.appendChild(toggleWatched);
-    [txtSearch, resultCount].forEach(elem => document.body.appendChild(elem));
-    return { txtSearch, resultCount };
+    [txtSearch, resultCount].forEach(function (elem) {
+      return document.body.appendChild(elem);
+    });
+    return {
+      txtSearch: txtSearch,
+      resultCount: resultCount
+    };
   },
-  search: (query = '') => {
-    const invert = query.startsWith('^');
-    if(invert) query = query.slice(1);
-    query = query.toLowerCase().trim().split(' ').map(q => q.trim()).filter(q => !!q);
-    const count = yps._items
-      .map(item => {
-        const hideBecauseWatched = yps.hideWatched && item.watched;
-        let hide = hideBecauseWatched || !query[invert ? 'some' : 'every'](q => item.name.includes(q));
-        if(invert && !hideBecauseWatched) hide = !hide;
-        item.elem.style.display = hide ? 'none' : '';
-        return hide;
-      })
-      .filter(hide => !hide).length;
+  search: function search() {
+    var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '',
+        invert = query.startsWith('^');
+    if (invert) query = query.slice(1);
+    query = query.toLowerCase().trim().split(' ').map(function (q) {
+      return q.trim();
+    }).filter(function (q) {
+      return !!q;
+    });
+
+    var count = yps._items.map(function (item) {
+      var hideBecauseWatched = yps.hideWatched && item.watched,
+          hide = hideBecauseWatched || !query[invert ? 'some' : 'every'](function (q) {
+        return item.name.includes(q);
+      });
+      if (invert && !hideBecauseWatched) hide = !hide;
+      item.elem.style.display = hide ? 'none' : '';
+      return hide;
+    }).filter(function (hide) {
+      return !hide;
+    }).length;
+
     return [count, yps._items.length, invert];
   },
-  start: () => {
+  start: function start() {
     util.log('Starting... waiting for playlist');
-    waitForUrl(/^https:\/\/www\.youtube\.com\/(playlist\?list=|(user|channel)\/[^\/]+\/videos|feed\/subscriptions).*/, () => {
+    waitForUrl(/^https:\/\/www\.youtube\.com\/(playlist\?list=|(user|channel)\/[^\/]+\/videos|feed\/subscriptions).*/, function () {
       util.log('Reached playlist, adding search box');
-      const playlistUrl = location.href;
-      const { txtSearch, resultCount } = yps.render();
-      const refresh = util.debounce(() => resultCount.render(...yps.search(txtSearch.value)), 50);
-      const itemWait = waitForElems({
-        sel: ITEM_SELECTOR, 
-        onmatch: elem => {
+      var playlistUrl = location.href,
+          {
+        txtSearch: txtSearch,
+        resultCount: resultCount
+      } = yps.render(),
+          refresh = util.debounce(function () {
+        return resultCount.render(...yps.search(txtSearch.value));
+      }, 50),
+          itemWait = waitForElems({
+        sel: ITEM_SELECTOR,
+        onmatch: function onmatch(elem) {
           yps._items.push({
-            elem,
+            elem: elem,
             name: util.q(TEXT_SELECTOR, elem).textContent.toLowerCase(),
             watched: false
           });
+
           refresh();
         }
-      });
-      const progressWait = waitForElems({
-        sel: ITEM_PROGRESS_SELECTOR, 
-        onmatch: prog => {
-          const watched = parseInt(prog.style.width) > 50;
-          if(!watched) return;
-          const itemElem = prog.closest(ITEM_SELECTOR);
-          const found = yps._items.find(item => item.elem === itemElem);
-          if(!found) return console.log('error, unable to find item parent', prog, itemElem, found);
+      }),
+          progressWait = waitForElems({
+        sel: ITEM_PROGRESS_SELECTOR,
+        onmatch: function onmatch(prog) {
+          var watched = parseInt(prog.style.width) > 50;
+          if (!watched) return;
+
+          var itemElem = prog.closest(ITEM_SELECTOR),
+              found = yps._items.find(function (item) {
+            return item.elem === itemElem;
+          });
+
+          if (!found) return console.log('error, unable to find item parent', prog, itemElem, found);
           found.watched = watched;
-          if(yps.hideWatched && watched) refresh();
+          if (yps.hideWatched && watched) refresh();
         }
-      });
-      const urlWaitId = waitForUrl(url => url !== playlistUrl, () => {
+      }),
+          urlWaitId = waitForUrl(function (url) {
+        return url !== playlistUrl;
+      }, function () {
         util.log('leaving playlist, cleaning up');
-        [progressWait, itemWait, urlWaitId].forEach(wait => wait.stop && wait.stop() || clearInterval(wait));
-        [txtSearch, resultCount].forEach(elem => elem.remove());
+        [progressWait, itemWait, urlWaitId].forEach(function (wait) {
+          return wait.stop && wait.stop() || clearInterval(wait);
+        });
+        [txtSearch, resultCount].forEach(function (elem) {
+          return elem.remove();
+        });
         yps._items = [];
       }, true);
     });
   }
 };
-
 yps.start();
-
 /******/ })()
 ;

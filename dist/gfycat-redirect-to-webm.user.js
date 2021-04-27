@@ -12,7 +12,10 @@
 // ==/UserScript==
 
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 var __webpack_exports__ = {};
+
+
 // ==UserScript==
 // @name         Gfycat Redirect to Webm
 // @namespace    http://fuzetsu/gfycat-redirect-webm
@@ -23,13 +26,14 @@ var __webpack_exports__ = {};
 // @grant        none
 // @deprecated   true
 // ==/UserScript==
-
 var xhr = new XMLHttpRequest();
 xhr.open('get', location.href + '.webm');
 xhr.responseType = 'document';
-xhr.onload = function() {
+
+xhr.onload = function () {
   location.href = xhr.response.querySelector('#inner > h1 > a').href;
-}
+};
+
 xhr.send();
 /******/ })()
 ;

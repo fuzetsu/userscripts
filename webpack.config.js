@@ -39,29 +39,34 @@ module.exports = {
     minimize: false,
   },
   entry,
+
   //watch: true,
+  // stats: "errors-only",
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/dist/',
     filename: '[name].js',
     clean: true,
-    chunkFilename: '[name].js'
+    chunkFilename: '[name].js',
+
   },
   module: {
     rules: [{
-      test: /\.mjs|\.es6$/,
+      test: /\.mjs|\.es6|\.js$/, //不能对js文件进行babel,有文件有问题
+      include: [path.resolve('./libs'), path.resolve('./src')],
       exclude: /node_modules/, //不需要对第三方模块进行转换，耗费性能
       loader: "babel-loader", //bable-loader打通了webpack和bable  bable-core
       options: {}
     }]
   },
   resolve: {
+    // modules: [path.resolve(__dirname, 'libs'), 'node_modules'],
     extensions: ['.es6', '.mjs', '.cjs', '.js', '.json', '.wasm'],
     alias: {
       '@libs': path.resolve('./libs') // 直接引用src源码
     }
   },
-
+  target: 'web',
   plugins: [
     new WebpackUserscript({
       headers: function (data) {

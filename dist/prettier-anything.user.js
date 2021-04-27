@@ -34,132 +34,138 @@ var __webpack_exports__ = {};
 // @grant        GM_registerMenuCommand
 // @require      https://cdn.jsdelivr.net/gh/kufii/My-UserScripts@00302ac8bd875599ed97df07b379b58f9b4932bd/libs/gm_config.js
 // ==/UserScript==
+
 /* global prettier prettierPlugins GM_setClipboard GM_xmlhttpRequest GM_registerMenuCommand GM_config */
 
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-const deps = [
-  'https://unpkg.com/prettier@2/standalone.js',
-  'https://unpkg.com/prettier@2/parser-babel.js'
-]
+function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-const loadDep = url =>
-  new Promise((resolve, reject) => {
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var deps = ['https://unpkg.com/prettier@2/standalone.js', 'https://unpkg.com/prettier@2/parser-babel.js'],
+    loadDep = function loadDep(url) {
+  return new Promise(function (resolve, reject) {
     GM_xmlhttpRequest({
       method: 'GET',
-      url,
-      onload: res => resolve(res.responseText),
-      onerror: () => reject(new Error(`Failed to load ${url}`))
-    })
-  })
-
-const Config = GM_config([
-  {
-    key: 'prettierrc',
-    label: 'Prettier Config',
-    default: '{}',
-    type: 'text',
-    multiline: true,
-    resizable: true
+      url: url,
+      onload: function onload(res) {
+        return resolve(res.responseText);
+      },
+      onerror: function onerror() {
+        return reject(new Error("Failed to load ".concat(url)));
+      }
+    });
+  });
+},
+    Config = GM_config([{
+  key: 'prettierrc',
+  label: 'Prettier Config',
+  "default": '{}',
+  type: 'text',
+  multiline: true,
+  resizable: true
+}, {
+  key: 'binding',
+  label: 'Key Binding',
+  type: 'keybinding',
+  "default": {
+    altKey: true,
+    shiftKey: true,
+    key: 'I'
   },
-  {
-    key: 'binding',
-    label: 'Key Binding',
-    type: 'keybinding',
-    default: { altKey: true, shiftKey: true, key: 'I' },
-    requireModifier: true,
-    requireKey: true
+  requireModifier: true,
+  requireKey: true
+}, {
+  key: 'copyBinding',
+  label: 'Copy Key Binding',
+  type: 'keybinding',
+  "default": {
+    ctrlKey: true,
+    altKey: true,
+    shiftKey: true,
+    key: 'I'
   },
-  {
-    key: 'copyBinding',
-    label: 'Copy Key Binding',
-    type: 'keybinding',
-    default: { ctrlKey: true, altKey: true, shiftKey: true, key: 'I' },
-    requireModifier: true,
-    requireKey: true
-  }
-])
-GM_registerMenuCommand('Prettier Anywhere Settings', () => {
-  if (window.top === window.self) Config.setup()
-})
-let config = Config.load()
-Config.onsave = cfg => (config = cfg)
+  requireModifier: true,
+  requireKey: true
+}]);
 
-const p = (...args) => (console.log(...args), args[0])
+GM_registerMenuCommand('Prettier Anywhere Settings', function () {
+  if (window.top === window.self) Config.setup();
+});
+var config = Config.load();
 
-let loaded = false
-const load = () => {
-  if (loaded) return
-  loaded = true
-  return Promise.all(deps.map(loadDep)).then(scripts => scripts.map(eval)) // eslint-disable-line no-eval
-}
+Config.onsave = function (cfg) {
+  return config = cfg;
+};
 
-const getSelection = () => {
-  const elem = document.activeElement
+var p = function p() {
+  return console.log(...arguments), arguments.length <= 0 ? undefined : arguments[0];
+},
+    loaded = false,
+    load = function load() {
+  if (loaded) return;
+  loaded = true;
+  return Promise.all(deps.map(loadDep)).then(function (scripts) {
+    return scripts.map(eval);
+  }); // eslint-disable-line no-eval
+},
+    getSelection = function getSelection() {
+  var elem = document.activeElement;
+
   if (['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
-    return elem.value.slice(elem.selectionStart, elem.selectionEnd)
+    return elem.value.slice(elem.selectionStart, elem.selectionEnd);
   } else if (elem.contentEditable) {
-    if (!document.getSelection().toString()) return
-    document.execCommand('copy')
-    return navigator.clipboard.readText()
-  } else return document.getSelection().toString()
-}
+    if (!document.getSelection().toString()) return;
+    document.execCommand('copy');
+    return navigator.clipboard.readText();
+  } else return document.getSelection().toString();
+},
+    insertText = function insertText(text) {
+  var elem = document.activeElement;
 
-const insertText = text => {
-  const elem = document.activeElement
   if (typeof InstallTrigger !== 'undefined' && ['INPUT', 'TEXTAREA'].includes(elem.nodeName)) {
-    elem.value =
-      elem.value.slice(0, elem.selectionStart) + text + elem.value.slice(elem.selectionEnd)
+    elem.value = elem.value.slice(0, elem.selectionStart) + text + elem.value.slice(elem.selectionEnd);
   } else {
-    document.execCommand('insertText', false, text)
+    document.execCommand('insertText', false, text);
   }
-}
+},
+    prettify = async function prettify(clip) {
+  var code = getSelection();
+  p('key combo HIT, selection = ', code, '; clip = ', clip);
+  if (!code) return p('no selection, so nothing to do');
+  p('--- PRETTIER START ---');
+  p('Loading Prettier');
+  var loadStart = Date.now();
+  await load();
+  p('Loaded, delta = ', Date.now() - loadStart);
 
-const prettify = async clip => {
-  const code = getSelection()
-  p('key combo HIT, selection = ', code, '; clip = ', clip)
-  if (!code) return p('no selection, so nothing to do')
-  p('--- PRETTIER START ---')
-
-  p('Loading Prettier')
-  const loadStart = Date.now()
-  await load()
-  p('Loaded, delta = ', Date.now() - loadStart)
-
-  const conf = {
-    ...JSON.parse(config.prettierrc || '{}'),
+  var conf = _objectSpread(_objectSpread({}, JSON.parse(config.prettierrc || '{}')), {}, {
     parser: 'babel',
     plugins: prettierPlugins
-  }
-  p('formatting using conf:', conf)
+  });
 
-  const formatted = prettier.format(code, conf)
-  if (clip) GM_setClipboard(formatted)
-  else insertText(formatted)
+  p('formatting using conf:', conf);
+  var formatted = prettier.format(code, conf);
+  if (clip) GM_setClipboard(formatted);else insertText(formatted);
+  document.getSelection().empty();
+  p('BEFORE:\n', code);
+  p('AFTER:\n', formatted);
+  p('--- PRETTIER END ---');
+},
+    keyBindingsMatch = function keyBindingsMatch(a, b) {
+  return !a.ctrlKey === !b.ctrlKey && !a.altKey === !b.altKey && !a.shiftKey === !b.shiftKey && !a.metaKey === !b.metaKey && a.key.toUpperCase() === b.key.toUpperCase();
+};
 
-  document.getSelection().empty()
-
-  p('BEFORE:\n', code)
-  p('AFTER:\n', formatted)
-  p('--- PRETTIER END ---')
-}
-
-const keyBindingsMatch = (a, b) =>
-  !a.ctrlKey === !b.ctrlKey &&
-  !a.altKey === !b.altKey &&
-  !a.shiftKey === !b.shiftKey &&
-  !a.metaKey === !b.metaKey &&
-  a.key.toUpperCase() === b.key.toUpperCase()
-
-window.addEventListener('keydown', e => {
+window.addEventListener('keydown', function (e) {
   if (keyBindingsMatch(e, config.binding)) {
-    e.preventDefault()
-    prettify()
+    e.preventDefault();
+    prettify();
   } else if (keyBindingsMatch(e, config.copyBinding)) {
-    e.preventDefault()
-    prettify(true)
+    e.preventDefault();
+    prettify(true);
   }
-})
-
+});
 /******/ })()
 ;

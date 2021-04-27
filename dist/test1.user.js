@@ -14,9 +14,7 @@ var __webpack_exports__ = {};
 
 var _parseMeta = require("@libs/parseMeta.mjs"),
     p = function p() {
-  var _console;
-
-  return (_console = console).log.apply(_console, arguments), arguments.length <= 0 ? undefined : arguments[0];
+  return console.log(...arguments), arguments.length <= 0 ? undefined : arguments[0];
 },
     test = 'Your awesome js code.',
     jquery = p,

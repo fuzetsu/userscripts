@@ -13,7 +13,10 @@
 // ==/UserScript==
 
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 var __webpack_exports__ = {};
+
+
 // ==UserScript==
 // @name         Kijiji Middle Click
 // @namespace    kijiji-middle-click
@@ -25,19 +28,19 @@ var __webpack_exports__ = {};
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @deprecated   true
 // ==/UserScript==
-
-(function() {
+(function () {
   'use strict';
-  var allowMiddleClick = function(evt) {
-    if(evt.button === 1) evt.stopPropagation();
+
+  var allowMiddleClick = function allowMiddleClick(evt) {
+    if (evt.button === 1) evt.stopPropagation();
   };
+
   waitForElems({
     sel: 'a',
-    onmatch: function(a) {
+    onmatch: function onmatch(a) {
       a.onclick = allowMiddleClick;
     }
   });
 })();
-
 /******/ })()
 ;

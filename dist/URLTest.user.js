@@ -28,9 +28,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
-
-
-// ==UserScript==
+ // ==UserScript==
 // @name         URLTest
 // @version      2019.12.20
 // @namespace    https://github.com/niubilityfrontend
@@ -56,6 +54,7 @@ var __webpack_exports__ = {};
 // @require      https://greasyfork.org/scripts/389774-gm-config-toolbar/code/gm_config_toolbar.js?version=730739
 // ==/UserScript==
 //
+
 function myFunction() {
   var uri = "https://www.w3schools.com/jsref/tryit.asp?Filename=tryjsref_decodeuri&color[0]=red&color[1]=green&selection=1&selection=2&selection=3#testhashzhong中文",
       enc = encodeURI(uri),

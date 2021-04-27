@@ -3,32 +3,28 @@ module.exports = function (api) {
 
   return {
     minified: false,
-  //  "only": ["**/*.mjs", "*/*.mjs", "**/*.es6", "*/*.es6"],  //此处如果不注释，则需要在调用出 排除 *.js, 否则 js文件babel-loader出错
+    // "only": ["**/*.mjs", "*/*.mjs", "**/*.es6", "*/*.es6"],  //此处如果不注释（限制对.js的解析），则需要在调用处 排除 *.js, 否则 js文件babel-loader出错
     presets: [
-      [
-        '@babel/env',
+
+      ['@babel/env',
         {
-          targets: {
+           // useBuiltIns: 'usage',
+          corejs: 3,
+          // caller.target will be the same as the target option from webpack
+          targets: api.caller(caller => caller && caller.target === 'node') ? {
+            node: 'current'
+          } : {
+            //ie: '11'           
             edge: '17',
             firefox: '60',
-            chrome: '67',
+            chrome: '74',
             safari: '11.1',
-            esmodules: false
+            // esmodules: false  //You may also target browsers supporting ES Modules (https://www.ecma-international.org/ecma-262/6.0/#sec-modules). When specifying this option, the browsers field will be ignored. You can use this approach in combination with <script type="module"></script> to conditionally serve smaller scripts to users (https://jakearchibald.com/2017/es-modules-in-browsers/#nomodule-for-backwards-compatibility).
           },
-          useBuiltIns: 'usage',
-          corejs: '3',
-          // caller.target will be the same as the target option from webpack
-          targets: api.caller(caller => caller && caller.target === 'node') ?
-            {
-              node: 'current'
-            } :
-            {
-              chrome: '58',
-              ie: '11'
-            }
         }
       ],
-      '@babel/preset-react'
+
+      '@babel/preset-react',
     ],
     plugins: [
       [
@@ -84,7 +80,13 @@ module.exports = function (api) {
           noInterop: true,
           lazy: true
         }
-      ]
+      ],
+      // ["@babel/plugin-transform-runtime", {
+      //   "corejs": false,
+      //   "helpers": true,
+      //   "regenerator": true,
+      //   "useESModules": false
+      // }]
     ]
   }
 }

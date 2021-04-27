@@ -14,7 +14,10 @@
 // ==/UserScript==
 
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 var __webpack_exports__ = {};
+
+
 // ==UserScript==
 // @name         Hummingbird Compatibility Hover
 // @namespace    http://fuzetsu.com/hch
@@ -27,61 +30,64 @@ var __webpack_exports__ = {};
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?1
 // @deprecated   true
 // ==/UserScript==
-
-var SCRIPT_NAME = 'Hummingbird Compatibility Hover';
-var COMPAT_ID = 'hb-compat-area';
-var LOAD_GIF = 'https://i.imgur.com/gX1lY9z.gif';
-var DELAY_SEC = 0.75;
-var CACHED = {};
-
-var Util = {
-  log: function() {
+var SCRIPT_NAME = 'Hummingbird Compatibility Hover',
+    COMPAT_ID = 'hb-compat-area',
+    LOAD_GIF = 'https://i.imgur.com/gX1lY9z.gif',
+    DELAY_SEC = .75,
+    CACHED = {},
+    Util = {
+  log: function log() {
     var args = [].slice.call(arguments);
     args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
     console.log.apply(console, args);
   },
-  q: function(query, context) {
+  q: function q(query, context) {
     return (context || document).querySelector(query);
   },
-  qq: function(query, context) {
+  qq: function qq(query, context) {
     return [].slice.call((context || document).querySelectorAll(query));
   },
-  getJSON: function(url, load, error) {
+  getJSON: function getJSON(url, load, error) {
     var xhr = new XMLHttpRequest();
     xhr.open('get', url);
     xhr.responseType = 'json';
-    xhr.onload = function() {
+
+    xhr.onload = function () {
       load(xhr.response);
     };
+
     xhr.onerror = error;
     xhr.send();
   },
   _style: document.head.appendChild(document.createElement('style')),
-  addStyle: function(styles) {
-    var sel, css, obj;
-    var out = '';
+  addStyle: function addStyle(styles) {
+    var sel,
+        css,
+        obj,
+        out = '';
+
     for (sel in styles) {
       obj = styles[sel];
       out += sel + '{';
+
       for (css in obj) {
         out += css + ':' + obj[css] + ';';
       }
+
       out += '}';
     }
+
     this._style.textContent += out;
   }
-};
-
-var hb = {
-  getUserName: function(url) {
+},
+    hb = {
+  getUserName: function getUserName(url) {
     return url.match(/\/users\/([a-z0-9_]+)/i)[1];
   }
-};
-
-var App = {
+},
+    App = {
   userLinkRegex: /^https?:\/\/(forums\.)?hummingbird\.me\/users\/[^\/]+\/?(\?.*)?$/,
-
-  styleUI: function() {
+  styleUI: function styleUI() {
     var style = {
       '.hb-visible': {
         'visibility': 'visible',
@@ -102,8 +108,8 @@ var App = {
         'font-size': '24px',
         'margin': '20px 10px 10px 10px'
       }
-    };
-    var id = '#' + COMPAT_ID;
+    },
+        id = '#' + COMPAT_ID;
     style[id] = {
       'font-family': '"Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
       'position': 'fixed',
@@ -122,8 +128,7 @@ var App = {
     };
     Util.addStyle(style);
   },
-
-  getCompatArea: function() {
+  getCompatArea: function getCompatArea() {
     var compatArea = Util.q('#' + COMPAT_ID);
 
     if (!compatArea) {
@@ -135,59 +140,55 @@ var App = {
 
     return compatArea;
   },
-
-  getCompatHTML: function(compat) {
+  getCompatHTML: function getCompatHTML(compat) {
     return '<h3 class="hb-compat-header">Compatibility is ' + compat.phrase + '</h3><div class="hb-compat-percent" style="color: ' + compat.color + '">' + compat.percent + '</div>';
   },
-
-  showCompat: function(me, them) {
+  showCompat: function showCompat(me, them) {
     if (me === them) return;
     if (Util.q('.signup-cta')) return; // not signed in
 
-    var self = this;
-    var area = this.getCompatArea();
+    var self = this,
+        area = this.getCompatArea(),
+        cache = CACHED[me + '+' + them];
 
-    var cache = CACHED[me + '+' + them];
     if (cache) {
       area.innerHTML = self.getCompatHTML(cache);
     } else {
       area.innerHTML = '<img src="' + LOAD_GIF + '" />';
-      Util.getJSON('https://hbird-cmp-node.herokuapp.com/compatibility/anime?user1=' + me + '&user2=' + them, function(compat) {
+      Util.getJSON('https://hbird-cmp-node.herokuapp.com/compatibility/anime?user1=' + me + '&user2=' + them, function (compat) {
         CACHED[me + '+' + them] = compat;
         area.innerHTML = self.getCompatHTML(compat);
       });
     }
+
     area.style.display = '';
-    setTimeout(function() {
+    setTimeout(function () {
       area.className = 'hb-visible';
     }, 0);
   },
-
-  hideCompat: function() {
+  hideCompat: function hideCompat() {
     var area = this.getCompatArea();
     area.className = 'hb-hidden';
-    setTimeout(function() {
+    setTimeout(function () {
       area.style.display = 'none';
     }, 500);
   },
-
   _timeout: null,
-  startHover: function(e) {
-    App._timeout = setTimeout(function() {
+  startHover: function startHover(e) {
+    App._timeout = setTimeout(function () {
       App._timeout = null;
       App.showCompat(hb.getUserName(Util.q('.dropdown-menu > li > a, #current-user > a').href), hb.getUserName(e.target.href));
-    }, DELAY_SEC * 1000);
+    }, DELAY_SEC * 1e3);
   },
-  stopHover: function(e) {
+  stopHover: function stopHover(e) {
     clearInterval(App._timeout);
     App.hideCompat();
   },
-
-  start: function() {
+  start: function start() {
     var self = this;
     Util.log('starting...');
     self.styleUI();
-    waitForElems('a', function(link) {
+    waitForElems('a', function (link) {
       if (self.userLinkRegex.test(link.href)) {
         link.addEventListener('mouseenter', self.startHover);
         link.addEventListener('mouseleave', self.stopHover);
@@ -195,10 +196,7 @@ var App = {
       }
     });
   }
-
 };
-
 App.start();
-
 /******/ })()
 ;

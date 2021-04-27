@@ -552,7 +552,7 @@ var __webpack_exports__ = {};
           width: 400,
           modal: false,
           buttons: {
-            立即停止: function _() {
+            立即停止: function 立即停止() {
               sessionStorage.setItem("selectedTimeSlots", "");
               GM_setValue("autonextpagecount", 0);
               $(this).dialog("close");
