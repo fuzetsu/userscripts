@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "userscripts",
   "version": "0.0.1",
   "description": "tampermonkey scripts",
@@ -44,10 +45,12 @@
     "babel-plugin-transform-merge-sibling-variables": "^6.9.4",
     "core-js": "^3.11.0",
     "fs": "0.0.1-security",
+    "html-webpack-plugin": "^5.3.1",
     "jquery": "^3.6.0",
     "js-beautify": "^1.13.13",
     "mini-css-extract-plugin": "^1.5.0",
     "path": "^0.12.7",
+    "terser-webpack-plugin": "^5.1.1",
     "webpack": "^5.35.1",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2",

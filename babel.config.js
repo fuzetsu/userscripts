@@ -1,29 +1,27 @@
 module.exports = function (api) {
   //api.cache(true);
-
   return {
     minified: false,
     // "only": ["**/*.mjs", "*/*.mjs", "**/*.es6", "*/*.es6"],  //此处如果不注释（限制对.js的解析），则需要在调用处 排除 *.js, 否则 js文件babel-loader出错
     presets: [
 
-      ['@babel/env',
+      ['@babel/preset-env',
         {
-           // useBuiltIns: 'usage',
+          useBuiltIns: 'entry',
           corejs: 3,
           // caller.target will be the same as the target option from webpack
           targets: api.caller(caller => caller && caller.target === 'node') ? {
             node: 'current'
           } : {
-            //ie: '11'           
-            edge: '17',
-            firefox: '60',
-            chrome: '74',
-            safari: '11.1',
+            "chrome": 52,
+            "browsers": [
+              "last 2 versions",
+              "safari >= 7"
+            ]
             // esmodules: false  //You may also target browsers supporting ES Modules (https://www.ecma-international.org/ecma-262/6.0/#sec-modules). When specifying this option, the browsers field will be ignored. You can use this approach in combination with <script type="module"></script> to conditionally serve smaller scripts to users (https://jakearchibald.com/2017/es-modules-in-browsers/#nomodule-for-backwards-compatibility).
           },
         }
       ],
-
       '@babel/preset-react',
     ],
     plugins: [

@@ -1,3 +1,4 @@
+import runExtend from './../../libs/RunExtend'
 // ==UserScript==
 // @name find best teacher on 51talk.com
 // @version 2021.4.15001
@@ -29,7 +30,7 @@
 // ==/UserScript==
 
 
-import runExtend from '@libs/RunExtend'
+
 
 
 runExtend($);

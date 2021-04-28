@@ -30,287 +30,10 @@
 
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ 666:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = _default;
-
-function _propertiesCaseInsensitive() {
-  var data = require("@lib/propertiesCaseInsensitive");
-
-  _propertiesCaseInsensitive = function _propertiesCaseInsensitive() {
-    return data;
-  };
-
-  return data;
-}
-
-var dateToString = function dateToString($) {
-  ///date to string with formater
-  var getPaddedComp = function getPaddedComp(comp) {
-    var len = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-    if (len < 1) len = 1;
-    comp = "" + comp;
-    var paddedLen = len - ("" + comp).length;
-
-    if (paddedLen > 0) {
-      return [...Array(paddedLen).fill("0"), ...comp].join("");
-    } else return comp;
-  },
-      o = {
-    "[y|Y]{4}": function yY4(date) {
-      return date.getFullYear();
-    },
-    // year
-    "[y|Y]{2}": function yY2(date) {
-      return date.getFullYear().toString().slice(2);
-    },
-    // year
-    MM: function MM(date) {
-      return getPaddedComp(date.getMonth() + 1);
-    },
-    //month
-    M: function M(date) {
-      return date.getMonth() + 1;
-    },
-    //month
-    "[d|D]{2}": function dD2(date) {
-      return getPaddedComp(date.getDate());
-    },
-    //day
-    "[d|D]{1}": function dD1(date) {
-      return date.getDate();
-    },
-    //day
-    "h{2}": function h2(date) {
-      return getPaddedComp(date.getHours() > 12 ? date.getHours() % 12 : date.getHours());
-    },
-    //hour
-    "h{1}": function h1(date) {
-      return date.getHours() > 12 ? date.getHours() % 12 : date.getHours();
-    },
-    //hour
-    "H{2}": function H2(date) {
-      return getPaddedComp(date.getHours());
-    },
-    //hour
-    "H{1}": function H1(date) {
-      return date.getHours();
-    },
-    //hour
-    "m{2}": function m2(date) {
-      return getPaddedComp(date.getMinutes());
-    },
-    //minute
-    "m{1}": function m1(date) {
-      return date.getMinutes();
-    },
-    //minute
-    "s+": function s(date) {
-      return getPaddedComp(date.getSeconds());
-    },
-    //second
-    "f+": function f(date) {
-      return getPaddedComp(date.getMilliseconds(), 3);
-    },
-    //millisecond,
-    "f{1}": function f1(date) {
-      return getPaddedComp(date.getMilliseconds(), 0);
-    },
-    //millisecond,
-    "b+": function b(date) {
-      return date.getHours() >= 12 ? "PM" : "AM";
-    }
-  };
-
-  $.extend(Date.prototype, {
-    toString: function toString(format) {
-      var formattedDate = format;
-
-      for (var k in o) {
-        if (new RegExp("(" + k + ")").test(format)) {
-          formattedDate = formattedDate.replace(RegExp.$1, o[k](this));
-        }
-      }
-
-      return formattedDate;
-    }
-  });
-},
-    typeToString = function typeToString($) {
-  $.extend(Array.prototype, {
-    clean: function clean() {
-      for (var deleteValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "", i = 0; i < this.length; i++) {
-        if (this[i] == deleteValue) {
-          this.splice(i, 1);
-          i--;
-        }
-      }
-
-      return this;
-    }
-  });
-  $.extend(Number.prototype, {
-    toString: function toString(num) {
-      if (isNaN(num)) num = 2;
-      return this.toFixed(num);
-    }
-  });
-  $.extend(String.prototype, {
-    toFloat: function toFloat() {
-      return parseFloat(this);
-    },
-    toInt: function toInt() {
-      return parseInt(this);
-    },
-    startsWith: function startsWith(str) {
-      return this.slice(0, str.length) == str;
-    },
-    endsWith: function endsWith(str) {
-      return this.slice(-str.length) == str;
-    },
-    includes: function includes(str) {
-      return this.indexOf(str) > -1;
-    },
-    replaceAll: function replaceAll(search, replacement) {
-      var target = this;
-      return target.replace(new RegExp(search, "g"), replacement);
-    }
-  });
-},
-    querytoObj = function querytoObj($) {
-  $.extend(window, {
-    parameters: function parameters(url) {
-      // get query string from url (optional) or window
-      var queryString = url ? url.split("?")[1] : window.location.search.slice(1),
-          cachedkey = "urlparameters" + queryString,
-          obj = $(window).data(cachedkey);
-
-      if (obj == undefined) {
-        obj = new Proxy({}, _propertiesCaseInsensitive()["default"]);
-        $(window).data(cachedkey, obj);
-      } else return obj; // we'll store the parameters here
-      // if query string exists
-
-
-      if (queryString) {
-        // stuff after # is not part of query string, so get rid of it
-        queryString = queryString.split("#")[0]; // split our query string into its component parts
-
-        var arr = queryString.split("&");
-
-        for (var i = 0; i < arr.length; i++) {
-          // separate the keys and the values
-          var a = arr[i].split("="),
-              paramName = a[0],
-              paramValue = typeof a[1] === "undefined" ? true : a[1]; // set parameter name and value (use 'true' if empty)
-
-          // if the paramName ends with square brackets, e.g. colors[] or colors[2]
-          if (paramName.match(/\[(\d+)?\]$/)) {
-            // create key if it doesn't exist
-            var key = paramName.replace(/\[(\d+)?\]/, "");
-            if (!obj[key]) obj[key] = []; // if it's an indexed array e.g. colors[2]
-
-            if (paramName.match(/\[\d+\]$/)) {
-              // get the index value and add the entry at the appropriate position
-              var index = /\[(\d+)\]/.exec(paramName)[1];
-              obj[key][index] = paramValue;
-            } else {
-              // otherwise add the value to the end of the array
-              obj[key].push(paramValue);
-            }
-          } else {
-            // we're dealing with a string
-            if (!obj[paramName]) {
-              // if it doesn't exist, create property
-              obj[paramName] = paramValue;
-            } else if (obj[paramName] && typeof obj[paramName] === "string") {
-              // if property does exist and it's a string, convert it to an array
-              obj[paramName] = [obj[paramName]];
-              obj[paramName].push(paramValue);
-            } else {
-              // otherwise add the property
-              obj[paramName].push(paramValue);
-            }
-          }
-        }
-      }
-
-      return obj;
-    }
-  });
-}; //扩展基本类型方法 array.clean(val), Number.toString(len),String.toFloat, String.toInt,String.startsWtih,String.endsWith, ** String.replaceAll区别育默认的string.replace
-
-
-function _default($) {
-  dateToString($);
-  typeToString($);
-  querytoObj($);
-}
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
 
 
-function _RunExtend() {
-  var data = __webpack_require__(666);
-
-  _RunExtend = function _RunExtend() {
-    return data;
-  };
-
-  return data;
-}
+var _RunExtend = require("./../../libs/RunExtend");
 
 // ==UserScript==
 // @name find best teacher on 51talk.com
@@ -341,7 +64,7 @@ function _RunExtend() {
 // @require https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/libs/gm_config.js
 //
 // ==/UserScript==
-(0, _RunExtend()["default"])($);
+(0, _RunExtend["default"])($);
 
 (function () {
   "use strict";
@@ -573,6 +296,41 @@ function _RunExtend() {
   }
 
   if (settings.isListPage) {
+    var getTeacherInfoInList = function getTeacherInfoInList(jqel) {
+      var age = 0,
+          label = function () {
+        var j_len = jqel.find(".label").text().match(num).clean("").length,
+            l = 0;
+
+        for (var j = 0; j < j_len; j++) {
+          l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+        }
+
+        return l;
+      }(),
+          name = jqel.find(".teacher-name").text(),
+          type = $(".s-t-top-list .li-active").text(),
+          effectivetime = getBatchNumber();
+
+      if (type == "收藏外教") {
+        var isfavorite = true;
+        return {
+          age: age,
+          label: label,
+          name: name,
+          effectivetime: effectivetime,
+          isfavorite: isfavorite
+        };
+      } else return {
+        age: age,
+        label: label,
+        name: name,
+        effectivetime: effectivetime,
+        type: type
+      };
+    }; //获取列表中数据
+
+
     $(".item-top-cont").prop("innerHTML", function (i, val) {
       return val.replaceAll("<!--", "").replaceAll("-->", "");
     }); // 自动获取时,显示停止按钮
@@ -618,42 +376,6 @@ function _RunExtend() {
 
       next();
     });
-
-    function getTeacherInfoInList(jqel) {
-      var age = 0,
-          label = function () {
-        var j_len = jqel.find(".label").text().match(num).clean("").length,
-            l = 0;
-
-        for (var j = 0; j < j_len; j++) {
-          l += Number(jqel.find(".label").text().match(num).clean("")[j]);
-        }
-
-        return l;
-      }(),
-          name = jqel.find(".teacher-name").text(),
-          type = $(".s-t-top-list .li-active").text(),
-          effectivetime = getBatchNumber();
-
-      if (type == "收藏外教") {
-        var isfavorite = true;
-        return {
-          age: age,
-          label: label,
-          name: name,
-          effectivetime: effectivetime,
-          isfavorite: isfavorite
-        };
-      } else return {
-        age: age,
-        label: label,
-        name: name,
-        effectivetime: effectivetime,
-        type: type
-      };
-    } //获取列表中数据
-
-
     $(".item").each(function (index, el) {
       submit(function (next) {
         Pace.track(function () {
@@ -789,7 +511,7 @@ function _RunExtend() {
   }
 
   if (settings.isDetailPage) {
-    function processTeacherDetailPage(jqr) {
+    var processTeacherDetailPage = function processTeacherDetailPage(jqr) {
       jqr.find(".teacher-name-tit").prop("innerHTML", function (i, val) {
         return val.replaceAll("<!--", "").replaceAll("-->", "");
       });
@@ -828,7 +550,7 @@ function _RunExtend() {
       jqr.find(".teacher-name-tit").prop("innerHTML", function (i, val) {
         return "".concat(val, "\n    <span class=\"age age-line\"><label title='\u6307\u6807'>").concat(tinfo.indicator, "</label></span>\n    <span class=\"age age-line\"><label title='\u597D\u8BC4\u7387'>").concat(tinfo.thumbupRate, "%</label></span>\n    <span class=\"age age-line\"><label title='\u88AB\u8D5E\u6570\u91CF'>").concat(tinfo.thumbup, "</label></span>\n    <span class=\"age age-line\"><label title='\u88AB\u8E29\u6570\u91CF'>").concat(tinfo.thumbdown, "</label></span>\n    <span class=\"age age-line\"><label title='\u8BC4\u8BBA\u6807\u7B7E\u6570\u91CF'>").concat(tinfo.label, "</label></span>\n      <span class=\"age age-line\"><label title='\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D'><span id=\"teacherRank\"></span></label></span>\n    ");
       });
-    }
+    };
 
     submit(function (next) {
       processTeacherDetailPage($(document));
@@ -853,9 +575,60 @@ function _RunExtend() {
   }
 
   if (settings.isListPage || settings.isDetailPage) {
+    var getRankHtml = function getRankHtml(t) {
+      if (t) {
+        var colorif = "";
+
+        if (t.rank <= conf.markRankRed) {
+          colorif = "style = 'color:red'";
+        }
+
+        return "<label title='\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D' ".concat(colorif, "> ").concat(t.rank, "\u540D</label>");
+      }
+    }; //弹出信息框
+
+
     //构建插件信息
     submit(function (next) {
       try {
+        var getCatchedTeachers = function getCatchedTeachers() {
+          var teachers = [];
+          $.each(GM_listValues(), function (i, item) {
+            if (item.startsWith("tinfo-")) {
+              var t = GM_getValue(item);
+              t.tid = item.slice(6, item.length);
+              teachers.push(t);
+            }
+          });
+          var indexs = {};
+          teachers = teachers.sort(function (t1, t2) {
+            if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
+            return t1.indicator > t2.indicator ? -1 : 1;
+          }).map(function (val, idx) {
+            if (isNaN(indexs[val.type])) {
+              indexs[val.type] = 1;
+            } else {
+              indexs[val.type] += 1;
+            }
+
+            var t = $.extend(val, {
+              // 'slevel': slevel,
+              tage: Number(val.tage),
+              thumbup: Number(val.thumbup),
+              thumbdown: Number(val.thumbdown),
+              thumbupRate: Number(val.thumbupRate),
+              indicator: Number(val.indicator),
+              //'favoritesCount': val.favoritesCount,
+              //'isfavorite': val.isfavorite,
+              //'expire': Date.now(),
+              rank: indexs[val.type]
+            }); //GM_setValue("tinfo-"+t.tid,t);
+
+            return t;
+          });
+          return teachers;
+        };
+
         var _config = GM_getValue("filterconfig", {
           l1: 300,
           l2: maxlabel,
@@ -1047,45 +820,6 @@ function _RunExtend() {
         $("#timesmutipulecheck").find("input").checkboxradio({
           icon: false
         });
-
-        function getCatchedTeachers() {
-          var teachers = [];
-          $.each(GM_listValues(), function (i, item) {
-            if (item.startsWith("tinfo-")) {
-              var t = GM_getValue(item);
-              t.tid = item.slice(6, item.length);
-              teachers.push(t);
-            }
-          });
-          var indexs = {};
-          teachers = teachers.sort(function (t1, t2) {
-            if (t1.indicator == t2.indicator) return t1.favoritesCount > t2.favoritesCount ? -1 : 1;
-            return t1.indicator > t2.indicator ? -1 : 1;
-          }).map(function (val, idx) {
-            if (isNaN(indexs[val.type])) {
-              indexs[val.type] = 1;
-            } else {
-              indexs[val.type] += 1;
-            }
-
-            var t = $.extend(val, {
-              // 'slevel': slevel,
-              tage: Number(val.tage),
-              thumbup: Number(val.thumbup),
-              thumbdown: Number(val.thumbdown),
-              thumbupRate: Number(val.thumbupRate),
-              indicator: Number(val.indicator),
-              //'favoritesCount': val.favoritesCount,
-              //'isfavorite': val.isfavorite,
-              //'expire': Date.now(),
-              rank: indexs[val.type]
-            }); //GM_setValue("tinfo-"+t.tid,t);
-
-            return t;
-          });
-          return teachers;
-        }
-
         $("#tabs").tabs({
           active: "#tabs-2",
           activate: function activate(event, ui) {
@@ -1329,20 +1063,6 @@ function _RunExtend() {
         next();
       }
     });
-
-    function getRankHtml(t) {
-      if (t) {
-        var colorif = "";
-
-        if (t.rank <= conf.markRankRed) {
-          colorif = "style = 'color:red'";
-        }
-
-        return "<label title='\u5728\u540C\u7C7B\u522B\u6559\u5E08\u4E2D\u7684\u6392\u540D' ".concat(colorif, "> ").concat(t.rank, "\u540D</label>");
-      }
-    } //弹出信息框
-
-
     submit(function (next) {
       $(".s-t-list").before($(".s-t-page").prop("outerHTML"));
       $("#tabs>div:first").append($(".s-t-page").prop("outerHTML"));
@@ -1374,7 +1094,5 @@ function _RunExtend() {
     return x;
   });
 })();
-})();
-
 /******/ })()
 ;
