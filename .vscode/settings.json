@@ -1,3 +1,13 @@
 {
-    "vue3snippets.enable-compile-vue-file-on-did-save-code": true
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": true,
+  "color-highlight.languages": [
+    "*"
+  ],
+  "bracketPairColorizer.activeScopeCSS": [
+    "borderStyle : solid",
+    "borderWidth : 1px",
+    "borderColor : {color}; opacity: 0.5"
+  ],
+  "javascript.validate.enable": false,
+  "editor.tabSize": 2
 }

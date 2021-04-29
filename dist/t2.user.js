@@ -12,7 +12,7 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 408:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 
@@ -21,43 +21,32 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.default = void 0;
 
+var _t = __webpack_require__(490);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0, descriptor; i < props.length; i++) { descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-// ==UserScript==
-// @name         gm_config_toolbar
-// @version      0.0.4
-// @namespace    https://github.com/niubilityfrontend
-// @description  greasyfork configuration toolbar on the script addins
-// @author       kufii
-// @license      OSL-3.0
-// @supportURL   https://github.com/kufii/My-UserScripts
-// @grant        GM_xmlhttpRequest
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_listValues
-// @grant        GM_deleteValue
-// @grant        GM_registerMenuCommand
-// ==/UserScript==
-var bb = /*#__PURE__*/function () {
-  function bb() {
-    _classCallCheck(this, bb);
+var t = /*#__PURE__*/function () {
+  function t() {
+    _classCallCheck(this, t);
   }
 
-  _createClass(bb, [{
+  _createClass(t, [{
     key: "test",
     value: function test() {
-      console.log('this is class bb');
+      _t["default"].test();
+
+      console.log('this is class t');
     }
   }]);
 
-  return bb;
+  return t;
 }();
 
-exports.default = bb;
+exports.default = t;
 
 /***/ }),
 
@@ -69,16 +58,34 @@ exports.default = bb;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.default = abc;
+exports.default = void 0;
 
 var _t = __webpack_require__(408);
 
-// let GM_config={};
-function abc() {
-  return new _t["default"]();
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-;
+function _defineProperties(target, props) { for (var i = 0, descriptor; i < props.length; i++) { descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var t1 = /*#__PURE__*/function () {
+  function t1() {
+    _classCallCheck(this, t1);
+  }
+
+  _createClass(t1, [{
+    key: "test",
+    value: function test() {
+      _t["default"].test();
+
+      console.log('this is class t1');
+    }
+  }]);
+
+  return t1;
+}();
+
+exports.default = t1;
 
 /***/ }),
 
@@ -115,6 +122,47 @@ var tmjs = /*#__PURE__*/function () {
 }();
 
 exports["default"] = tmjs;
+
+/***/ }),
+
+/***/ 490:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var _t = __webpack_require__(491),
+    _t1mjs = __webpack_require__(193);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0, descriptor; i < props.length; i++) { descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var t12 = /*#__PURE__*/function () {
+  function t12() {
+    _classCallCheck(this, t12);
+  }
+
+  _createClass(t12, [{
+    key: "test",
+    value: function test() {
+      _t["default"].test();
+
+      t1mjs.test();
+      console.log('this is class t2');
+    }
+  }]);
+
+  return t12;
+}();
+
+exports.default = t12;
 
 /***/ })
 
@@ -157,26 +205,11 @@ exports["default"] = tmjs;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-
-
-var _t = __webpack_require__(491),
-    _t1mjs = __webpack_require__(193);
-
-_t1mjs["default"].a();
-
-_t["default"].abc(3);
-
-(function (x) {
-  return x + v;
-});
-
-(function (b) {
-  return b + x(122);
-});
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(490);
+/******/ 	
 /******/ })()
 ;

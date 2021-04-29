@@ -13,10 +13,11 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
+import t2 from './t2'
 
-
-export default class bb {
+export default class t {
     test() {
-        console.log('this is class bb')
+        t2.test();
+        console.log('this is class t')
     }
 }

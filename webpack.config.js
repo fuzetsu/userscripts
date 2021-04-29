@@ -70,7 +70,10 @@ module.exports = (env, argv) => {
         exclude: /node_modules/, //不需要对第三方模块进行转换，耗费性能
         loader: 'babel-loader', //bable-loader打通了webpack和bable  bable-core
         options: {}
-      }]
+      },
+      { test: /\.mjs$/, 
+      include: /node_modules/, type: 'javascript/auto' }
+    ]
     },
     resolve: {
       //modules: [path.resolve(__dirname, 'libs'), 'node_modules'],
