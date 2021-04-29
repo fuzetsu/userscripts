@@ -1,4 +1,4 @@
-import runExtend from './../../libs/RunExtend'
+import runExtend from './../../libs/RunExtend.mjs'
 // ==UserScript==
 // @name find best teacher on 51talk.com
 // @version 2021.4.15001

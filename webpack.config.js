@@ -1,10 +1,10 @@
-// const path = require('path')
-// const glob = require('glob')
-// const fs = require('fs')
+const path = require('path')
+const glob = require('glob')
+const fs = require('fs')
 
-import path from 'path'
-import glob from 'glob'
-import fs from 'fs'
+// import path from 'path'
+// import glob from 'glob'
+// import fs from 'fs'
 
 
 const WebpackUserscript = require('webpack-userscript')
@@ -73,11 +73,11 @@ module.exports = (env, argv) => {
       }]
     },
     resolve: {
-      // //modules: [path.resolve(__dirname, 'libs'), 'node_modules'],
-      // extensions: ['.es6', '.mjs', '.cjs', '.js', '.json', '.wasm'],
-      // alias: {
-      //   libs$: path.resolve('libs') // 直接引用src源码
-      // }
+      //modules: [path.resolve(__dirname, 'libs'), 'node_modules'],
+      extensions: ['.es6', '.mjs', '.cjs', '.js', '.json', '.wasm'],
+      alias: {
+        libs$: path.resolve('libs') // 直接引用src源码
+      }
     },
     target: 'web',
     plugins: [

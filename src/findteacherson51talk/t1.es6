@@ -1,5 +1,5 @@
 
-import GM_config from './../../libs/gm_config.es6'
+import GM_config from './t.es6'
 
 // let GM_config={};
 

@@ -1,4 +1,4 @@
-import PropertiesCaseInsensitive from '@lib/propertiesCaseInsensitive'
+import PropertiesCaseInsensitive from './propertiesCaseInsensitive.mjs'
 
 
 let dateToString = function ($) {
