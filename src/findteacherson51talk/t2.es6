@@ -1,6 +1,6 @@
  
-import t1 from './t1.es6'
- import test from './t1mjs'
+import t1 from './t1.mjs'
+ import test from './t1mjs.mjs'
 export default class t12 {
     
     test() {

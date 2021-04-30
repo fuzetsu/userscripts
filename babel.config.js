@@ -13,10 +13,13 @@ module.exports = function (api) {
           targets: api.caller(caller => caller && caller.target === 'node') ? {
             node: 'current'
           } : {
-            "chrome": 52,
+            chrome: 90,
+            edge: 90,
+            // 'opera next'： 75,
             "browsers": [
               "last 2 versions",
-              "safari >= 7"
+              "safari >= 7",
+
             ]
             // esmodules: false  //You may also target browsers supporting ES Modules (https://www.ecma-international.org/ecma-262/6.0/#sec-modules). When specifying this option, the browsers field will be ignored. You can use this approach in combination with <script type="module"></script> to conditionally serve smaller scripts to users (https://jakearchibald.com/2017/es-modules-in-browsers/#nomodule-for-backwards-compatibility).
           },
@@ -71,19 +74,20 @@ module.exports = function (api) {
           throwIfClosureRequired: true
         }
       ],
-      [
-        '@babel/plugin-transform-modules-commonjs',
-        {
-          allowTopLevelThis: true,
-          noInterop: true,
-          lazy: true
-        }
-      ],
+      // [
+      //   '@babel/plugin-transform-modules-commonjs',
+      //   {
+      //     allowTopLevelThis: true,
+      //     noInterop: true,
+      //     lazy: true
+      //   }
+      // ],
+
       // ["@babel/plugin-transform-runtime", {
-      //   "corejs": false,
+      //   "corejs": 3,
       //   "helpers": true,
       //   "regenerator": true,
-      //   "useESModules": false
+      //   "useESModules": true
       // }]
     ]
   }

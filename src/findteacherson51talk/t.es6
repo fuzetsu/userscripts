@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
 import t2 from './t2'
-
+import css from './style.css'
 export default class t {
     test() {
         t2.test();

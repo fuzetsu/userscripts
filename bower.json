@@ -1,0 +1,21 @@
+{
+  "name": "userscript",
+  "description": "tampermonkey scripts",
+  "main": "build-readme.js",
+  "authors": [
+    "Jimbo Tang <happycoder@foxmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/niubilityfrontend/userscripts",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-ui": "https://github.com/jquery/jquery-ui/archive/refs/tags/1.12.1.zip",
+    "jquery": "^3.6.0"
+  }
+}

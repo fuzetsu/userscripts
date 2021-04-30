@@ -116,14 +116,8 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
     }),
-    new webpack.IgnorePlugin(/vertx/),
+    //new webpack.IgnorePlugin(/vertx/),
     new ProgressPlugin(),
-    new AngularCompilerPlugin({
-      platform: 0,
-      entryModule: path.join(PATHS.src, 'apps/client/app/app.module#AppModule'),
-      sourceMap: true,
-      tsConfigPath: path.join(PATHS.root, 'tsconfig.json'),
-      skipCodeGeneration: true,
-    })
+  
   ]
 };

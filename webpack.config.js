@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const fs = require('fs')
-
+const TerserPlugin =require('terser-webpack-plugin')
 // import path from 'path'
 // import glob from 'glob'
 // import fs from 'fs'
@@ -42,13 +42,15 @@ let parseMeta = script =>
   }, {})
 const isDev = false //env.NODE_ENV === 'development';
 module.exports = (env, argv) => {
-  p(argv)
-
   return {
     mode: isDev ? 'development' : 'production',
     optimization: {
       minimize: false,
-
+      minimizer: [
+        new TerserPlugin({
+          extractComments: true,
+        }),
+      ],
       removeEmptyChunks: true
     },
 
@@ -65,15 +67,22 @@ module.exports = (env, argv) => {
     },
     module: {
       rules: [{
-        test: /\.mjs|\.es6|\.js$/, //不能对js文件进行babel,有文件有问题
-        include: [path.resolve('./src')],
-        exclude: /node_modules/, //不需要对第三方模块进行转换，耗费性能
-        loader: 'babel-loader', //bable-loader打通了webpack和bable  bable-core
-        options: {}
-      },
-      { test: /\.mjs$/, 
-      include: /node_modules/, type: 'javascript/auto' }
-    ]
+          test: /\.m?js$|\.es6$|\.js$/, //不能对js文件进行babel,有文件有问题
+          include: [path.resolve('./src')],
+          exclude: /node_modules/, //不需要对第三方模块进行转换，耗费性能
+          loader: 'babel-loader', //bable-loader打通了webpack和bable  bable-core
+          options: {}
+        },
+        {
+          test: /\.css$/,
+          use: [ 'style-loader', 'css-loader' ]
+        },
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto'
+        }
+      ]
     },
     resolve: {
       //modules: [path.resolve(__dirname, 'libs'), 'node_modules'],

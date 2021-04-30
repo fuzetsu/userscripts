@@ -55,6 +55,7 @@
     "semistandard": "^16.0.0",
     "standard": "^16.0.3",
     "standardx": "^7.0.0",
+    "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-standard": "^10.0.0",
     "typescript": "^4.3.0-dev.20210428",
@@ -68,6 +69,7 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/runtime": "^7.13.17",
     "add": "^2.0.6",
+    "css-loader": "^5.2.4",
     "jshint": "^2.12.0",
     "nyc": "^15.1.0",
     "yarn": "^1.22.10"
