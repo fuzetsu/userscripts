@@ -9,5 +9,7 @@
     "borderColor : {color}; opacity: 0.5"
   ],
   "javascript.validate.enable": false,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "compile-hero.disable-compile-files-on-did-save-code": false,
+  "git.ignoreLimitWarning": true
 }

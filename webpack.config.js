@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const fs = require('fs')
-const TerserPlugin =require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 // import path from 'path'
 // import glob from 'glob'
 // import fs from 'fs'
@@ -57,7 +57,7 @@ module.exports = (env, argv) => {
     entry,
 
     //watch: true,
-    stats: 'verbose', // "normal", // "verbose",
+    stats: 'normal', //'verbose',  "normal", // "verbose",
     output: {
       path: path.join(__dirname, 'dist'),
       publicPath: '/dist/',
@@ -74,21 +74,91 @@ module.exports = (env, argv) => {
           options: {}
         },
         {
-          test: /\.css$/,
-          use: [ 'style-loader', 'css-loader' ]
+          test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            minetype: 'application/font-woff',
+          },
         },
         {
-          test: /\.mjs$/,
-          include: /node_modules/,
-          type: 'javascript/auto'
-        }
+          test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            minetype: 'application/font-woff',
+          },
+        },
+        {
+          test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            minetype: 'application/octet-stream',
+          },
+        },
+        {
+          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            minetype: 'application/vnd.ms-fontobject',
+          },
+        },
+        {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            minetype: 'image/svg+xml',
+          },
+        },
+        {
+          //use数组中loader执行顺序：从右到左，从下到上，依次执行
+          test: /\.(less|css)$/,
+          use: [
+            'style-loader',
+            'css-loader',
+            'less-loader'
+          ]
+        },
+        {
+          test: /\.(jpg|JPG|png)$/,
+          //处理不了html中的图片
+          //下载url-loader和file-loader
+          loader: 'url-loader',
+          options: {
+            //图片小于8kb（一般8~12），就会被base64处理,在built.js里变成字符串形式 文件夹下不会生产相应图片
+            //优点：减少请求数量（减轻服务器压力）
+            //缺点：图片体积会更大（速度更慢）
+            limit: 8 * 1024,
+            //可能有小问题：url-loader默认使用es6模块化解析，而html-loader引入图片是commonjs
+            //解析时会出现 [object Module]
+            //解决：关闭url-loader的es6模块化，使用commonjs解析
+            // esModule:false,
+
+            //给图片进行重命名
+            //[hash:10]取图片前10位
+            //[ext]取文件原来扩展名
+            name: '[hash:10].[ext]',
+          }
+        },
+
+        {
+          test: /\.html?$/,
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+          },
+        },
+
       ]
     },
     resolve: {
-      //modules: [path.resolve(__dirname, 'libs'), 'node_modules'],
-      extensions: ['.es6', '.mjs', '.cjs', '.js', '.json', '.wasm'],
+      modules: [path.resolve(__dirname, 'libs'), path.resolve(__dirname, 'node_modules')],
+      extensions: ['.es6', '.mjs', '.cjs', '.js', '.css','.json', '.wasm'],
       alias: {
-        libs$: path.resolve('libs') // 直接引用src源码
+       // libs$: path.resolve('libs') // 直接引用src源码
       }
     },
     target: 'web',
@@ -107,7 +177,12 @@ module.exports = (env, argv) => {
           }
         },
         pretty: true,
-        metajs: false
+        metajs: false,
+        proxyScript: {
+          baseUrl: 'http://127.0.0.1:12345',
+          filename: '[basename].user.js',
+          enable: () => process.env.LOCAL_DEV === '1'
+        }
       })
     ]
   }

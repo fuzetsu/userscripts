@@ -1,6 +1,6 @@
-import runExtend from './../../libs/RunExtend.mjs'
+
 // ==UserScript==
-// @name find best teacher on 51talk.com
+// @name BestTeacher
 // @version 2021.4.15001
 // @namespace https://github.com/niubilityfrontend
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
@@ -19,7 +19,7 @@ import runExtend from './../../libs/RunExtend.mjs'
 // @grant GM_listValues
 // @grant GM_deleteValue
 // @grant GM_registerMenuCommand
-// @require https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js
+
 // @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js
 // @require https://raw.githubusercontent.com/niubilityfrontend/pace/v1.2.4/pace.min.js
 // @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/i18n/grid.locale-cn.js
@@ -29,11 +29,14 @@ import runExtend from './../../libs/RunExtend.mjs'
 //
 // ==/UserScript==
 
-
-
-
-
+import runExtend from './../../libs/RunExtend.mjs'
+import {
+    jquery as $
+} from 'jquery'
+ 
 runExtend($);
+
+
 
 (function () {
     "use strict";

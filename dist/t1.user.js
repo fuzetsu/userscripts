@@ -11,7 +11,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 773:
+/***/ 941:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 
@@ -22,8 +22,8 @@ var findteacherson51talk_t2 = __webpack_require__(490);
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./src/findteacherson51talk/style.css
-var style = __webpack_require__(675);
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/less-loader/dist/cjs.js!./src/findteacherson51talk/style.css
+var style = __webpack_require__(640);
 ;// CONCATENATED MODULE: ./src/findteacherson51talk/style.css
 
             
@@ -87,7 +87,7 @@ var t = /*#__PURE__*/(/* unused pure expression or super */ null && (function ()
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* unused harmony export default */
-/* harmony import */ var _t_es6__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(773);
+/* harmony import */ var _t_es6__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(941);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0, descriptor; i < props.length; i++) { descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -151,7 +151,7 @@ var t12 = /*#__PURE__*/(/* unused pure expression or super */ null && (function 
 
 /***/ }),
 
-/***/ 675:
+/***/ 640:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -163,7 +163,7 @@ var t12 = /*#__PURE__*/(/* unused pure expression or super */ null && (function 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Overlays */\r\n.ui-widget-overlay {\r\n  background: #aaaaaa;\r\n  opacity: .3;\r\n  filter: Alpha(Opacity=30);\r\n  /* support: IE8 */\r\n}\r\n\r\n.ui-widget-shadow {\r\n  -webkit-box-shadow: 0px 0px 5px #666666;\r\n  box-shadow: 0px 0px 5px #666666;\r\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* Overlays */\n.ui-widget-overlay {\n  background: #aaaaaa;\n  opacity: 0.3;\n  filter: alpha(opacity=30);\n  /* support: IE8 */\n}\n.ui-widget-shadow {\n  -webkit-box-shadow: 0px 0px 5px #666666;\n  box-shadow: 0px 0px 5px #666666;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

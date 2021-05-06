@@ -1,5 +1,6 @@
 # ide stuff
 .c9
-node_modules
+
 .nyc_output
 coverage
+node_modules 
