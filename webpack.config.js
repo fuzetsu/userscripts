@@ -1,11 +1,9 @@
 const path = require('path')
 const glob = require('glob')
 const fs = require('fs')
-const TerserPlugin = require('terser-webpack-plugin')
-// import path from 'path'
-// import glob from 'glob'
-// import fs from 'fs'
-
+const extend = require("extend");
+const TerserPlugin = require('terser-webpack-plugin');
+const version = require('extra-version');
 
 const WebpackUserscript = require('webpack-userscript')
 
@@ -13,7 +11,7 @@ const WebpackUserscript = require('webpack-userscript')
 const p = (...args) => (console.log(...args), args[0])
 
 let entry = glob
-  .sync(path.resolve('./src/*/*.@(js|es6|mjs|cjs|ts)'))
+  .sync(path.resolve('./src/*/*.@(user.js|user.es6|user.mjs|user.cjs|user.ts)'))
   .filter((current, index, all) => current.includes('findteacher'))
   .reduce((entries, current) => {
     const item = path.parse(current);
@@ -156,9 +154,9 @@ module.exports = (env, argv) => {
     },
     resolve: {
       modules: [path.resolve(__dirname, 'libs'), path.resolve(__dirname, 'node_modules')],
-      extensions: ['.es6', '.mjs', '.cjs', '.js', '.css','.json', '.wasm'],
+      extensions: ['.es6', '.mjs', '.cjs', '.js', '.css', '.json', '.wasm'],
       alias: {
-       // libs$: path.resolve('libs') // 直接引用src源码
+        // libs$: path.resolve('libs') // 直接引用src源码
       }
     },
     target: 'web',
@@ -171,18 +169,22 @@ module.exports = (env, argv) => {
             console.log(`--${data.chunkName}  --  ${entry[data.chunkName]}            
           END-------------------------
           `)
-            return {}
+            return {};
           } else {
-            return parseMeta(fs.readFileSync(origionpath, 'utf8'))
+            let header = parseMeta(fs.readFileSync(origionpath, 'utf8'));
+            return extend(true, {}, header, {
+              version: isDev ? `[version]-build.[buildNo]` : `${header.version}`
+            });
           }
         },
         pretty: true,
-        metajs: false,
+        metajs: true,
         proxyScript: {
           baseUrl: 'http://127.0.0.1:12345',
           filename: '[basename].user.js',
           enable: () => process.env.LOCAL_DEV === '1'
-        }
+        },
+       
       })
     ]
   }

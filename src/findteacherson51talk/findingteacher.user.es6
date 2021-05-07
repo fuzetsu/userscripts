@@ -1,4 +1,3 @@
-
 // ==UserScript==
 // @name BestTeacher
 // @version 2021.4.15001
@@ -20,91 +19,21 @@
 // @grant GM_deleteValue
 // @grant GM_registerMenuCommand
 
-// @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js
-// @require https://raw.githubusercontent.com/niubilityfrontend/pace/v1.2.4/pace.min.js
+// @require https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js 
 // @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/i18n/grid.locale-cn.js
 // @require https://raw.githubusercontent.com/free-jqgrid/jqGrid/v4.15.5/dist/jquery.jqgrid.min.js
 // @require https://greasyfork.org/scripts/388372-scrollfix/code/scrollfix.js?version=726657
-// @require https://raw.githubusercontent.com/niubilityfrontend/userscripts/master/libs/gm_config.js
-//
 // ==/UserScript==
 
-import runExtend from './../../libs/RunExtend.mjs'
-import {
-    jquery as $
-} from 'jquery'
- 
-runExtend($);
+import {$,submit} from './jqueryextend.es6'
 
-
+import config from './bestteacher_gm_toolbar.es6'
+import './common'
+import './jqueryextend.es6'
+import Pace from './pacesetup.es6'
 
 (function () {
     "use strict";
-
-    const config = GM_config([{
-            key: "pagecount",
-            label: "最大页数 (自动获取时)",
-            default: 20,
-            type: "dropdown",
-            values: [0, 5, 10, 20, 50, 1000],
-        },
-        {
-            key: "newBatcherKeyHours",
-            label: "批次更新间隔（小时），0为每次更新",
-            default: 24,
-            type: "dropdown",
-            values: [0, 1, 2, 3, 5, 10, 24, 168, 168000],
-        },
-        {
-            key: "markRankRed",
-            label: "突出前N名教师的名次",
-            default: 100,
-            type: "dropdown",
-            values: [5, 10, 30, 50, 120, 500, 3000, 5000, 10080],
-        },
-        {
-            key: "version",
-            type: "hidden",
-            default: 1,
-        },
-    ]);
-    let conf = config.load();
-    config.onsave = (cfg) => {
-        conf = cfg;
-        $("#autogetnextpage").text("自动获取" + getAutoNextPagesCount() + "页");
-    };
-    GM_registerMenuCommand("设置", config.setup);
-    //*://www.51talk.com/ReserveNew/index*
-    //https://www.51talk.com/TeacherNew/info/t26501111
-    //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=all&has_msg=1
-    //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=good&has_msg=1
-    //https://www.51talk.com/TeacherNew/teacherComment?tid=t26501111&type=bad&has_msg=1
-    //https://www.51talk.com/user/study_center_zx
-    //https://www.51talk.com/user/study_center_zy
-    //https://www.51talk.com/user/study_center_xx
-    let url = window.location.href.toLocaleLowerCase();
-    let settings = {
-        url: url,
-        tid: url.match(/(t\d+)/g),
-        pagecount: conf.pagecount,
-        isDetailPage: url.includes("teachernew"),
-        isListPage: url.includes("reservenew"),
-        isCoursePage: url.includes("study_center"),
-    };
-
-    function gettid() {
-        return settings.tid;
-    }
-    /**
-     * 提交运算函数到 document 的 fx 队列
-     */
-    let submit = function (fun) {
-        let queue = $.queue(document, "fx", fun);
-        if (queue[0] == "inprogress") {
-            return;
-        }
-        $.dequeue(document);
-    };
 
     function getorAddSession(key, func) {
         if (!(key in sessionStorage)) {
@@ -114,14 +43,6 @@ runExtend($);
         }
         return sessionStorage.getItem(key);
     }
-    Pace.Options = {
-        ajax: false, // disabled
-        document: false, // disabled
-        eventLag: false, // disabled
-        elements: {
-            selectors: ["#filterdialog"],
-        },
-    };
 
     function sleep(delay) {
         let start = Date.now();
@@ -174,16 +95,7 @@ runExtend($);
 .search-teachers { width: 100%; }
 .search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
 .search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }
-.pace {
-  -webkit-pointer-events: none;
-  pointer-events: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
-.pace-inactive {
-  display: none;
-}
+
 .ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}
 .ui-dialog .ui-dialog-content { padding: .5em 0.2em;}
 .pace .pace-progress {
