@@ -1,8 +1,9 @@
 import PropertiesCaseInsensitive from './../../libs/propertiesCaseInsensitive.mjs'
 
-import {
-    jquery as $
-} from 'jquery'
+// import $script from 'scriptjs';
+// import {
+//     jquery as $
+// } from './../../libs/jquery-ui-1.12.1/external/jquery/jquery.js'
 
 ///date to string with formater
 let getPaddedComp = (comp, len = 2) => {
@@ -68,19 +69,25 @@ $.extend(String.prototype, {
     toInt: function () {
         return parseInt(this);
     },
-    startsWith: function (str) {
-        return this.slice(0, str.length) == str;
-    },
-    endsWith: function (str) {
-        return this.slice(-str.length) == str;
-    },
-    includes: function (str) {
-        return this.indexOf(str) > -1;
-    },
-    replaceAll: function (search, replacement) {
-        let target = this;
-        return target.replace(new RegExp(search, "g"), replacement);
-    },
+    includesAny: function (arr) {
+        if (!Array.isArray(arr))
+            return false;
+        var s = this;
+        return s.includes(new Regex(arr.join('|')).test(s));
+    }
+    // startsWith: function (str) {
+    //     return this.slice(0, str.length) == str;
+    // },
+    // endsWith: function (str) {
+    //     return this.slice(-str.length) == str;
+    // },
+    // includes: function (str) {
+    //     return this.indexOf(str) > -1;
+    // },
+    // replaceAll: function (search, replacement) {
+    //     let target = this;
+    //     return target.replace(new RegExp(search, "g"), replacement);
+    // },
 });
 
 
@@ -143,16 +150,3 @@ $.extend(window, {
     },
 });
 
-
-/**
- * 提交运算函数到 document 的 fx 队列
- */
-let submit = function (fun) {
-    let queue = $.queue(document, "fx", fun);
-    if (queue[0] == "inprogress") {
-        return;
-    }
-    $.dequeue(document);
-}
-
-export {$ ,submit}; 

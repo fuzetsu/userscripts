@@ -10,9 +10,14 @@ const WebpackUserscript = require('webpack-userscript')
 
 const p = (...args) => (console.log(...args), args[0])
 
+let stringIncludesAny = function (s, ...arr) {
+
+  return new RegExp(arr.join('|')).test(s);
+}
+
 let entry = glob
   .sync(path.resolve('./src/*/*.@(user.js|user.es6|user.mjs|user.cjs|user.ts)'))
-  .filter((current, index, all) => current.includes('findteacher'))
+  .filter((current, index, all) => stringIncludesAny(current, 'findteacher', 'test'))
   .reduce((entries, current) => {
     const item = path.parse(current);
     let entryName = item.name;
@@ -54,8 +59,8 @@ module.exports = (env, argv) => {
 
     entry,
 
-    //watch: true,
-    stats: 'normal', //'verbose',  "normal", // "verbose",
+    watch: true,
+    stats: 'verbose', //'verbose',  "normal", // "verbose",
     output: {
       path: path.join(__dirname, 'dist'),
       publicPath: '/dist/',
@@ -113,12 +118,23 @@ module.exports = (env, argv) => {
         },
         {
           //use数组中loader执行顺序：从右到左，从下到上，依次执行
-          test: /\.(less|css)$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'less-loader'
-          ]
+          test: /\.(sa|sc|le|c)ss$/, // 针对 .scss 或者 .css 后缀的文件设置 loader
+          use:
+            // [
+            //   'style-loader',
+            //   'css-loader',
+            //   'less-loader'
+            // ]
+            [{
+                loader: 'style-loader' // 用style标签将样式插入到head中
+              },
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1 // 一个css中引入了另一个css，也会执行之前两个loader，即postcss-loader和sass-loader
+                }
+              }
+            ]
         },
         {
           test: /\.(jpg|JPG|png)$/,
@@ -184,7 +200,7 @@ module.exports = (env, argv) => {
           filename: '[basename].user.js',
           enable: () => process.env.LOCAL_DEV === '1'
         },
-       
+
       })
     ]
   }

@@ -1,6 +1,6 @@
-import Pace from './../../libs/pace-1.2.4/pace.min.js'
+ 
 // xxxxxxxxxxxxxx
-import './../../libs/pace-1.2.4/themes/red/pace-theme-big-counter.css'
+import PaceCss from './../../libs/pace-1.2.4/themes/red/pace-theme-big-counter.css'
 
 Pace.Options = {
   ajax: false, // disabled
@@ -11,3 +11,6 @@ Pace.Options = {
   },
 };
  
+export { 
+  PaceCss
+};
