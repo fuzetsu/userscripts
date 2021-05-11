@@ -4,8 +4,8 @@
 .search-teachers .s-t-list .s-t-content { margin-right: 0px;}
 .search-teachers { width: 100%; }
 .search-teachers .s-t-list .item .item-top .teacher-name {line-height: 15px;}
-.search-teachers .s-t-list .item { height: auto; margin-right: 5px; margin-bottom: 5px; }
-
+.search-teachers .s-t-list .item { width: 230px; height: auto; margin-right: 5px; margin-bottom: 5px; }
+ 
 
 .ui-tabs .ui-tabs-panel{padding:.5em 0.2em;}
 .ui-dialog .ui-dialog-content { padding: .5em 0.2em;}

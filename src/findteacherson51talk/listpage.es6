@@ -122,6 +122,37 @@ function getUiFilters() {
   };
 }
 
+function getTeacherInfoInList(jqel) {
+  let age = 0;
+  let label = (function () {
+    let j_len = jqel.find(".label").text().match(num).clean("").length;
+    let l = 0;
+    for (let j = 0; j < j_len; j++) {
+      l += Number(jqel.find(".label").text().match(num).clean("")[j]);
+    }
+    return l;
+  })();
+  let name = jqel.find(".teacher-name").text();
+  let type = $(".s-t-top-list .li-active").text();
+  let effectivetime = getBatchNumber();
+  if (type == "收藏外教") {
+    let isfavorite = true;
+    return {
+      age,
+      label,
+      name,
+      effectivetime,
+      isfavorite,
+    };
+  } else
+    return {
+      age,
+      label,
+      name,
+      effectivetime,
+      type,
+    };
+}
 
 
 if (settings.isListPage) {
@@ -176,37 +207,6 @@ if (settings.isListPage) {
     next();
   });
 
-  function getTeacherInfoInList(jqel) {
-    let age = 0;
-    let label = (function () {
-      let j_len = jqel.find(".label").text().match(num).clean("").length;
-      let l = 0;
-      for (let j = 0; j < j_len; j++) {
-        l += Number(jqel.find(".label").text().match(num).clean("")[j]);
-      }
-      return l;
-    })();
-    let name = jqel.find(".teacher-name").text();
-    let type = $(".s-t-top-list .li-active").text();
-    let effectivetime = getBatchNumber();
-    if (type == "收藏外教") {
-      let isfavorite = true;
-      return {
-        age,
-        label,
-        name,
-        effectivetime,
-        isfavorite,
-      };
-    } else
-      return {
-        age,
-        label,
-        name,
-        effectivetime,
-        type,
-      };
-  }
   //获取列表中数据
   $(".item").each(function (index, el) {
     submit(function (next) {

@@ -1,10 +1,5 @@
 import PropertiesCaseInsensitive from './../../libs/propertiesCaseInsensitive.mjs'
 
-// import $script from 'scriptjs';
-// import {
-//     jquery as $
-// } from './../../libs/jquery-ui-1.12.1/external/jquery/jquery.js'
-
 ///date to string with formater
 let getPaddedComp = (comp, len = 2) => {
         if (len < 1) len = 1;
@@ -69,11 +64,10 @@ $.extend(String.prototype, {
     toInt: function () {
         return parseInt(this);
     },
-    includesAny: function (arr) {
+    includesAny: function (...arr) {
         if (!Array.isArray(arr))
             return false;
-        var s = this;
-        return s.includes(new Regex(arr.join('|')).test(s));
+        return new RegExp(arr.join('|')).test(this);;
     }
     // startsWith: function (str) {
     //     return this.slice(0, str.length) == str;
@@ -149,4 +143,3 @@ $.extend(window, {
         return obj;
     },
 });
-

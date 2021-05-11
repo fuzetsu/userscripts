@@ -22,7 +22,7 @@
  };
 
 
-
+ x => x;
  let configExprMilliseconds = 3600000 * GM_getValue("tinfoexprhours", 168); //缓存7天小时
  let num = /[0-9]*/g;
 

@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name        BestTeacher
-// @version     2021.4.15001
+// @name        find best teacher on 51talk.com(old)
+// @version     2021.4.14002
 // @author      jimbo
 // @description 辅助选老师-排序显示，经验值计算|好评率|显示年龄|列表显示所有教师
 // @homepage    https://github.com/niubilityfrontend/userscripts#readme

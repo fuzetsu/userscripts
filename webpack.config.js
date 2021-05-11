@@ -17,7 +17,7 @@ let stringIncludesAny = function (s, ...arr) {
 
 let entry = glob
   .sync(path.resolve('./src/*/*.@(user.js|user.es6|user.mjs|user.cjs|user.ts)'))
-  .filter((current, index, all) => stringIncludesAny(current, 'findteacher', 'test'))
+  //.filter((current, index, all) => stringIncludesAny(current, 'findteacher', 'test'))
   .reduce((entries, current) => {
     const item = path.parse(current);
     let entryName = item.name;
@@ -60,7 +60,15 @@ module.exports = (env, argv) => {
     entry,
 
     watch: true,
-    stats: 'verbose', //'verbose',  "normal", // "verbose",
+    stats: 'normal',   
+    //  'errors-only'	none	Only output when errors happen
+    // 'errors-warnings'	none	Only output errors and warnings happen
+    // 'minimal'	none	Only output when errors or new compilation happen
+    // 'none'	false	Output nothing
+    // 'normal'	true	Standard output
+    // 'verbose'	none	Output everything
+    // 'detailed'	none	Output everything except chunkModules and chunkRootModules
+    // 'summary'	none	Output webpack version, warnings count and errors 
     output: {
       path: path.join(__dirname, 'dist'),
       publicPath: '/dist/',
