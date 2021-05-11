@@ -60,7 +60,7 @@ module.exports = (env, argv) => {
     entry,
 
     watch: true,
-    stats: 'normal',   
+    stats: 'normal',
     //  'errors-only'	none	Only output when errors happen
     // 'errors-warnings'	none	Only output errors and warnings happen
     // 'minimal'	none	Only output when errors or new compilation happen
@@ -203,6 +203,10 @@ module.exports = (env, argv) => {
         },
         pretty: true,
         metajs: true,
+
+        downloadBaseUrl: '',
+        updateBaseUrl: '',
+
         proxyScript: {
           baseUrl: 'http://127.0.0.1:12345',
           filename: '[basename].user.js',
@@ -210,6 +214,9 @@ module.exports = (env, argv) => {
         },
 
       })
-    ]
+    ],
+    devServer: {
+      contentBase: path.join(__dirname, 'dist')
+    },
   }
 }
