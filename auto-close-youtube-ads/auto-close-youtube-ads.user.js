@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.4.2
+// @version      1.4.3
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @match        *://*.youtube.com/*
@@ -211,8 +211,8 @@ function parseTime(str) {
   return minutes * 60 + seconds || 0
 }
 
-const getMuteButton = () => util.q(CSS.muteButton)
-const getMuteIndicator = () => util.q(CSS.muteIndicator)
+const getMuteButton = () => util.qq(CSS.muteButton).find(elem => elem.offsetParent)
+const getMuteIndicator = () => util.qq(CSS.muteIndicator).find(elem => elem.offsetParent)
 const isMuted = m => m.style.left === '0px'
 
 function getAdLength(ad) {
