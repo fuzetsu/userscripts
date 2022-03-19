@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.4.3
+// @version      1.4.4
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
+// @run-at       document-body
 // @match        *://*.youtube.com/*
 // @exclude      *://*.youtube.com/subscribe_embed?*
 // @grant        GM_getValue
@@ -165,7 +166,7 @@ function createMessageElement() {
   const elem = document.createElement('div')
   elem.setAttribute(
     'style',
-    'border: 1px solid white;border-right: none;background: rgb(0,0,0,0.75);color:white;position: absolute;right: 0;z-index: 1000;top: 10px;padding: 10px;padding-right: 20px;cursor: pointer;pointer-events: all;'
+    'border: 1px solid white;border-right: none;background: rgb(0,0,0,0.75);color:white;position: absolute;right: 0;z-index: 1000;top: 30px;padding: 10px;padding-right: 20px;cursor: pointer;pointer-events: all;'
   )
   return elem
 }
@@ -191,6 +192,10 @@ function setupCancelDiv(ad) {
       util.log('cancel clicked')
       DONT_SKIP = true
       cancelDiv.remove()
+      if (conf.hideAd) {
+        ad.style.zIndex = ''
+        ad.style.background = ''
+      }
       const muteButton = getMuteButton()
       const muteIndicator = getMuteIndicator()
       if (conf.muteAd && muteButton && muteIndicator && isMuted(muteIndicator)) muteButton.click()
@@ -231,7 +236,7 @@ function waitForAds() {
         util.keepTrying(500, () => {
           if (!btn) return true
           // if not visible
-          if (btn.offsetParent === null) return
+          if (btn.offsetParent == null) return
           setTimeout(() => {
             if (DONT_SKIP) {
               util.log('not skipping...')
