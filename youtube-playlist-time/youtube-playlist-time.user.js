@@ -100,7 +100,7 @@ const calcTotalTime = (force = false) => {
   const timestamps = util.qq(TIMESTAMP_SELECTOR)
   if (!force && timestamps.length === lastLength && timeLocExists()) return
   lastLength = timestamps.length
-  const totalSeconds = timestamps.filter(ts => ts.textContent.trim() !== 'LIVE').reduce(function (total, ts) {
+  const totalSeconds = timestamps.filter(ts => ts.textContent.trim().search(":") > 0).reduce(function (total, ts) {
     return total + calcTimeString(ts.textContent.trim())
   }, 0)
   setTime(totalSeconds)
