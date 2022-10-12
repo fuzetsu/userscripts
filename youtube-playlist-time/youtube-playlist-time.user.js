@@ -87,6 +87,7 @@ const getTimeLoc = function () {
   let loc = util.q('#' + EL_ID)
   if (!loc) {
     loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement(EL_TYPE))
+    loc.removeAttribute('is-empty')
     loc.id = EL_ID
     loc.className = EL_CLASS
   }
