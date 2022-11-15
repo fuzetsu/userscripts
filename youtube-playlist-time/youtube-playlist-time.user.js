@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 const SCRIPT_NAME = 'YouTube Playlist Time'
-const HOLDER_SELECTOR = '#stats'
+const HOLDER_SELECTOR = '.metadata-stats'
 const TIMESTAMP_SELECTOR =
   'ytd-browse:not([hidden]) span.ytd-thumbnail-overlay-time-status-renderer'
 const EL_ID = 'us-total-time'
