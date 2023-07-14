@@ -16,6 +16,7 @@ View more information about a particular script by clicking on its name.
 |Format JSON|_no readme_|[Install](https://github.com/fuzetsu/userscripts/raw/master/format-json/format-json.user.js)|
 |Kitsu MAL Rating|[Info](https://github.com/fuzetsu/userscripts/tree/master/kitsu-mal-rating)|[Install](https://github.com/fuzetsu/userscripts/raw/master/kitsu-mal-rating/kitsu-mal-rating.user.js)|
 |Prettier Anything|_no readme_|[Install](https://github.com/fuzetsu/userscripts/raw/master/prettier-anything/prettier-anything.user.js)|
+|YouTube Comment Search|_no readme_|[Install](https://github.com/fuzetsu/userscripts/raw/master/youtube-comment-search/youtube-comment-search.user.js)|
 |YouTube Playlist Search|[Info](https://github.com/fuzetsu/userscripts/tree/master/youtube-playlist-search)|[Install](https://github.com/fuzetsu/userscripts/raw/master/youtube-playlist-search/youtube-playlist-search.user.js)|
 |YouTube Playlist Time|[Info](https://github.com/fuzetsu/userscripts/tree/master/youtube-playlist-time)|[Install](https://github.com/fuzetsu/userscripts/raw/master/youtube-playlist-time/youtube-playlist-time.user.js)|
 
