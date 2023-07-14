@@ -3,7 +3,7 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.0
+// @version     1.1
 // @author      fuz
 // @description Search textbox with live filtering for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
@@ -59,7 +59,7 @@ const filter = (term, comments = findComments()) => {
   batchUpdateDisplay()
 }
 
-let watching = false
+let watching
 const watch = term => {
   let items = []
   stop(false)
@@ -74,14 +74,13 @@ const stop = (reset = true) => {
   clearInterval(watching)
   cancelAnimationFrame(filtering)
   if (reset) filter('')
-  watching = false
 }
 
 const mountSearch = () => {
   const commentsArea = $(COMMENTS_AREA_SEL)
   if (!commentsArea) return
 
-  $(`#${APP_ID}`)?.remove()
+  $('#' + APP_ID)?.remove()
 
   const app = document.createElement('div')
   app.id = APP_ID
@@ -102,22 +101,23 @@ const mountSearch = () => {
     border: 1px solid #ddd;
   `
 
+  const handleChange = debounce(200, term => (term.length > 1 ? watch(term) : stop()))
+  searchBox.addEventListener('input', e => handleChange(e.target.value.trim()))
+
   const resultCount = document.createElement('span')
   resultCount.id = RESULT_COUNT_ID
   resultCount.style.cssText = `
     position: absolute;
-    top: 12px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
     font-size: large;
     color: rgba(0,0,0,0.5);
   `
 
   app.append(searchBox, resultCount)
   commentsArea.parentElement.insertBefore(app, commentsArea)
-
-  const handleChange = debounce(200, term => (term.length > 1 ? watch(term) : stop()))
-
-  searchBox.addEventListener('input', e => handleChange(e.target.value.trim()))
 }
 
 waitForUrl(
