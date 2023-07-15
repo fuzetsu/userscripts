@@ -7,6 +7,7 @@
 // @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @copyright    MIT
 // @grant        none
+// @deprecated   true
 // ==/UserScript==
 
 const SCRIPT_NAME = 'YouTube Playlist Time'
@@ -100,9 +101,11 @@ const calcTotalTime = (force = false) => {
   const timestamps = util.qq(TIMESTAMP_SELECTOR)
   if (!force && timestamps.length === lastLength && timeLocExists()) return
   lastLength = timestamps.length
-  const totalSeconds = timestamps.filter(ts => ts.textContent.trim() !== 'LIVE').reduce(function (total, ts) {
-    return total + calcTimeString(ts.textContent.trim())
-  }, 0)
+  const totalSeconds = timestamps
+    .filter(ts => ts.textContent.trim() !== 'LIVE')
+    .reduce(function (total, ts) {
+      return total + calcTimeString(ts.textContent.trim())
+    }, 0)
   setTime(totalSeconds)
 }
 

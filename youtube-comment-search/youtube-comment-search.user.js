@@ -24,7 +24,7 @@ const FILTER_BATCH_SIZE = 15
 const $ = query => document.querySelector(query)
 const $$ = query => Array.from(document.querySelectorAll(query))
 const debounce = (ms, fn) => {
-  let id = -1
+  let id
   return (...args) => {
     clearTimeout(id)
     id = setTimeout(fn, ms, ...args)
