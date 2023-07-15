@@ -104,7 +104,7 @@ const calcTotalTime = (force = false) => {
   lastLength = timestamps.length
   const totalSeconds = timestamps
     .map(ts => ts.textContent.trim())
-    .filter(ts => ts.search(":") > 0)
+    .filter(ts => ts.includes(':'))
     .reduce((total, ts) => total + calcTimeString(ts), 0)
   setTime(totalSeconds)
 }
