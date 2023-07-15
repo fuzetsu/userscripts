@@ -11,7 +11,7 @@
 // ==/UserScript==
 
 const SCRIPT_NAME = 'YouTube Playlist Time'
-const HOLDER_SELECTOR = '#stats'
+const HOLDER_SELECTOR = '.metadata-stats'
 const TIMESTAMP_SELECTOR =
   'ytd-browse:not([hidden]) span.ytd-thumbnail-overlay-time-status-renderer'
 const EL_ID = 'us-total-time'
@@ -88,6 +88,7 @@ const getTimeLoc = function () {
   let loc = util.q('#' + EL_ID)
   if (!loc) {
     loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement(EL_TYPE))
+    loc.removeAttribute('is-empty')
     loc.id = EL_ID
     loc.className = EL_CLASS
   }
