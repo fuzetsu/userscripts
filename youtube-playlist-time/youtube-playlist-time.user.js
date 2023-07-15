@@ -7,10 +7,11 @@
 // @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @copyright    MIT
 // @grant        none
+// @deprecated   true
 // ==/UserScript==
 
 const SCRIPT_NAME = 'YouTube Playlist Time'
-const HOLDER_SELECTOR = '#stats'
+const HOLDER_SELECTOR = '.metadata-stats'
 const TIMESTAMP_SELECTOR =
   'ytd-browse:not([hidden]) span.ytd-thumbnail-overlay-time-status-renderer'
 const EL_ID = 'us-total-time'
@@ -87,6 +88,7 @@ const getTimeLoc = function () {
   let loc = util.q('#' + EL_ID)
   if (!loc) {
     loc = util.q(HOLDER_SELECTOR).appendChild(document.createElement(EL_TYPE))
+    loc.removeAttribute('is-empty')
     loc.id = EL_ID
     loc.className = EL_CLASS
   }
@@ -100,9 +102,10 @@ const calcTotalTime = (force = false) => {
   const timestamps = util.qq(TIMESTAMP_SELECTOR)
   if (!force && timestamps.length === lastLength && timeLocExists()) return
   lastLength = timestamps.length
-  const totalSeconds = timestamps.filter(ts => ts.textContent.trim().search(":") > 0).reduce(function (total, ts) {
-    return total + calcTimeString(ts.textContent.trim())
-  }, 0)
+  const totalSeconds = timestamps
+    .map(ts => ts.textContent.trim())
+    .filter(ts => ts.search(":") > 0)
+    .reduce((total, ts) => total + calcTimeString(ts), 0)
   setTime(totalSeconds)
 }
 

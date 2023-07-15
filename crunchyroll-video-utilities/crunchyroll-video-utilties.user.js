@@ -10,6 +10,7 @@
 // @grant GM_setValue
 // @require https://gitcdn.xyz/cdn/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @require https://gitcdn.xyz/cdn/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @deprecated  true
 // ==/UserScript==
 /* globals unsafeWindow, GM_config, GM_registerMenuCommand, waitForElems */
 const sep = '~~@~~'
