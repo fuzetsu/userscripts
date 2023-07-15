@@ -103,10 +103,9 @@ const calcTotalTime = (force = false) => {
   if (!force && timestamps.length === lastLength && timeLocExists()) return
   lastLength = timestamps.length
   const totalSeconds = timestamps
-    .filter(ts => ts.textContent.trim() !== 'LIVE')
-    .reduce(function (total, ts) {
-      return total + calcTimeString(ts.textContent.trim())
-    }, 0)
+    .map(ts => ts.textContent.trim())
+    .filter(ts => ts.search(":") > 0)
+    .reduce((total, ts) => total + calcTimeString(ts), 0)
   setTime(totalSeconds)
 }
 
