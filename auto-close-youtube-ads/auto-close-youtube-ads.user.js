@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.4.4
+// @version      1.4.5
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @run-at       document-body
@@ -22,7 +22,7 @@
  */
 const CSS = {
   // the button used to skip an ad
-  skipButton: '.videoAdUiSkipButton,.ytp-ad-skip-button',
+  skipButton: '.videoAdUiSkipButton,.ytp-ad-skip-button,.ytp-ad-skip-button-modern',
   // the area showing the countdown to the skip button showing
   preSkipButton: '.videoAdUiPreSkipButton,.ytp-ad-preview-container',
   // little x that closes banner ads
