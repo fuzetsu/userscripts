@@ -3,16 +3,18 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.1
+// @version     1.2
 // @author      fuz
-// @description Search textbox with live filtering for YouTube comments
+// @description Search textbox for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
+// @noframes
 // ==/UserScript==
 
 /**
  * Constants
  */
 const COMMENT_SEL = '#sections > div:nth-child(3) > ytd-comment-thread-renderer'
+const COMMENT_CONTENT_SEL = '#comment-content'
 const COMMENTS_AREA_SEL = '#comments'
 const APP_ID = 'yt-comment-search'
 const RESULT_COUNT_ID = 'yt-comment-search__result-count'
@@ -21,22 +23,16 @@ const FILTER_BATCH_SIZE = 15
 /**
  * Utils
  */
-const $ = query => document.querySelector(query)
-const $$ = query => Array.from(document.querySelectorAll(query))
-const debounce = (ms, fn) => {
-  let id
-  return (...args) => {
-    clearTimeout(id)
-    id = setTimeout(fn, ms, ...args)
-  }
-}
+const $ = (query, ctx = document) => ctx.querySelector(query)
+const $$ = (query, ctx = document) => Array.from(ctx.querySelectorAll(query))
 
 /**
  * App
  */
 const findComments = () => $$(COMMENT_SEL)
+const findResultCount = () => $('#' + RESULT_COUNT_ID)
 const updateResultCount = text => {
-  const resultCount = $('#' + RESULT_COUNT_ID)
+  const resultCount = findResultCount()
   if (resultCount) resultCount.textContent = text
 }
 
@@ -49,7 +45,8 @@ const filter = (term, comments = findComments()) => {
     const batch = comments.slice(index, FILTER_BATCH_SIZE + index)
     if (batch.length <= 0) return
     batch.forEach(comment => {
-      const shouldShow = !term || comment.textContent.toLowerCase().includes(term)
+      const shouldShow =
+        !term || $(COMMENT_CONTENT_SEL, comment).innerText.toLowerCase().includes(term)
       if (shouldShow) foundCount += 1
       comment.style.display = shouldShow ? '' : 'none'
     })
@@ -101,8 +98,23 @@ const mountSearch = () => {
     border: 1px solid #ddd;
   `
 
-  const handleChange = debounce(200, term => (term.length > 1 ? watch(term) : stop()))
-  searchBox.addEventListener('input', e => handleChange(e.target.value.trim()))
+  const handleChange = term => {
+    if (term.length > 1) {
+      watch(term)
+    } else {
+      updateResultCount('')
+      stop()
+    }
+  }
+  searchBox.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      handleChange(e.target.value.trim())
+    } else {
+      updateResultCount('press Enter to search')
+    }
+  })
+  searchBox.addEventListener('change', e => handleChange(e.target.value.trim()))
+  searchBox.addEventListener('blur', () => updateResultCount(''))
 
   const resultCount = document.createElement('span')
   resultCount.id = RESULT_COUNT_ID
