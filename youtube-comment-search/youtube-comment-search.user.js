@@ -3,7 +3,7 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.2
+// @version     1.3.0
 // @author      fuz
 // @description Search textbox for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
@@ -107,10 +107,16 @@ const mountSearch = () => {
     }
   }
   searchBox.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      handleChange(e.target.value.trim())
-    } else {
-      updateResultCount('press Enter to search')
+    switch (e.key) {
+      case 'Enter':
+        handleChange(e.target.value.trim())
+        break
+      case 'Escape':
+        handleChange((e.target.value = ''))
+        break
+      default:
+        updateResultCount('press Enter to search')
+        break
     }
   })
   searchBox.addEventListener('change', e => handleChange(e.target.value.trim()))
