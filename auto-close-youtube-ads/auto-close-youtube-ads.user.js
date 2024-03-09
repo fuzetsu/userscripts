@@ -196,6 +196,26 @@ function getAdLength(ad) {
   return time ? parseTime(time.textContent) : 0
 }
 
+function speedUp() {
+  const vid = document.getElementsByTagName("video")
+  if (vid) {
+    util.log('Speeding up video')
+    vid[0].playbackRate = 16
+  } else {
+    util.log('Couldn\'t find video to speed up')
+  }
+}
+
+function slowDown() {
+  const vid = document.getElementsByTagName("video")
+  if (vid) {
+    util.log('Setting video speed to 1')
+    vid[0].playbackRate = 1
+  } else {
+    util.log('Couldn\'t find video to change speed')
+  }
+}
+
 function waitForAds() {
   DONT_SKIP = false
   TICKS.push(
@@ -251,14 +271,17 @@ function waitForAds() {
         const muteIndicator = getMuteIndicator()
         if (!muteIndicator) return util.log('unable to determine mute state, skipping mute')
         muteButton.click()
+        speedUp()
         util.log('Video ad detected, muting audio')
         // wait for the ad to disappear before unmuting
         util.keepTrying(250, () => {
           if (!util.q(CSS.adArea)) {
             if (isMuted(muteIndicator)) {
               muteButton.click()
+              slowDown()
               util.log('Video ad ended, unmuting audio')
             } else {
+              slowDown()
               util.log('Video ad ended, audio already unmuted')
             }
             return true
