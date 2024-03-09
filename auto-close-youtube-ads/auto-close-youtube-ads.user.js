@@ -73,6 +73,7 @@ const SCRIPT_NAME = 'Auto Close YouTube Ads'
 const SHORT_AD_MSG_LENGTH = 12000
 const TICKS = []
 let DONT_SKIP = false
+const CONFIG_VERSION = 2
 
 const config = GM_config([
   {
@@ -123,44 +124,13 @@ const config = GM_config([
   {
     key: 'version',
     type: 'hidden',
-    default: 1
+    default: CONFIG_VERSION
   }
 ])
 
-const configVersion = 2
 let conf = config.load()
 
 config.onsave = cfg => (conf = cfg)
-
-// config upgrade procedure
-function upgradeConfig() {
-  let lastVersion
-  while (conf.version < configVersion && lastVersion !== conf.version) {
-    util.log('upgrading config version, current = ', conf.version, ', target = ', configVersion)
-    lastVersion = conf.version
-    switch (conf.version) {
-      case 1: {
-        const oldConf = {
-          muteAd: util.storeGet('MUTE_AD'),
-          hideAd: util.storeGet('HIDE_AD'),
-          secWait: util.storeGet('SEC_WAIT')
-        }
-
-        if (oldConf.muteAd != null) conf.muteAd = !!oldConf.muteAd
-        if (oldConf.hideAd != null) conf.hideAd = !!oldConf.hideAd
-        if (oldConf.secWait != null && !isNaN(oldConf.secWait))
-          conf.secWaitBanner = conf.secWaitVideo = parseInt(oldConf.secWait)
-
-        conf.version = 2
-
-        config.save(conf)
-        ;['SEC_WAIT', 'HIDE_AD', 'MUTE_AD'].forEach(util.storeDel)
-        break
-      }
-    }
-  }
-}
-upgradeConfig()
 
 function createMessageElement() {
   const elem = document.createElement('div')
