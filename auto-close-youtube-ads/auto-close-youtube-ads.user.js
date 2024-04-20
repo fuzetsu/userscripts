@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
 // @namespace    http://fuzetsu.acypa.com
-// @version      1.4.6
+// @version      1.4.7
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @run-at       document-body
@@ -25,7 +25,7 @@ const CSS = {
   skipButton:
     '.videoAdUiSkipButton,.ytp-ad-skip-button,.ytp-ad-skip-button-modern,.ytp-skip-ad-button',
   // the area showing the countdown to the skip button showing
-  preSkipButton: '.videoAdUiPreSkipButton,.ytp-ad-preview-container',
+  preSkipButton: '.videoAdUiPreSkipButton,.ytp-ad-preview-container,.ytp-preview-ad',
   // little x that closes banner ads
   closeBannerAd: '.close-padding.contains-svg,a.close-button,.ytp-ad-overlay-close-button',
   // button that toggle mute on the video
@@ -33,7 +33,7 @@ const CSS = {
   // the slider bar handle that represents the current volume
   muteIndicator: '.ytp-volume-slider-handle',
   // container for ad on video
-  adArea: '.videoAdUi,.ytp-ad-player-overlay',
+  adArea: '.videoAdUi,.ytp-ad-player-overlay,.ytp-ad-player-overlay-layout',
   // container that shows ad length eg 3:23
   adLength: '.videoAdUiAttribution,.ytp-ad-duration-remaining',
   // container for header ad on the home page
@@ -152,7 +152,8 @@ function showMessage(container, text, ms) {
 function setupCancelDiv(ad) {
   const skipArea = util.q(CSS.preSkipButton, ad)
   const skipText = skipArea && skipArea.textContent.trim().replace(/\s+/g, ' ')
-  if (skipText && !['will begin', 'will play'].some(snip => skipText.includes(snip))) {
+  if (skipText) {
+    if (['will begin', 'will play', 'plays soon'].some(snip => skipText.includes(snip))) return
     const cancelClass = 'acya-cancel-skip'
     let cancelDiv = util.q('.' + cancelClass)
     if (cancelDiv) cancelDiv.remove()
@@ -225,6 +226,7 @@ function waitForAds() {
     waitForElems({
       sel: CSS.adArea,
       onmatch: ad => {
+        util.log('Video ad detected')
         // reset don't skip
         DONT_SKIP = false
         const adLength = getAdLength(ad)
@@ -251,11 +253,15 @@ function waitForAds() {
         const muteButton = getMuteButton()
         const muteIndicator = getMuteIndicator()
         if (!muteIndicator) return util.log('unable to determine mute state, skipping mute')
-        muteButton.click()
-        util.log('Video ad detected, muting audio')
+        if (isMuted(muteIndicator)) {
+          util.log('Audio is already muted')
+        } else {
+          util.log('Muting audio')
+          muteButton.click()
+        }
         // wait for the ad to disappear before unmuting
         util.keepTrying(250, () => {
-          if (!util.q(CSS.adArea)) {
+          if (!ad.offsetParent) {
             if (isMuted(muteIndicator)) {
               muteButton.click()
               util.log('Video ad ended, unmuting audio')
