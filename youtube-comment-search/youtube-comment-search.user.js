@@ -3,7 +3,7 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.3.0
+// @version     1.3.1
 // @author      fuz
 // @description Search textbox for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
@@ -14,7 +14,7 @@
  * Constants
  */
 const COMMENT_SEL = '#sections > div:nth-child(3) > ytd-comment-thread-renderer'
-const COMMENT_CONTENT_SEL = '#comment-content'
+const COMMENT_CONTENT_SEL = '#content-text'
 const COMMENTS_AREA_SEL = '#comments'
 const APP_ID = 'yt-comment-search'
 const RESULT_COUNT_ID = 'yt-comment-search__result-count'
