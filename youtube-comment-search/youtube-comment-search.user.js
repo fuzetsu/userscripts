@@ -3,7 +3,7 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.3.1
+// @version     1.3.2
 // @author      fuz
 // @description Search textbox for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
@@ -18,7 +18,7 @@ const COMMENT_CONTENT_SEL = '#content-text'
 const COMMENTS_AREA_SEL = '#comments'
 const APP_ID = 'yt-comment-search'
 const RESULT_COUNT_ID = 'yt-comment-search__result-count'
-const FILTER_BATCH_SIZE = 15
+const FILTER_BATCH_SIZE = 50
 
 /**
  * Utils
@@ -35,6 +35,7 @@ const updateResultCount = text => {
   const resultCount = findResultCount()
   if (resultCount) resultCount.textContent = text
 }
+const getResultCount = text => findResultCount()?.textContent
 
 let filtering
 const filter = (term, comments = findComments()) => {
@@ -42,16 +43,18 @@ const filter = (term, comments = findComments()) => {
   updateResultCount('')
   let foundCount = 0
   const batchUpdateDisplay = (index = 0) => {
-    const batch = comments.slice(index, FILTER_BATCH_SIZE + index)
-    if (batch.length <= 0) return
-    batch.forEach(comment => {
-      const shouldShow =
-        !term || $(COMMENT_CONTENT_SEL, comment).innerText.toLowerCase().includes(term)
-      if (shouldShow) foundCount += 1
-      comment.style.display = shouldShow ? '' : 'none'
+    filtering = requestAnimationFrame(() => {
+      const batch = comments.slice(index, FILTER_BATCH_SIZE + index)
+      if (batch.length <= 0) return
+      batch.forEach(comment => {
+        const shouldShow =
+          !term || $(COMMENT_CONTENT_SEL, comment).innerText.toLowerCase().includes(term)
+        if (shouldShow) foundCount += 1
+        comment.style.display = shouldShow ? '' : 'none'
+      })
+      if (term) updateResultCount(`matches ${foundCount} out of ${comments.length}`)
+      batchUpdateDisplay(index + FILTER_BATCH_SIZE)
     })
-    if (term) updateResultCount(`matches ${foundCount} out of ${comments.length}`)
-    filtering = requestAnimationFrame(() => batchUpdateDisplay(index + FILTER_BATCH_SIZE))
   }
   batchUpdateDisplay()
 }
@@ -106,6 +109,8 @@ const mountSearch = () => {
       stop()
     }
   }
+
+  const submitText = 'press Enter to search'
   searchBox.addEventListener('keydown', e => {
     switch (e.key) {
       case 'Enter':
@@ -115,12 +120,14 @@ const mountSearch = () => {
         handleChange((e.target.value = ''))
         break
       default:
-        updateResultCount('press Enter to search')
+        updateResultCount(submitText)
         break
     }
   })
   searchBox.addEventListener('change', e => handleChange(e.target.value.trim()))
-  searchBox.addEventListener('blur', () => updateResultCount(''))
+  searchBox.addEventListener('blur', () => {
+    if (getResultCount() === submitText) updateResultCount('')
+  })
 
   const resultCount = document.createElement('span')
   resultCount.id = RESULT_COUNT_ID
