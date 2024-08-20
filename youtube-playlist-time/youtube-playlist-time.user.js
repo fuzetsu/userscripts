@@ -18,6 +18,12 @@ const EL_ID = 'us-total-time'
 const EL_TYPE = 'yt-formatted-string'
 const EL_CLASS = 'style-scope ytd-playlist-sidebar-primary-info-renderer'
 
+if (!window.trustedTypes.defaultPolicy) {
+  window.trustedTypes.createPolicy('default', {
+    createHTML: (input) => input
+  });
+}
+
 const util = {
   log() {
     const args = [].slice.call(arguments)
