@@ -11,10 +11,11 @@
 // ==/UserScript==
 
 const SCRIPT_NAME = 'YouTube Playlist Time'
-const HOLDER_SELECTOR = '.metadata-stats'
+const HOLDER_SELECTOR = '.metadata-stats, .page-header-sidebar yt-content-metadata-view-model'
 const TIMESTAMP_SELECTOR =
   'ytd-browse:not([hidden]) span.ytd-thumbnail-overlay-time-status-renderer'
 const EL_ID = 'us-total-time'
+const EL_ID2 = '.page-header-sidebar yt-content-metadata-view-model > div:last-of-type > span:last-of-type'
 const EL_TYPE = 'yt-formatted-string'
 const EL_CLASS = 'style-scope ytd-playlist-sidebar-primary-info-renderer'
 
@@ -92,6 +93,19 @@ const getTimeLoc = function () {
     loc.id = EL_ID
     loc.className = EL_CLASS
   }
+
+  let loc2 = util.q(EL_ID2)
+  if (loc2) {
+    if (loc2.getAttribute('data-playlist-time') === null) {
+      const separator = loc2.previousElementSibling.cloneNode(true);
+      const playlistTime = loc2.cloneNode(true);
+      loc2.parentElement.appendChild(separator);
+      loc2.parentElement.appendChild(playlistTime).setAttribute('data-playlist-time', '');
+      return playlistTime
+    }
+    return loc2
+  }
+
   return loc
 }
 
