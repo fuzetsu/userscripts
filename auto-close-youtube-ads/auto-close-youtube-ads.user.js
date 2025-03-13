@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Close YouTube Ads
-// @namespace    http://fuzetsu.acypa.com
-// @version      1.4.7
+// @namespace    fuz/acya
+// @version      1.4.8
 // @description  Close and/or Mute YouTube ads automatically!
 // @author       fuzetsu
 // @run-at       document-body
