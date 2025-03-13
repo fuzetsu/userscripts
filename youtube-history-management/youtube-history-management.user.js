@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         YouTube History Management
-// @namespace    http://fuzetsu.com/YHM
+// @namespace    fuz/youtube-history-management
 // @version      1.1.0
 // @description  Select and remove YouTube history items quickly
 // @author       fuzetsu

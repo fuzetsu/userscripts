@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         YouTube Playlist Time
-// @namespace    http://www.fuzetsu.com/WLFT
+// @namespace    fuz/ypt
 // @version      1.2.13
 // @description  Shows the total time it would take to watch all the videos in a YouTube playlist
 // @match        https://www.youtube.com/*

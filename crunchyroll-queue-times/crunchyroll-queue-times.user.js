@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Crunchyroll Queue Real Times
-// @namespace   http://www.fuzetsu.com/CRRT
+// @namespace   fuz/cqrt
 // @version     1.0.4
 // @description Display countdown until next episode in the Crunchyroll Queue page
 // @match       http://www.crunchyroll.com/home/queue

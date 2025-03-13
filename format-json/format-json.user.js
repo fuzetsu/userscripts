@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Format JSON
-// @namespace    format-json
+// @namespace    fuz/format-json
 // @author       fuzetsu
 // @version      0.0.2
 // @description  Automatically prettify JSON responses

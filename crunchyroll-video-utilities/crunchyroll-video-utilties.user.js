@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Crunchyroll Video Utilities
 // @version 1.0.5
-// @namespace fuzetsu/csdvqn
+// @namespace fuz/csdvqn
 // @description seek video with hotkeys and set default quality
 // @match https://static.crunchyroll.com/*/player.html
 // @match https://www.crunchyroll.com/*

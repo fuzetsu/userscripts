@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         YouTube Playlist Search
-// @namespace    http://www.fuzetsu.com/YPS
+// @namespace    fuz/yps
 // @version      1.1.3
 // @description  Allows you to quickly search through youtube playlists
 // @match        https://www.youtube.com/*

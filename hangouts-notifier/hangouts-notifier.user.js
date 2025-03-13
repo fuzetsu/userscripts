@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hangouts Notifier
-// @namespace    fuzetsu.com/HangoutsNotifier
+// @namespace    fuz/HangoutsNotifier
 // @version      0.0.9
 // @description  Show desktop notifications for the Hangouts web app
 // @author       fuzetsu

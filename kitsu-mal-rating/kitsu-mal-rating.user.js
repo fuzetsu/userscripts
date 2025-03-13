@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Kitsu MAL Rating
-// @namespace    http://fuzetsu.com/kitsu-mal-rating
+// @namespace    fuz/kitsu-mal-rating
 // @version      2.3
 // @description  Shows MyAnimeList.net rating on Kitsu.io
 // @author       synthtech / fuzetsu

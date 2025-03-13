@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Gfycat Redirect to Webm
-// @namespace    http://fuzetsu/gfycat-redirect-webm
+// @namespace    fuz/gfycat-redirect-webm
 // @version      1.0.1
 // @description  Automatically redirects you to the webm source of a gif when you load a gfycat page
 // @author       fuzetsu
