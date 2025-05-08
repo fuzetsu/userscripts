@@ -3,7 +3,7 @@
 // @namespace   yt-comment-search
 // @match       https://www.youtube.com/*
 // @grant       none
-// @version     1.3.3
+// @version     1.3.4
 // @author      fuz
 // @description Search textbox for YouTube comments
 // @require     https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
@@ -32,11 +32,18 @@ const $$ = (query, ctx = document) => Array.from(ctx.querySelectorAll(query))
 const findComments = () => $$(COMMENT_SEL)
 const findInfo = () => $('#' + INFO_ID)
 
+let _lastInfoText = ''
 const updateInfoText = text => {
   const infoDiv = findInfo()
-  if (infoDiv) infoDiv.textContent = text
+  if (infoDiv) {
+    const curText = infoDiv.textContent
+    if (curText === text) return
+    _lastInfoText = curText
+    infoDiv.textContent = text
+  }
 }
 const getInfoText = () => findInfo()?.textContent
+const getLastInfoText = () => _lastInfoText
 
 let filtering
 const filter = (term, comments = findComments()) => {
@@ -102,7 +109,9 @@ const mountSearch = () => {
     border: 1px solid #ddd;
   `
 
+  let activeSearchValue = ''
   const handleChange = term => {
+    activeSearchValue = term
     if (term.length > 1) {
       watch(term)
     } else {
@@ -123,14 +132,9 @@ const mountSearch = () => {
     }
   })
   searchBox.addEventListener('change', e => handleChange(e.target.value.trim()))
-  let initialInfoText, initialSearch
-  searchBox.addEventListener('focus', () => {
-    initialSearch = searchBox.value
-    initialInfoText = getInfoText() ?? ''
-  })
   searchBox.addEventListener('input', () => {
-    const dirty = initialSearch !== searchBox.value
-    updateInfoText(dirty ? submitText : initialInfoText)
+    const dirty = activeSearchValue !== searchBox.value.trim()
+    updateInfoText(dirty ? submitText : getLastInfoText())
   })
 
   const infoDiv = document.createElement('span')
